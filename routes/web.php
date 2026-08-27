@@ -36,7 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/sessions/logout-others', [App\Http\Controllers\SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware('can:session.revoke');
 
     Route::get('/audit', [App\Http\Controllers\AuditController::class, 'index'])->name('audit.index')->middleware('can:audit.view');
-    Route::get('/api-tokens', fn () => view('placeholder', ['title' => 'API Tokens']))->name('api-tokens.index')->middleware('can:api-token.view');
+    Route::get('/api-tokens', [App\Http\Controllers\ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware('can:api-token.view');
+    Route::resource('api-tokens', App\Http\Controllers\ApiTokenController::class)
+        ->only(['store', 'destroy'])
+        ->middleware('can:api-token.create');
 
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');
 });
