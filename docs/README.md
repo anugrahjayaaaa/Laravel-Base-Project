@@ -1,0 +1,34 @@
+# Laravel Base Project
+
+Base core system built on Laravel (latest) — the foundation for a web admin
+plus a mobile API integration. This document is the **single source of truth**.
+AI agents and developers MUST read these docs before coding; if code conflicts
+with docs, **docs win** (change via an ADR).
+
+## How AI uses these docs
+- Start every task with the `dev-lifecycle` skill, then read the relevant doc first.
+- Each phase gate must be green before proceeding.
+- New requirement → add to `CONTRIBUTING.md` (open items) or write a new ADR.
+
+## Docs structure
+| File | Contents |
+|------|----------|
+| README.md | This index, goal, usage |
+| CONTRIBUTING.md | Dev setup, conventions, Definition of Done, open items |
+| architecture.md | Stack, layered architecture, v1 modules, decisions |
+| auth.md | Authentication (username/phone, strong pwd, lockout, verify) |
+| authorization.md | Dynamic RBAC + management UI |
+| audit-trail.md | Logging all user actions |
+| frontend-theme.md | AdminLTE 4.9.1, dark default, responsive, sidebar |
+| observability.md | Logger + Sentry + health check |
+| api-mobile.md | Sanctum API /api/v1 for mobile |
+| packages.md | Verified packages (don't reinvent) |
+| adr.md | Architecture Decision Records |
+
+## LOCKED DECISIONS (user confirmed, 27 Aug 2026)
+1. All proposed extra features are in v1 (reset pwd, lockout, verify, self-service, session mgmt, seed, dashboard, /up).
+2. Template **AdminLTE 4.9.1** (dist zip from GitHub release).
+3. Verification is **email only**; MFA/2FA is not v1.
+4. i18n: English first.
+5. Single-tenant v1 (schema ready to add `tenant_id` later).
+6. Sidebar: main menu + a "Template" section (demo from zip) below it.
