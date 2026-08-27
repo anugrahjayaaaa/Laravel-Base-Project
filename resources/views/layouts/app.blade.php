@@ -39,55 +39,70 @@
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-center">
                 {{-- Theme toggle --}}
                 <li class="nav-item">
-                    <button class="btn btn-link nav-link" id="theme-toggle" type="button" title="Toggle light/dark">
-                        <i class="bi bi-moon-stars" id="theme-icon"></i>
+                    <button class="btn btn-link nav-link px-2" id="theme-toggle" type="button" title="Toggle light/dark" aria-label="Toggle theme">
+                        <i class="bi bi-moon-stars fs-5" id="theme-icon"></i>
                     </button>
                 </li>
 
                 {{-- Notifications --}}
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" title="Notifications">
-                        <i class="bi bi-bell fs-5"></i>
+                    <a class="nav-link position-relative px-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications" aria-label="Notifications">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle border" style="width:36px;height:36px;background:var(--lbp-surface-2);border-color:var(--lbp-border)">
+                            <i class="bi bi-bell fs-5"></i>
+                        </span>
                         @if (($notifications['unread'] ?? 0) > 0)
-                            <span class="badge text-bg-danger position-absolute top-0 start-100 translate-middle-y rounded-pill">{{ $notifications['unread'] }}</span>
+                            <span class="position-absolute badge rounded-pill text-bg-danger" style="top:2px;right:2px;font-size:10px;padding:2px 5px">{{ $notifications['unread'] }}</span>
                         @endif
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg">
-                        <span class="dropdown-item dropdown-header">Recent activity ({{ $notifications['items']->count() }})</span>
-                        <div class="dropdown-divider"></div>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg py-0" style="width:320px">
+                        <span class="dropdown-item dropdown-header d-flex justify-content-between"><span>Recent activity</span><span class="badge bg-primary-subtle text-primary">{{ $notifications['items']->count() }}</span></span>
+                        <div class="dropdown-divider my-0"></div>
+                        <div style="max-height:280px;overflow:auto">
                         @forelse ($notifications['items'] as $n)
-                            <a href="{{ route('audit.index') }}" class="dropdown-item">
-                                <i class="bi bi-activity text-secondary me-2"></i> {{ \Illuminate\Support\Str::limit($n->description, 28) }}
-                                <span class="text-muted float-end small">{{ $n->created_at->diffForHumans() }}</span>
+                            <a href="{{ route('audit.index') }}" class="dropdown-item py-2 border-bottom" style="white-space:normal">
+                                <div class="d-flex gap-2">
+                                    <i class="bi bi-activity text-primary mt-1"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="small">{{ \Illuminate\Support\Str::limit($n->description, 40) }}</div>
+                                        <div class="text-muted" style="font-size:11px">{{ $n->created_at->diffForHumans() }}</div>
+                                    </div>
+                                </div>
                             </a>
                         @empty
                             <span class="dropdown-item text-muted">No activity yet.</span>
                         @endforelse
-                        <div class="dropdown-divider"></div>
-                        <a href="{{ route('audit.index') }}" class="dropdown-item dropdown-footer">View all audit log</a>
+                        </div>
+                        <div class="dropdown-divider my-0"></div>
+                        <a href="{{ route('audit.index') }}" class="dropdown-item dropdown-footer text-center text-primary">View all audit log</a>
                     </div>
                 </li>
 
                 {{-- User menu --}}
                 @auth
                 <li class="nav-item dropdown">
-                    <a class="nav-link d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                        <span class="avatar avatar-sm rounded-circle bg-primary text-white me-2 d-flex align-items-center justify-content-center" style="width:32px;height:32px">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                        </span>
-                        <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
-                        <i class="bi bi-chevron-down ms-1"></i>
+                    <a class="nav-link d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:34px;height:34px">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                        <span class="d-none d-md-inline fw-medium">{{ auth()->user()->name }}</span>
+                        <i class="bi bi-chevron-down small opacity-75"></i>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a href="{{ route('profile.show') }}" class="dropdown-item"><i class="bi bi-person me-2"></i> Profile</a>
-                        <a href="{{ route('sessions.index') }}" class="dropdown-item"><i class="bi bi-pc-display me-2"></i> Sessions</a>
-                        <div class="dropdown-divider"></div>
+                    <div class="dropdown-menu dropdown-menu-end py-1" style="min-width:220px">
+                        <div class="dropdown-item-text d-flex align-items-center gap-2 pb-2">
+                            <span class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:38px;height:38px">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                            <div class="text-truncate">
+                                <div class="fw-medium">{{ auth()->user()->name }}</div>
+                                <div class="text-muted small text-truncate" style="max-width:150px">{{ auth()->user()->email }}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider my-0"></div>
+                        <a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> Profile</a>
+                        <a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> Sessions</a>
+                        <div class="dropdown-divider my-0"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
+                            <button class="dropdown-item py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
                         </form>
                     </div>
                 </li>
@@ -134,10 +149,36 @@
                     @endcan
 
                     <li class="nav-header">TEMPLATE</li>
-                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/UI/general.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-card-list"></i> <span>Components</span></a></li>
-                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/forms/general.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-ui-checks"></i> <span>Forms</span></a></li>
-                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/tables/general.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-table"></i> <span>Tables</span></a></li>
-                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/charts/chartjs.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-bar-chart"></i> <span>Charts</span></a></li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#tpl-ui" role="button" aria-expanded="false">
+                            <i class="nav-icon bi bi-collection"></i> <span>UI Elements</span> <i class="bi bi-chevron-down ms-auto small"></i>
+                        </a>
+                        <ul class="nav nav-treeview collapse" id="tpl-ui" style="padding-left:1rem">
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/forms/elements.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-ui-checks"></i> <span>Forms</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/forms/advanced.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-sliders"></i> <span>Advanced Forms</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/tables/simple.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-table"></i> <span>Tables</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/tables/data.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-grid-1x2"></i> <span>Data Tables</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/widgets/cards.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-card-heading"></i> <span>Cards</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/widgets/info-box.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-info-circle"></i> <span>Info Box</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-toggle="collapse" data-bs-target="#tpl-pages" role="button" aria-expanded="false">
+                            <i class="nav-icon bi bi-files"></i> <span>Pages</span> <i class="bi bi-chevron-down ms-auto small"></i>
+                        </a>
+                        <ul class="nav nav-treeview collapse" id="tpl-pages" style="padding-left:1rem">
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/profile.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/projects.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-kanban"></i> <span>Projects</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/kanban.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-columns-gap"></i> <span>Kanban</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/calendar.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-calendar"></i> <span>Calendar</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/invoice.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-receipt"></i> <span>Invoice</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/gallery.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-images"></i> <span>Gallery</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/pricing.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-tag"></i> <span>Pricing</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/chat.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-chat-dots"></i> <span>Chat</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/faq.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-question-circle"></i> <span>FAQ</span></a></li>
+                            <li class="nav-item"><a href="{{ asset('vendor/adminlte/pages/settings.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-gear"></i> <span>Settings</span></a></li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -172,13 +213,15 @@
         const icon = document.getElementById('theme-icon');
         const saved = localStorage.getItem('theme') || 'dark';
         root.setAttribute('data-bs-theme', saved);
-        icon.className = saved === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun';
+        icon.className = saved === 'dark' ? 'bi bi-moon-stars fs-5' : 'bi bi-sun fs-5';
         document.getElementById('theme-toggle').addEventListener('click', function () {
             const next = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-bs-theme', next);
             localStorage.setItem('theme', next);
-            icon.className = next === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun';
+            icon.className = next === 'dark' ? 'bi bi-moon-stars fs-5' : 'bi bi-sun fs-5';
         });
+        // tooltips for action/icon buttons
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
     })();
 </script>
 @stack('scripts')
