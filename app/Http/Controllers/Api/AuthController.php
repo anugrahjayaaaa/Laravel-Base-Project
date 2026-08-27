@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
+
+class AuthController extends Controller
+{
+    public function login(Request $request): JsonResponse
+    {
+        $request->validate([
+            'identifier' => 'required|string',
+            'password' => 'required|string',
+            'device_name' => 'required|string',
+        ]);
+
+        $identifier = $request->identifier;
+        $throttleKey = 'api-login:' . $request->ip() . ':' . strtolower($identifier);
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return response()->json(['error' => ['code' => 'RATE_LIMITED', 'message' => "Too many attempts. Try again in {$seconds}s."]], 429);
+        }
+
+        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email'
+            : (preg_match('/^\+?\d{8,15}$/', $identifier) ? 'phone' : 'username');
+
+        $user = \App\Models\User::where($field, $identifier)->first();
+
+        if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($throttleKey, 900);
+            throw ValidationException::withMessages(['identifier' => 'Invalid credentials.']);
+        }
+
+        RateLimiter::clear($throttleKey);
+
+        // ponytail: shared audit via Login event (same path as web)
+        event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
+
+        $token = $user->createToken($request->device_name, ['mobile'])->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => ['id' => $user->id, 'name' => $user->name, 'username' => $user->username, 'email' => $user->email],
+        ]);
+    }
+
+    public function me(Request $request): JsonResponse
+    {
+        return response()->json([
+            'user' => ['id' => $request->user()->id, 'name' => $request->user()->name, 'username' => $request->user()->username, 'email' => $request->user()->email],
+        ]);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out.']);
+    }
+
+    public function changePassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'current_password' => 'required|current_password',
+            'password' => 'required|string|min:12|confirmed',
+        ]);
+        $request->user()->update(['password' => bcrypt($data['password'])]);
+        $request->user()->tokens()->delete(); // revoke all mobile tokens
+        return response()->json(['message' => 'Password changed.']);
+    }
+}
