@@ -3,23 +3,49 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
+    // ponytail: flat permission list; expand per-module as features land
+    private const PERMISSIONS = [
+        'user.view', 'user.create', 'user.edit', 'user.delete',
+        'role.view', 'role.create', 'role.edit', 'role.delete',
+        'permission.view', 'permission.create', 'permission.edit', 'permission.delete',
+        'audit.view',
+        'session.view', 'session.revoke',
+        'api-token.view', 'api-token.create', 'api-token.delete',
+    ];
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Permissions
+        foreach (self::PERMISSIONS as $perm) {
+            Permission::findOrCreate($perm, 'web');
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Roles
+        $superAdmin = Role::findOrCreate('super-admin', 'web');
+        $admin = Role::findOrCreate('admin', 'web');
+        $staff = Role::findOrCreate('staff', 'web');
+
+        $admin->syncPermissions(self::PERMISSIONS);
+        $staff->syncPermissions(['user.view', 'audit.view']);
+        $superAdmin->syncPermissions(self::PERMISSIONS);
+
+        // Super-admin user (first-run)
+        $user = User::updateOrCreate(
+            ['email' => 'admin@laravel-base.local'],
+            [
+                'name' => 'Super Admin',
+                'username' => 'superadmin',
+                'phone' => '+6281200000001',
+                'password' => bcrypt('Admin@base12345'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $user->assignRole('super-admin');
     }
 }

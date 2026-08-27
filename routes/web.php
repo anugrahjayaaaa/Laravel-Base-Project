@@ -6,8 +6,12 @@ use Illuminate\Support\Facades\Route;
 // Health check (no auth)
 Route::get('/up', fn () => response()->json(['status' => 'ok']));
 
-// Auth (login UI now; full auth flow in auth phase)
-Route::get('login', fn () => view('auth.login'))->name('login');
+// Auth
+Route::middleware('guest')->group(function () {
+    Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
+    Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'store'])
+        ->middleware('throttle:10,15')->name('login.store');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -21,7 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sessions', fn () => view('placeholder', ['title' => 'Sessions']))->name('sessions.index')->middleware('can:session.view');
     Route::get('/api-tokens', fn () => view('placeholder', ['title' => 'API Tokens']))->name('api-tokens.index')->middleware('can:api-token.view');
 
-    Route::post('/logout', fn () => auth()->logout())->name('logout');
+    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');
 });
 
 Route::get('/', fn () => auth()->check()
