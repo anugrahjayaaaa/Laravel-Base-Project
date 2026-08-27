@@ -21,5 +21,9 @@ class AppServiceProvider extends ServiceProvider
     {
         \Illuminate\Pagination\Paginator::useBootstrap();
         \Illuminate\Pagination\LengthAwarePaginator::useBootstrap();
+
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
+        \Spatie\Permission\Models\Role::observe(\App\Observers\RoleObserver::class);
+        \Spatie\Permission\Models\Permission::observe(\App\Observers\PermissionObserver::class);
     }
 }
