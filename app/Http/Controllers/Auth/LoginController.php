@@ -43,6 +43,9 @@ class LoginController extends Controller
             ]);
         }
 
+        // ponytail: attempt() may not fire Login event under test session guard; dispatch explicitly so audit is consistent
+        event(new \Illuminate\Auth\Events\Login('web', $user, $request->boolean('remember')));
+
         RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
 
