@@ -34,5 +34,15 @@ class AppServiceProvider extends ServiceProvider
                 'traces_sample_rate' => (float) config('sentry.traces_sample_rate', 0.2),
             ]);
         }
+
+        // Recent activity for header notifications dropdown
+        \Illuminate\Support\Facades\View::composer('layouts.app', function ($view) {
+            if (auth()->check() && class_exists(\Spatie\Activitylog\Models\Activity::class)) {
+                $items = \Spatie\Activitylog\Models\Activity::latest()->limit(5)->get();
+                $view->with('notifications', ['items' => $items, 'unread' => $items->count()]);
+            } else {
+                $view->with('notifications', ['items' => collect(), 'unread' => 0]);
+            }
+        });
     }
 }

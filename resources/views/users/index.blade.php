@@ -3,42 +3,60 @@
 @include('partials.flash-message')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Users</h3>
-    <a href="{{ route('users.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New User</a>
+    @can('user.create')
+    <a href="{{ route('users.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New User</a>
+    @endcan
 </div>
+
 <form method="GET" class="mb-3">
-    <div class="input-group" style="max-width:360px">
-        <input type="text" name="q" class="form-control" placeholder="Search name/username/email" value="{{ request('q') }}">
-        <button class="btn btn-outline-secondary">Search</button>
+    <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
+        <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search name, username, email…" value="{{ request('q') }}">
+        <button class="btn btn-primary px-3" type="submit">Search</button>
     </div>
 </form>
-<div class="card">
+
+<div class="card shadow-sm">
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Roles</th><th class="text-end">Actions</th></tr></thead>
+        <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th class="text-end">Actions</th></tr>
+            </thead>
             <tbody>
                 @forelse ($users as $user)
                 <tr class="{{ $user->trashed() ? 'table-secondary' : '' }}">
-                    <td>{{ $users->firstItem() + $loop->index }}</td>
-                    <td>{{ $user->name }} @if($user->trashed())<span class="badge bg-danger">deleted</span>@endif</td>
+                    <td class="text-muted">{{ $users->firstItem() + $loop->index }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:32px;height:32px">{{ strtoupper(substr($user->name,0,1)) }}</span>
+                            <div>
+                                <div class="fw-medium">{{ $user->name }}</div>
+                                @if($user->trashed())<span class="badge bg-danger">deleted</span>@endif
+                            </div>
+                        </div>
+                    </td>
                     <td>{{ $user->username }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->roles->pluck('name')->join(', ') ?: '-' }}</td>
+                    <td class="text-muted">{{ $user->email }}</td>
+                    <td>
+                        @foreach ($user->roles as $role)
+                            <span class="badge bg-info-subtle text-info border border-info-subtle me-1">{{ $role->name }}</span>
+                        @endforeach
+                        @if ($user->roles->isEmpty())<span class="text-muted">-</span>@endif
+                    </td>
                     <td class="text-end">
-                        <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
-                        @if (!$user->trashed())
-                            @if ($user->id !== auth()->id())
-                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="{{ route('users.destroy', $user) }}"><i class="bi bi-trash"></i></button>
-                            @endif
-                        @else
-                            <a href="{{ route('users.restore', $user->id) }}" class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise"></i></a>
-                        @endif
+                        <x-action-buttons
+                            :edit="!$user->trashed() ? route('users.edit', $user) : null"
+                            :restore="$user->trashed() ? route('users.restore', $user->id) : null"
+                            :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null" />
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="text-center text-muted">No users.</td></tr>
+                <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 @include('partials.pagination-info', ['items' => $users])

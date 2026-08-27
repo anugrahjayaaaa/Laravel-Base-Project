@@ -3,32 +3,38 @@
 @include('partials.flash-message')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Roles</h3>
-    <a href="{{ route('roles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Role</a>
+    @can('role.create')
+    <a href="{{ route('roles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Role</a>
+    @endcan
 </div>
-<div class="card">
+
+<div class="card shadow-sm">
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead>
+        <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
                 <tr><th>#</th><th>Name</th><th>Permissions</th><th class="text-end">Actions</th></tr>
             </thead>
             <tbody>
                 @forelse ($roles as $role)
                 <tr>
-                    <td>{{ $roles->firstItem() + $loop->index }}</td>
-                    <td>{{ $role->name }}</td>
-                    <td>{{ $role->permissions->count() }}</td>
+                    <td class="text-muted">{{ $roles->firstItem() + $loop->index }}</td>
+                    <td>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ $role->name }}</span>
+                    </td>
+                    <td><span class="badge bg-secondary-subtle text-secondary">{{ $role->permissions->count() }}</span></td>
                     <td class="text-end">
-                        <a href="{{ route('roles.edit', $role) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
-                        @if ($role->name !== 'super-admin')
-                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="{{ route('roles.destroy', $role) }}"><i class="bi bi-trash"></i></button>
-                        @endif
+                        <x-action-buttons
+                            :edit="route('roles.edit', $role)"
+                            :delete="$role->name !== 'super-admin' ? route('roles.destroy', $role) : null" />
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="text-center text-muted">No roles.</td></tr>
+                <tr><td colspan="4" class="text-center text-muted py-4">No roles.</td></tr>
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 @include('partials.pagination-info', ['items' => $roles])

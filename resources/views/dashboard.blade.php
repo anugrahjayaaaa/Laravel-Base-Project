@@ -1,30 +1,44 @@
 @extends('layouts.app')
 @section('content')
-<div class="row">
+<div class="row g-3 mb-3">
     <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon text-bg-primary shadow-sm"><i class="bi bi-people"></i></span>
-            <div class="info-box-content"><span class="info-box-text">Users</span><span class="info-box-number">{{ $userCount ?? 0 }}</span></div>
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="rounded-circle d-flex align-items-center justify-content-center text-bg-primary" style="width:48px;height:48px"><i class="bi bi-people fs-4"></i></span>
+                <div><div class="text-muted small">Users</div><div class="fs-4 fw-semibold">{{ $userCount ?? 0 }}</div></div>
+            </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon text-bg-success shadow-sm"><i class="bi bi-shield"></i></span>
-            <div class="info-box-content"><span class="info-box-text">Roles</span><span class="info-box-number">{{ $roleCount ?? 0 }}</span></div>
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="rounded-circle d-flex align-items-center justify-content-center text-bg-success" style="width:48px;height:48px"><i class="bi bi-shield fs-4"></i></span>
+                <div><div class="text-muted small">Roles</div><div class="fs-4 fw-semibold">{{ $roleCount ?? 0 }}</div></div>
+            </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon text-bg-warning shadow-sm"><i class="bi bi-journal-text"></i></span>
-            <div class="info-box-content"><span class="info-box-text">Audit Entries</span><span class="info-box-number">{{ $auditCount ?? 0 }}</span></div>
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="rounded-circle d-flex align-items-center justify-content-center text-bg-warning" style="width:48px;height:48px"><i class="bi bi-journal-text fs-4"></i></span>
+                <div><div class="text-muted small">Audit Entries</div><div class="fs-4 fw-semibold">{{ $auditCount ?? 0 }}</div></div>
+            </div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon text-bg-info shadow-sm"><i class="bi bi-hdd-network"></i></span>
-            <div class="info-box-content"><span class="info-box-text">DB</span><span class="info-box-number">{{ $dbName ?? 'n/a' }}</span></div>
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="rounded-circle d-flex align-items-center justify-content-center text-bg-info" style="width:48px;height:48px"><i class="bi bi-hdd-network fs-4"></i></span>
+                <div><div class="text-muted small">Database</div><div class="fs-6 fw-semibold">{{ $dbName ?? 'n/a' }}</div></div>
+            </div>
         </div>
     </div>
 </div>
-<div class="card"><div class="card-body">Welcome to the Laravel Base Project scaffold.</div></div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <h5 class="mb-1">Welcome, {{ auth()->user()->name }} 👋</h5>
+        <p class="text-muted mb-0">Laravel Base Project scaffold — manage users, roles, and monitor activity from the sidebar.</p>
+    </div>
+</div>
 @endsection
