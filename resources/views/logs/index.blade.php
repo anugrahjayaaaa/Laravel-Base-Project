@@ -5,35 +5,41 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <h1 class="m-0 h3">System Logs</h1>
+        <div class="row align-items-center">
+            <div class="col">
+                <h1 class="m-0 h3">System Logs</h1>
+            </div>
+            <div class="col-auto">
+                <form method="GET" class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">File</span>
+                        <select name="file" class="form-select" onchange="this.form.submit()">
+                            @foreach($files as $f)
+                                <option value="{{ $f }}" @if($f === $current) selected @endif>{{ $f }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">Level</span>
+                        <select name="level" class="form-select" onchange="this.form.submit()">
+                            <option value="">All</option>
+                            @foreach($levels as $l)
+                                <option value="{{ $l }}" @if($l === $activeLevel) selected @endif>{{ ucfirst($l) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @if($current)
+                    <a href="?file={{ urlencode($current) }}&dl={{ urlencode($current) }}" class="btn btn-sm btn-outline-secondary">Download</a>
+                    @endif
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
 <section class="content">
     <div class="container-fluid">
         <div class="card">
-            <div class="card-header d-flex flex-wrap gap-2 align-items-center">
-                <form method="GET" class="d-flex flex-wrap gap-2 align-items-center mb-0">
-                    <label class="mb-0">File</label>
-                    <select name="file" class="form-select form-select-sm" onchange="this.form.submit()">
-                        @foreach($files as $f)
-                            <option value="{{ $f }}" @if($f === $current) selected @endif>{{ $f }}</option>
-                        @endforeach
-                    </select>
-
-                    <label class="mb-0 ms-2">Level</label>
-                    <select name="level" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">All</option>
-                        @foreach($levels as $l)
-                            <option value="{{ $l }}" @if($l === $activeLevel) selected @endif>{{ ucfirst($l) }}</option>
-                        @endforeach
-                    </select>
-                </form>
-                @if($current)
-                <a href="?file={{ urlencode($current) }}&dl={{ urlencode($current) }}" class="btn btn-sm btn-outline-secondary ms-auto">Download</a>
-                @endif
-            </div>
-
             <div class="card-body p-0">
                 <div class="table-responsive" style="max-height: 70vh; overflow:auto">
                     <table class="table table-sm table-hover mb-0">
@@ -66,7 +72,7 @@
                                         @if(!empty($log['stack']))
                                             <details class="mt-1">
                                                 <summary class="small text-primary" style="cursor:pointer">Stack trace</summary>
-                                                <pre class="small bg-light p-2 mt-1" style="white-space:pre-wrap">{{ trim($log['stack']) }}</pre>
+                                                <pre class="small bg-dark text-light p-2 mt-1 mb-0" style="white-space:pre-wrap;overflow:auto">{{ $log['stack'] }}</pre>
                                             </details>
                                         @endif
                                     </td>
