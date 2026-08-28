@@ -85,7 +85,7 @@
                         @endforelse
                         </div>
                         <div class="dropdown-divider my-0"></div>
-                        <a href="{{ route('audit.index') }}" class="dropdown-item dropdown-footer text-center text-primary">View all audit log</a>
+                        <a href="{{ route('notifications.index') }}" class="dropdown-item dropdown-footer text-center text-primary">View all notifications</a>
                     </div>
                 </li>
 
