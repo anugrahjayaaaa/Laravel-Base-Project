@@ -132,7 +132,7 @@
         </div>
         <div class="sidebar-wrapper">
             <nav class="mt-3 sidebar-nav">
-                <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false">
+                <ul class="nav sidebar-menu nav-indent flex-column" data-lte-toggle="treeview" data-accordion="false">
                     <li class="nav-header">MAIN MENU</li>
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" data-menu-text="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
