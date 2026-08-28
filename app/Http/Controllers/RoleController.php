@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Rbac\RoleStoreRequest;
+use App\Http\Requests\Rbac\RoleUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -22,13 +25,9 @@ class RoleController extends Controller
         return view('rbac.roles.create', compact('permissions'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(RoleStoreRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
+        $data = $request->validated();
 
         $role = Role::create(['name' => $data['name'], 'guard_name' => 'web']);
         $role->syncPermissions($data['permissions'] ?? []);
@@ -43,13 +42,9 @@ class RoleController extends Controller
         return view('rbac.roles.edit', compact('role', 'permissions'));
     }
 
-    public function update(Request $request, Role $role): RedirectResponse
+    public function update(RoleUpdateRequest $request, Role $role): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
+        $data = $request->validated();
 
         $role->update(['name' => $data['name']]);
         $role->syncPermissions($data['permissions'] ?? []);

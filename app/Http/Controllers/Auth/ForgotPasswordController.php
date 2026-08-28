@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PasswordEmailRequest;
+use App\Http\Requests\Auth\PasswordResetRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -24,7 +26,7 @@ class ForgotPasswordController extends Controller
     /**
      * Send a password reset link to the given email.
      *
-     * @param  Request  $request  Must contain: email (valid email)
+     * @param  PasswordEmailRequest  $request  Validated: email (valid email)
      * @return RedirectResponse  Back with 'status' on success, or back with 'email' error.
      *
      * @throws ValidationException  If the email is not found / broker error
@@ -34,12 +36,10 @@ class ForgotPasswordController extends Controller
      * The email itself is sent via the default ResetPassword notification
      * (requires MAIL_* config to actually deliver).
      */
-    public function store(Request $request): RedirectResponse
+    public function store(PasswordEmailRequest $request): RedirectResponse
     {
-        $request->validate(['email' => 'required|email']);
-
         $status = Password::broker('users')->sendResetLink(
-            $request->only('email')
+            $request->validated()
         );
 
         if ($status === Password::RESET_LINK_SENT) {
@@ -66,7 +66,7 @@ class ForgotPasswordController extends Controller
     /**
      * Reset the user's password.
      *
-     * @param  Request  $request  Must contain: token, email, password (min:8), password_confirmation
+     * @param  PasswordResetRequest  $request  Validated: token, email, password (min:8), password_confirmation
      * @return RedirectResponse  Redirect to login with 'status' on success, or back with 'email' error.
      *
      * @throws ValidationException  On invalid/expired token or mismatch
@@ -74,16 +74,10 @@ class ForgotPasswordController extends Controller
      * @details Verifies token against DB table `password_reset_tokens` via the 'users' broker,
      * then updates the user's password and clears the token row.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(PasswordResetRequest $request): RedirectResponse
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
         $status = Password::broker('users')->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            $request->validated(),
             function ($user, $password) {
                 $user->password = $password;
                 $user->save();
