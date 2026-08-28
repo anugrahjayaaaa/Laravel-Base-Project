@@ -15,6 +15,9 @@
                     <span class="badge text-bg-success">active</span>
                 @endif
             </span>
+            @if ($user->last_login_at)
+                <span class="text-muted small">Last login: {{ $user->last_login_at->format('Y-m-d H:i') }} ({{ $user->last_login_ip }})</span>
+            @endif
             @if (auth()->user()->can('user.lock'))
                 @if ($user->isLocked())
                     <span>Unlock:
