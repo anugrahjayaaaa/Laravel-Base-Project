@@ -36,6 +36,15 @@ class RoleObserver
         ])->performedOn($role)->log('role_restored');
     }
 
+    /**
+     * Log a permanent (hard) delete of a role to the audit trail.
+     *
+     * @param  \App\Models\Role  $role
+     * @return void
+     *
+     * @details Writes a 'role_force_deleted' row into DB table `activity_log`
+     * (spatie/activitylog). Unrecoverable, unlike `deleted()` (soft delete).
+     */
     public function forceDeleted(Role $role)
     {
         activity()->causedBy(auth()->user())->withProperties([

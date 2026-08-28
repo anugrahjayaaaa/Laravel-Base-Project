@@ -14,7 +14,7 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'store'])
         ->middleware('throttle:10,15')->name('login.store');
 
-    // Password reset
+    // Password reset (guest only). Token state lives in DB table `password_reset_tokens`.
     Route::get('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'create'])->name('password.request');
     Route::post('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'store'])->name('password.email');
     Route::get('reset-password/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'edit'])->name('password.reset');

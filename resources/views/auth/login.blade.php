@@ -49,6 +49,7 @@
 
 @push('scripts')
 <script>
+    // Toggle password visibility. State is DOM-only (no persistence / no server state).
     (function () {
         const pwd = document.getElementById('password');
         const btn = document.getElementById('toggle-password');

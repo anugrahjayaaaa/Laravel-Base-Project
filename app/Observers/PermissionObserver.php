@@ -36,6 +36,15 @@ class PermissionObserver
         ])->performedOn($permission)->log('permission_restored');
     }
 
+    /**
+     * Log a permanent (hard) delete of a permission to the audit trail.
+     *
+     * @param  \App\Models\Permission  $permission
+     * @return void
+     *
+     * @details Writes a 'permission_force_deleted' row into DB table `activity_log`
+     * (spatie/activitylog). Unrecoverable, unlike `deleted()` (soft delete).
+     */
     public function forceDeleted(Permission $permission)
     {
         activity()->causedBy(auth()->user())->withProperties([
