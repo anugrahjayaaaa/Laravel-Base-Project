@@ -25,11 +25,13 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Password {{ isset($user) ? '(leave blank to keep)' : '' }}</label>
-                    <input type="password" name="password" class="form-control" {{ isset($user) ? '' : 'required' }}>
+                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" {{ isset($user) ? '' : 'required' }}>
+                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Confirm Password</label>
-                    <input type="password" name="password_confirmation" class="form-control">
+                    <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror">
+                    @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-12">
                     <label class="form-label">Roles</label>
@@ -47,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="card-footer d-flex flex-column gap-2">
             <div>
                 @if ($user->isLocked())
                     <span class="badge text-bg-warning me-1">locked</span>
@@ -65,9 +67,9 @@
                     @endif
                 @endif
             </div>
-            <div>
-                <button class="btn btn-primary">Save</button>
+            <div class="d-flex justify-content-end gap-2">
                 <a href="{{ route('users.index') }}" class="btn btn-link">Cancel</a>
+                <button class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>

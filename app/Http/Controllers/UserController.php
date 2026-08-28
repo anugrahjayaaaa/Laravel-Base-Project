@@ -45,7 +45,7 @@ class UserController extends Controller
             'phone' => $data['phone'] ?? null,
             'password' => bcrypt($data['password']),
         ]);
-        $user->syncRoles($data['roles'] ?? []);
+        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
 
         return redirect()->route('users.index')->with('success', 'User created.');
     }
@@ -72,7 +72,7 @@ class UserController extends Controller
             $payload['password'] = bcrypt($data['password']);
         }
         $user->update($payload);
-        $user->syncRoles($data['roles'] ?? []);
+        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
 
         return redirect()->route('users.index')->with('success', 'User updated.');
     }
