@@ -17,14 +17,18 @@
             </thead>
             <tbody>
                 @forelse ($permissions as $perm)
-                <tr>
+                <tr class="{{ $perm->trashed() ? 'table-secondary' : '' }}">
                     <td class="text-muted">{{ $permissions->firstItem() + $loop->index }}</td>
                     <td>{{ $perm->name }}</td>
-                    <td><span class="badge text-bg-secondary">{{ $perm->guard_name }}</span></td>
+                    <td>
+                        <span class="badge text-bg-secondary">{{ $perm->guard_name }}</span>
+                        @if($perm->trashed())<span class="badge text-bg-danger">deleted</span>@endif
+                    </td>
                     <td class="text-end">
                         <x-action-buttons
-                            :edit="route('permissions.edit', $perm)"
-                            :delete="route('permissions.destroy', $perm)" />
+                            :edit="$perm->trashed() ? null : route('permissions.edit', $perm)"
+                            :restore="$perm->trashed() ? route('permissions.restore', $perm->id) : null"
+                            :delete="$perm->trashed() ? null : route('permissions.destroy', $perm)" />
                     </td>
                 </tr>
                 @empty

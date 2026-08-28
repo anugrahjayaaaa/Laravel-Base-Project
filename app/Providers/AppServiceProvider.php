@@ -23,8 +23,8 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Pagination\LengthAwarePaginator::useBootstrap();
 
         \App\Models\User::observe(\App\Observers\UserObserver::class);
-        \Spatie\Permission\Models\Role::observe(\App\Observers\RoleObserver::class);
-        \Spatie\Permission\Models\Permission::observe(\App\Observers\PermissionObserver::class);
+        \App\Models\Role::observe(\App\Observers\RoleObserver::class);
+        \App\Models\Permission::observe(\App\Observers\PermissionObserver::class);
 
         // ponytail: Sentry DSN-gated; no-op locally when DSN empty
         if (class_exists(\Sentry\Sentry::class) && config('sentry.dsn')) {

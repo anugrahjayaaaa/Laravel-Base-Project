@@ -28,4 +28,11 @@ class PermissionObserver
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
         ])->performedOn($permission)->log('permission_deleted');
     }
+
+    public function restored(Permission $permission)
+    {
+        activity()->causedBy(auth()->user())->withProperties([
+            'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
+        ])->performedOn($permission)->log('permission_restored');
+    }
 }

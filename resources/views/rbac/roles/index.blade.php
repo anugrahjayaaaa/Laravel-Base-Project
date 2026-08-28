@@ -17,16 +17,18 @@
             </thead>
             <tbody>
                 @forelse ($roles as $role)
-                <tr>
+                <tr class="{{ $role->trashed() ? 'table-secondary' : '' }}">
                     <td class="text-muted">{{ $roles->firstItem() + $loop->index }}</td>
                     <td>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ $role->name }}</span>
+                        @if($role->trashed())<span class="badge text-bg-danger">deleted</span>@endif
                     </td>
                     <td><span class="badge bg-secondary-subtle text-secondary">{{ $role->permissions->count() }}</span></td>
                     <td class="text-end">
                         <x-action-buttons
-                            :edit="route('roles.edit', $role)"
-                            :delete="$role->name !== 'super-admin' ? route('roles.destroy', $role) : null" />
+                            :edit="$role->trashed() ? null : route('roles.edit', $role)"
+                            :restore="$role->trashed() ? route('roles.restore', $role->id) : null"
+                            :delete="!$role->trashed() && $role->name !== 'super-admin' ? route('roles.destroy', $role) : null" />
                     </td>
                 </tr>
                 @empty

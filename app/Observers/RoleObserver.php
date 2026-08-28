@@ -28,4 +28,11 @@ class RoleObserver
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
         ])->performedOn($role)->log('role_deleted');
     }
+
+    public function restored(Role $role)
+    {
+        activity()->causedBy(auth()->user())->withProperties([
+            'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
+        ])->performedOn($role)->log('role_restored');
+    }
 }

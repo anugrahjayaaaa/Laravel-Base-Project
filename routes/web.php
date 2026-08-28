@@ -26,7 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware('can:user.edit');
 
     Route::resource('roles', RoleController::class)->middleware('can:role.view');
+    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware('can:role.edit');
+
     Route::resource('permissions', PermissionController::class)->middleware('can:permission.view');
+    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware('can:permission.edit');
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');

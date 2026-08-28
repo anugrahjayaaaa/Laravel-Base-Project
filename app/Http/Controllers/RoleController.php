@@ -12,7 +12,7 @@ class RoleController extends Controller
 {
     public function index(): View
     {
-        $roles = Role::with('permissions')->paginate(10);
+        $roles = Role::withTrashed()->with('permissions')->paginate(10);
         return view('rbac.roles.index', compact('roles'));
     }
 
@@ -64,5 +64,11 @@ class RoleController extends Controller
         }
         $role->delete();
         return redirect()->route('roles.index')->with('success', 'Role deleted.');
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        Role::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('roles.index')->with('success', 'Role restored.');
     }
 }

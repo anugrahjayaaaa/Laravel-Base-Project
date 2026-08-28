@@ -11,7 +11,7 @@ class PermissionController extends Controller
 {
     public function index(): View
     {
-        $permissions = Permission::orderBy('name')->paginate(10);
+        $permissions = Permission::withTrashed()->orderBy('name')->paginate(10);
         return view('rbac.permissions.index', compact('permissions'));
     }
 
@@ -51,5 +51,11 @@ class PermissionController extends Controller
     {
         $permission->delete();
         return redirect()->route('permissions.index')->with('success', 'Permission deleted.');
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        Permission::withTrashed()->findOrFail($id)->restore();
+        return redirect()->route('permissions.index')->with('success', 'Permission restored.');
     }
 }
