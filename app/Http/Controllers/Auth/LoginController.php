@@ -36,9 +36,10 @@ class LoginController extends Controller
     {
         $identifier = (string) $request->input('identifier');
         $throttleKey = 'login:' . $request->ip() . ':' . strtolower($identifier);
+        $userKey = 'login:user:' . strtolower($identifier); // ponytail: account-centric; survives IP rotation
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $seconds = RateLimiter::availableIn($throttleKey);
+        if (RateLimiter::tooManyAttempts($userKey, 5) || RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = max(RateLimiter::availableIn($userKey), RateLimiter::availableIn($throttleKey));
             throw ValidationException::withMessages([
                 'identifier' => "Too many attempts. Try again in {$seconds}s.",
             ]);
@@ -61,10 +62,11 @@ class LoginController extends Controller
 
         if (! $user || ! Auth::guard('web')->attempt([$field => $identifier, 'password' => $request->password], $request->boolean('remember'))) {
             // Failed attempt -> increment lock window in CACHE (table `cache`), 900s
+            RateLimiter::hit($userKey, 900);
             RateLimiter::hit($throttleKey, 900);
 
             // On the 5th failed attempt, lock the account for 15 minutes (DB-persisted)
-            if (RateLimiter::attempts($throttleKey) >= 5 && $user) {
+            if (RateLimiter::attempts($userKey) >= 5 && $user) {
                 $user->update(['locked_until' => now()->addMinutes(15)]);
             }
 
@@ -76,6 +78,7 @@ class LoginController extends Controller
         // ponytail: attempt() may not fire Login event under test session guard; dispatch explicitly so audit is consistent
         event(new \Illuminate\Auth\Events\Login('web', $user, $request->boolean('remember')));
 
+        RateLimiter::clear($userKey);
         RateLimiter::clear($throttleKey);
         // Clear any expired lock marker on successful login
         if ($user->locked_until !== null) {

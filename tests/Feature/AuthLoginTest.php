@@ -56,3 +56,18 @@ it('forgot password stores token and reset works', function () {
     $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'Admin@base12345'])
         ->assertSessionHasErrors();
 });
+
+it('locks account after 5 fails regardless of IP rotation', function () {
+    $email = 'admin@laravel-base.local';
+
+    // 5 wrong attempts from IP A
+    for ($i = 0; $i < 5; $i++) {
+        $this->post(route('login.store'), ['identifier' => $email, 'password' => 'wrong'], [], ['REMOTE_ADDR' => '10.0.0.1']);
+    }
+    // 6th attempt from a DIFFERENT IP must still be blocked (account-centric limiter)
+    $this->post(route('login.store'), ['identifier' => $email, 'password' => 'wrong'], [], ['REMOTE_ADDR' => '10.0.0.99'])
+        ->assertSessionHasErrors('identifier');
+
+    // and the account itself is locked in DB
+    expect(User::where('email', $email)->first()->fresh()->isLocked())->toBeTrue();
+});
