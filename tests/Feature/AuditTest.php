@@ -38,3 +38,15 @@ it('logs a real login event', function () {
 
     expect(Activity::where('description', 'login_success')->exists())->toBeTrue();
 });
+
+it('records old and new values on user update (no password)', function () {
+    $u = User::factory()->create(['username' => 'audupd'.time()]);
+    $oldName = $u->name;
+    $u->update(['name' => 'Changed Name', 'password' => bcrypt('NewPass@12345')]);
+
+    $log = Activity::where('description', 'user_updated')->where('subject_id', $u->id)->latest()->first();
+    expect($log)->not->toBeNull();
+    expect($log->properties['old']['name'])->toBe($oldName);
+    expect($log->properties['new']['name'])->toBe('Changed Name');
+    expect($log->properties['new'])->not->toHaveKey('password'); // secret never logged
+});

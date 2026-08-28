@@ -15,9 +15,15 @@ class UserObserver
 
     public function updated($user)
     {
+        $dirty = $user->getDirty();
+        unset($dirty['password'], $dirty['remember_token']); // ponytail: never log secrets
+        $old = [];
+        foreach ($dirty as $k => $v) {
+            $old[$k] = $user->getOriginal($k);
+        }
         activity()->causedBy(auth()->user())->withProperties([
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
-            'changes' => $user->getDirty(),
+            'old' => $old, 'new' => $dirty,
         ])->performedOn($user)->log('user_updated');
     }
 

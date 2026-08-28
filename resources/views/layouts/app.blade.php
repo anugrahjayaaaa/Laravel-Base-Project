@@ -37,15 +37,14 @@
                 </li>
             </ul>
 
-            {{-- Global search --}}
+            {{-- Global menu search (dropdown of matches; click navigates. No backend.) --}}
             <ul class="navbar-nav ms-auto flex-grow-1 px-2 d-none d-md-flex">
-                <li class="nav-item w-100" style="max-width:420px">
-                    <form action="{{ route('users.index') }}" method="GET" class="d-flex">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-                            <input type="search" name="q" class="form-control bg-body border-0" placeholder="Search users, roles…" value="{{ request('q') }}">
-                        </div>
-                    </form>
+                <li class="nav-item w-100 position-relative" style="max-width:420px">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
+                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="Search menu…" autocomplete="off" aria-label="Search menu" aria-expanded="false" aria-controls="menu-search-results">
+                    </div>
+                    <ul id="menu-search-results" class="dropdown-menu w-100 py-1 shadow-sm" style="display:none;max-height:320px;overflow:auto"></ul>
                 </li>
             </ul>
 
@@ -136,28 +135,28 @@
                 <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false">
                     <li class="nav-header">MAIN MENU</li>
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('dashboard') }}" data-menu-text="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-speedometer2"></i> <span>Dashboard</span>
                         </a>
                     </li>
                     @can('user.view')
-                    <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
+                    <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="Users" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
                     @endcan
                     @can('role.view')
-                    <li class="nav-item"><a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
+                    <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="Roles" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
                     @endcan
                     @can('permission.view')
-                    <li class="nav-item"><a href="{{ route('permissions.index') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
+                    <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="Permissions" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
                     @endcan
                     @can('audit.view')
-                    <li class="nav-item"><a href="{{ route('audit.index') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
+                    <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="Audit Log" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
                     @endcan
-                    <li class="nav-item"><a href="{{ route('profile.show') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
+                    <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="Profile" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
                     @can('session.view')
-                    <li class="nav-item"><a href="{{ route('sessions.index') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
+                    <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="Sessions" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
                     @endcan
                     @can('api-token.view')
-                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
+                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="API Tokens" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
                     @endcan
 
                     <li class="nav-item">
@@ -369,6 +368,30 @@
         });
         // tooltips for action/icon buttons
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+        // Live header search -> dropdown of matching menu links (no sidebar filtering; click navigates)
+        (function () {
+            const input = document.getElementById('menu-search');
+            const results = document.getElementById('menu-search-results');
+            if (!input || !results) return;
+            const items = [...document.querySelectorAll('.sidebar-nav a[data-menu-text]')]
+                .map(a => ({ text: a.dataset.menuText, href: a.getAttribute('href') }));
+
+            const render = (q) => {
+                const matches = q === '' ? [] : items.filter(i => i.text.toLowerCase().includes(q));
+                results.innerHTML = matches.length
+                    ? matches.map(i => `<li><a class="dropdown-item py-2" href="${i.href}"><i class="bi bi-box-arrow-up-right me-2 opacity-50"></i>${i.text}</a></li>`).join('')
+                    : `<li><span class="dropdown-item text-muted">No menu found</span></li>`;
+                results.style.display = 'block';
+                input.setAttribute('aria-expanded', 'true');
+            };
+            const close = () => { results.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); };
+
+            input.addEventListener('input', () => render(input.value.trim().toLowerCase()));
+            input.addEventListener('focus', () => { if (input.value.trim() !== '') render(input.value.trim().toLowerCase()); });
+            input.addEventListener('keydown', e => { if (e.key === 'Escape') { input.value = ''; close(); } });
+            document.addEventListener('click', e => { if (!e.target.closest('.position-relative')) close(); });
+        })();
     })();
 </script>
 @stack('scripts')

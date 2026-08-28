@@ -14,11 +14,17 @@ class RoleObserver
         ])->performedOn($role)->log('role_created');
     }
 
-    public function updated(Role $role)
+    public function updated($role)
     {
+        $dirty = $role->getDirty();
+        unset($dirty['password'], $dirty['remember_token']); // ponytail: never log secrets
+        $old = [];
+        foreach ($dirty as $k => $v) {
+            $old[$k] = $role->getOriginal($k);
+        }
         activity()->causedBy(auth()->user())->withProperties([
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
-            'changes' => $role->getDirty(),
+            'old' => $old, 'new' => $dirty,
         ])->performedOn($role)->log('role_updated');
     }
 
