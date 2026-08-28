@@ -23,12 +23,13 @@
 <div class="card">
     <div class="card-body p-0">
         <table class="table mb-0">
-            <thead><tr><th>Name</th><th>Abilities</th><th>Last used</th><th></th></tr></thead>
+            <thead><tr><th>Name</th><th>Abilities</th><th>Created</th><th>Last used</th><th></th></tr></thead>
             <tbody>
             @forelse($tokens as $token)
                 <tr>
                     <td>{{ $token->name }}</td>
                     <td>{{ implode(', ', $token->abilities) }}</td>
+                    <td>{{ $token->created_at?->format('Y-m-d H:i') ?? '—' }}</td>
                     <td>{{ $token->last_used_at?->diffForHumans() ?? 'never' }}</td>
                     <td>
                         <form method="POST" action="{{ route('api-tokens.destroy', $token) }}" onsubmit="return confirm('Revoke this token?')">
@@ -38,7 +39,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="text-muted">No tokens yet.</td></tr>
+                <tr><td colspan="5" class="text-muted">No tokens yet.</td></tr>
             @endforelse
             </tbody>
         </table>
