@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use Illuminate\Support\Facades\Request;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 
 class PermissionObserver
 {

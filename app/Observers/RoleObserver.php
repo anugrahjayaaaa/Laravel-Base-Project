@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use Illuminate\Support\Facades\Request;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class RoleObserver
 {
