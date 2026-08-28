@@ -50,6 +50,14 @@ body {
   border-bottom: 1px solid var(--lbp-border);
   min-height: 60px;
 }
+/* keep header items horizontal even if a grid/flex override kicks in */
+.app-header.navbar,
+.app-header .navbar-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.app-header .navbar-nav { flex-wrap: nowrap; }
 .app-sidebar.sidebar {
   background: var(--lbp-surface) !important;
   border-right: 1px solid var(--lbp-border);
