@@ -8,7 +8,7 @@
             <div class="modal-body">This will permanently delete the item and cannot be undone. Continue?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="forceDeleteModalForm" method="POST">@csrf @method('DELETE')
+                <form id="forceDeleteModalForm" method="POST">@csrf
                     <button type="submit" class="btn btn-danger">Delete permanently</button>
                 </form>
             </div>
