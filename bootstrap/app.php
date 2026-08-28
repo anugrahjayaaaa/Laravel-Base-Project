@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         $middleware->append(\App\Http\Middleware\LogHttpErrors::class);
+        $middleware->append(\App\Http\Middleware\SetLocale::class);
         $middleware->alias([
             'feature' => \App\Http\Middleware\EnsureFeatureEnabled::class,
         ]);
