@@ -51,16 +51,20 @@
                     </td>
                     <td class="text-muted small">{{ $log->properties['ip'] ?? '-' }}</td>
                     <td class="text-end">
-                        <button type="button" class="btn btn-sm btn-light border rounded-2"
+                        <button type="button" class="btn btn-sm btn-light border rounded-2 audit-detail-btn"
                                 data-bs-toggle="modal" data-bs-target="#auditDetailModal"
                                 data-action="{{ $log->description }}"
                                 data-time="{{ $log->created_at->format('Y-m-d H:i:s') }}"
                                 data-causer="{{ $log->causer->username ?? ($log->properties['identifier'] ?? '-') }}"
                                 data-ip="{{ $log->properties['ip'] ?? '' }}"
-                                data-agent="{{ $log->properties['user_agent'] ?? '' }}"
-                                data-old='{{ json_encode($log->properties['old'] ?? new \stdClass(), JSON_FORCE_OBJECT) }}'
-                                data-new='{{ json_encode($log->properties['new'] ?? new \stdClass(), JSON_FORCE_OBJECT) }}'>
+                                data-agent="{{ $log->properties['user_agent'] ?? '' }}">
                             <i class="bi bi-eye"></i>
+                            <script type="application/json" class="audit-detail-data">{{
+                                json_encode([
+                                    'old' => $log->properties['old'] ?? new \stdClass(),
+                                    'new' => $log->properties['new'] ?? new \stdClass(),
+                                ], JSON_FORCE_OBJECT)
+                            }}</script>
                         </button>
                     </td>
                 </tr>
@@ -107,16 +111,17 @@ document.getElementById('auditDetailModal')?.addEventListener('show.bs.modal', f
     document.getElementById('auditDetailIp').textContent = b.dataset.ip || '-';
     document.getElementById('auditDetailAgent').textContent = b.dataset.agent || '-';
 
-    const oldV = JSON.parse(b.dataset.old || '{}');
-    const newV = JSON.parse(b.dataset.new || '{}');
-    const keys = [...new Set([...Object.keys(oldV), ...Object.keys(newV)])];
+    const changes = JSON.parse(b.querySelector('.audit-detail-data')?.textContent || '{}');
+    const oldMap = changes.old ?? {};
+    const newMap = changes.new ?? {};
+    const keys = [...new Set([...Object.keys(oldMap), ...Object.keys(newMap)])];
     const box = document.getElementById('auditDetailChanges');
     if (!keys.length) { box.innerHTML = '<p class="text-muted mb-0">No field changes recorded.</p>'; return; }
 
     const cell = (v) => v === null ? '<em class="text-muted">null</em>' : String(v);
     let html = '<table class="table table-sm mb-0"><thead><tr><th>Field</th><th>Old</th><th>New</th></tr></thead><tbody>';
     keys.forEach(k => {
-        html += `<tr><td class="text-capitalize text-muted">${k}</td><td class="text-break">${cell(oldV[k])}</td><td class="text-break">${cell(newV[k])}</td></tr>`;
+        html += `<tr><td class="text-capitalize text-muted">${k}</td><td class="text-break">${cell(oldMap[k])}</td><td class="text-break">${cell(newMap[k])}</td></tr>`;
     });
     box.innerHTML = html + '</tbody></table>';
 });
