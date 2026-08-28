@@ -13,9 +13,11 @@ use App\Models\Role;
 
 class RoleController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $roles = Role::withTrashed()->with('permissions')->paginate(10);
+        $roles = Role::withTrashed()->with('permissions')
+            ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%' . $request->q . '%'))
+            ->orderBy('name')->paginate(10)->withQueryString();
         return view('rbac.roles.index', compact('roles'));
     }
 

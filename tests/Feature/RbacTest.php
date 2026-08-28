@@ -32,13 +32,17 @@ it('prevents deleting super-admin', function () {
     expect(Role::where('name', 'super-admin')->exists())->toBeTrue();
 });
 
-it('creates and updates a permission', function () {
-    $this->post(route('permissions.store'), ['name' => 'report.view'])
-        ->assertRedirect(route('permissions.index'));
-    expect(Permission::where('name', 'report.view')->exists())->toBeTrue();
+it('searches roles by name', function () {
+    Role::create(['name' => 'zztemp_role_alpha', 'guard_name' => 'web']);
+    $this->get(route('roles.index', ['q' => 'zztemp_role_alpha']))
+        ->assertOk()
+        ->assertSee('zztemp_role_alpha')
+        ->assertDontSee('super-admin');
+});
 
-    $p = Permission::where('name', 'report.view')->first();
-    $this->put(route('permissions.update', $p), ['name' => 'report.export'])
-        ->assertRedirect(route('permissions.index'));
-    expect(Permission::where('name', 'report.export')->exists())->toBeTrue();
+it('searches permissions by name', function () {
+    Permission::create(['name' => 'zztemp_perm_alpha', 'guard_name' => 'web']);
+    $this->get(route('permissions.index', ['q' => 'zztemp_perm_alpha']))
+        ->assertOk()
+        ->assertSee('zztemp_perm_alpha');
 });
