@@ -35,11 +35,15 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        // Recent activity for header notifications dropdown
+        // Recent activity for header notifications dropdown + unread count (per-user read state)
         \Illuminate\Support\Facades\View::composer('layouts.app', function ($view) {
             if (auth()->check() && class_exists(\Spatie\Activitylog\Models\Activity::class)) {
+                $userId = auth()->id();
                 $items = \Spatie\Activitylog\Models\Activity::latest()->limit(5)->get();
-                $view->with('notifications', ['items' => $items, 'unread' => $items->count()]);
+                $readIds = \App\Models\NotificationRead::where('user_id', $userId)
+                    ->whereIn('activity_id', $items->pluck('id'))->pluck('activity_id')->all();
+                $unread = $items->filter(fn ($a) => ! in_array($a->id, $readIds, true))->count();
+                $view->with('notifications', ['items' => $items, 'unread' => $unread]);
             } else {
                 $view->with('notifications', ['items' => collect(), 'unread' => 0]);
             }

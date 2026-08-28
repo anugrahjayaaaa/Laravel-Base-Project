@@ -24,15 +24,14 @@
                         @endif
                     </td>
                     <td class="text-end">
-                        <form method="POST" action="{{ route('features.toggle', $feature->slug) }}" class="d-inline features-toggle-form">
-                            @csrf
-                            <input type="hidden" name="enabled" value="{{ $feature->enabled ? '0' : '1' }}">
-                            <div class="form-check form-switch d-inline-flex align-items-center justify-content-end mb-0">
-                                <input class="form-check-input feature-toggle" type="checkbox" role="switch"
-                                       id="feat-{{ $feature->slug }}" {{ $feature->enabled ? 'checked' : '' }}
-                                       aria-label="Toggle {{ $feature->label }}">
-                            </div>
-                        </form>
+                        <div class="form-check form-switch d-inline-flex align-items-center justify-content-end mb-0">
+                            <input class="form-check-input" type="checkbox" role="switch"
+                                   id="feat-{{ $feature->slug }}" {{ $feature->enabled ? 'checked' : '' }}
+                                   aria-label="Toggle {{ $feature->label }}"
+                                   data-bs-toggle="modal" data-bs-target="#featureToggleModal"
+                                   data-action="{{ route('features.toggle', $feature->slug) }}"
+                                   data-enabled="{{ $feature->enabled ? '0' : '1' }}">
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -43,21 +42,6 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
-<script>
-    document.querySelectorAll('.feature-toggle').forEach(function (el) {
-        el.addEventListener('change', function () {
-            var form = el.closest('.features-toggle-form');
-            var next = el.checked ? 'enable' : 'disable';
-            if (! confirm('Are you sure you want to ' + next + ' this feature?')) {
-                el.checked = ! el.checked; // revert the switch
-                return;
-            }
-            form.querySelector('input[name="enabled"]').value = el.checked ? '1' : '0';
-            form.submit();
-        });
-    });
-</script>
-@endpush
+@include('partials.feature-toggle-modal')
+@endsection
