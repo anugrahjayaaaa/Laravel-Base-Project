@@ -15,6 +15,19 @@ class AuditNotification extends Notification
         public ?string $ip = null,
     ) {}
 
+    /** Human-readable label for the auth event. */
+    public function label(): string
+    {
+        return match ($this->action) {
+            'login_success' => 'Login successful',
+            'logout' => 'Logged out',
+            'login_failed' => 'Login failed',
+            'password_reset' => 'Password reset requested',
+            'email_verified' => 'Email verified',
+            default => str_replace('_', ' ', ucfirst($this->action)),
+        };
+    }
+
     /** @return array<int,string> */
     public function via(object $notifiable): array
     {
@@ -26,6 +39,7 @@ class AuditNotification extends Notification
     {
         return [
             'action' => $this->action,
+            'label' => $this->label(),
             'ip' => $this->ip,
         ];
     }

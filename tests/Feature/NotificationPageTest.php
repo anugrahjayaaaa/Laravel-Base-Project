@@ -15,7 +15,7 @@ it('shows notifications page with native notifications', function () {
         ->get(route('notifications.index'))
         ->assertOk()
         ->assertSee('Notifications')
-        ->assertSee('login_success');
+        ->assertSee('Login successful'); // human-readable label, not raw 'login_success'
 });
 
 it('marks notifications read on view (unread count drops to 0)', function () {
