@@ -12,7 +12,7 @@
         </a>
     @endif
     @if ($delete && !$deleteDisabled)
-        <button type="button" class="btn btn-sm btn-light border text-danger rounded-2" data-bs-toggle="tooltip" data-bs-title="Delete" aria-label="Delete"
+        <button type="button" class="btn btn-sm btn-light border text-danger rounded-2" title="Delete" aria-label="Delete"
                 style="min-width:38px"
                 data-bs-toggle="modal" data-bs-target="#deleteModal" data-action="{{ $delete }}">
             <i class="bi bi-trash"></i>
