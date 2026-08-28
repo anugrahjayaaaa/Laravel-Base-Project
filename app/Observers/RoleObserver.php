@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use Illuminate\Support\Facades\Request;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class RoleObserver
 {
@@ -34,5 +34,12 @@ class RoleObserver
         activity()->causedBy(auth()->user())->withProperties([
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
         ])->performedOn($role)->log('role_restored');
+    }
+
+    public function forceDeleted(Role $role)
+    {
+        activity()->causedBy(auth()->user())->withProperties([
+            'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
+        ])->performedOn($role)->log('role_force_deleted');
     }
 }

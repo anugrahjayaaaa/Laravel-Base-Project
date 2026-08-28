@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 
 class PermissionController extends Controller
 {
@@ -57,5 +57,11 @@ class PermissionController extends Controller
     {
         Permission::withTrashed()->findOrFail($id)->restore();
         return redirect()->route('permissions.index')->with('success', 'Permission restored.');
+    }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        Permission::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('permissions.index')->with('success', 'Permission permanently deleted.');
     }
 }

@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 beforeEach(function () {
     $this->seed();

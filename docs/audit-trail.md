@@ -5,8 +5,8 @@ Uses `spatie/laravel-activitylog`. Every user action is logged automatically.
 ## Must be logged
 - Auth: successful login, logout, **failed login**, lockout, reset request,
   reset success, password change, account verification.
-- User: create, update, delete (soft), restore.
-- RBAC: role create/edit/delete, permission attach/detach, user-role assign.
+- User: create, update, delete (soft), restore, force-delete (permanent).
+- RBAC: role create/edit/delete, role restore, role force-delete, permission create/edit/delete, permission restore, permission force-delete, permission attach/detach, user-role assign.
 - Business modules: main CRUD (added as modules are built).
 
 ## Format

@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use Illuminate\Support\Facades\Request;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 
 class PermissionObserver
 {
@@ -34,5 +34,12 @@ class PermissionObserver
         activity()->causedBy(auth()->user())->withProperties([
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
         ])->performedOn($permission)->log('permission_restored');
+    }
+
+    public function forceDeleted(Permission $permission)
+    {
+        activity()->causedBy(auth()->user())->withProperties([
+            'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
+        ])->performedOn($permission)->log('permission_force_deleted');
     }
 }

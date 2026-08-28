@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class UserController extends Controller
 {
@@ -101,5 +101,14 @@ class UserController extends Controller
     {
         User::withTrashed()->findOrFail($id)->restore();
         return redirect()->route('users.index')->with('success', 'User restored.');
+    }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        if ($id === auth()->id()) {
+            return redirect()->route('users.index')->with('error', 'Cannot delete yourself permanently.');
+        }
+        User::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('users.index')->with('success', 'User permanently deleted.');
     }
 }

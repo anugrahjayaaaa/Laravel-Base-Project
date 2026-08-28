@@ -11,7 +11,7 @@ class DashboardController extends Controller
         return view('dashboard', [
             'title' => 'Dashboard',
             'userCount' => \App\Models\User::count(),
-            'roleCount' => \Spatie\Permission\Models\Role::count(),
+            'roleCount' => \App\Models\Role::count(),
             'auditCount' => \Spatie\Activitylog\Models\Activity::count(),
             'dbName' => \Illuminate\Support\Facades\DB::connection()->getDatabaseName(),
         ]);

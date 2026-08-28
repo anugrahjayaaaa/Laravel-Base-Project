@@ -34,4 +34,11 @@ class UserObserver
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
         ])->performedOn($user)->log('user_restored');
     }
+
+    public function forceDeleted($user)
+    {
+        activity()->causedBy(auth()->user())->withProperties([
+            'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
+        ])->performedOn($user)->log('user_force_deleted');
+    }
 }

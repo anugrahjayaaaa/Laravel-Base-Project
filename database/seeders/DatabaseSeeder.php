@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
     // ponytail: flat permission list; expand per-module as features land
     private const PERMISSIONS = [
-        'user.view', 'user.create', 'user.edit', 'user.delete',
-        'role.view', 'role.create', 'role.edit', 'role.delete',
-        'permission.view', 'permission.create', 'permission.edit', 'permission.delete',
+        'user.view', 'user.create', 'user.edit', 'user.delete', 'user.restore', 'user.force-delete',
+        'role.view', 'role.create', 'role.edit', 'role.delete', 'role.restore', 'role.force-delete',
+        'permission.view', 'permission.create', 'permission.edit', 'permission.delete', 'permission.restore', 'permission.force-delete',
         'audit.view',
         'session.view', 'session.revoke',
         'api-token.view', 'api-token.create', 'api-token.delete',
