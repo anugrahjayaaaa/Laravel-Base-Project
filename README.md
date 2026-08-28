@@ -18,9 +18,9 @@ use as the foundation for internal web applications.
 
 ## Features
 
-- **Authentication** — login via **email or username**, lockout after 5 failed attempts
-  (15 min), forgot/reset password (token stored in DB), change-password (requires current
-  password).
+- **Authentication** — login via **email or username**, account lockout after 5 failed attempts
+  (15 min, IP-independent, auto-unlock), forgot/reset password (token stored in DB), change-password
+  (requires current password).
 - **RBAC** — dynamic roles & permissions (spatie). `super-admin`, `admin`, `staff` are
   seeded. Every action is gated via `can:*` (route middleware + Form Request `authorize()`).
 - **User management** — CRUD, soft-delete, restore, and permanent delete (force-delete).
