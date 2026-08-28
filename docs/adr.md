@@ -29,3 +29,12 @@
 
 ## ADR-0008: Sidebar "Template" section
 - Decision: below main menu, a "Template" group with zip demos (read-only).
+
+## ADR-0009: Feature flags above RBAC
+- Context: need to disable whole modules without touching code or redeploy, and let
+  a `feature.manage` holder keep access while a flag is off.
+- Decision: `features` DB table + `feature()` helper + `feature:{slug}` route middleware
+  stacked with `can:{perm}`; sidebar visibility via `featureVisible()`. A flag off 404s
+  the route and hides its menu item for normal users; `feature.manage` holders bypass.
+- Consequences: closest path to change the enabled state is the `/features` UI (under
+  Settings); fails closed when a feature row is missing.

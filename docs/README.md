@@ -18,6 +18,7 @@ with docs, **docs win** (change via an ADR).
 | architecture.md | Stack, layered architecture, v1 modules, decisions |
 | auth.md | Authentication (username/phone, strong pwd, lockout, verify) |
 | authorization.md | Dynamic RBAC + management UI |
+| feature-flags.md | Feature flags (layer above RBAC) |
 | audit-trail.md | Logging all user actions |
 | frontend-theme.md | AdminLTE 4.9.1, dark default, responsive, sidebar |
 | observability.md | Logger + Sentry + health check |

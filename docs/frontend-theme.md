@@ -9,7 +9,8 @@
 
 ## Sidebar structure (locked)
 1. Main menu: Dashboard, Users, Roles, Permissions, Audit Log, Profile, Sessions, API Tokens.
-2. "Template" section (below): component reference library from the zip demo
+2. **Settings** submenu: Features (feature-flag management, `feature.manage` only).
+3. "Template" section (below): component reference library from the zip demo
    (`dist/pages/`): Buttons, Cards, Tables, Forms, Modals, Tabs, Badges, Alerts,
    Charts, Icons, Widgets. Read-only, for the team to copy-paste.
 
