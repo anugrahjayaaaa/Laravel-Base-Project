@@ -11,9 +11,9 @@
                 <input type="text" name="name" class="form-control" value="{{ old('name', $permission->name ?? '') }}" placeholder="e.g. user.edit" required>
             </div>
         </div>
-        <div class="card-footer">
-            <button class="btn btn-primary">Save</button>
+        <div class="card-footer d-flex justify-content-end gap-2">
             <a href="{{ route('permissions.index') }}" class="btn btn-link">Cancel</a>
+            <button class="btn btn-primary">Save</button>
         </div>
     </div>
 </form>
