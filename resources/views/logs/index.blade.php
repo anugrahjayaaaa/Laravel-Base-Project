@@ -42,8 +42,8 @@
         <div class="card">
             <div class="card-body p-0">
                 <div class="table-responsive" style="max-height: 70vh; overflow:auto">
-                    <table class="table table-sm table-hover mb-0">
-                        <thead class="sticky-top bg-white">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
                             <tr>
                                 <th style="width:90px">Level</th>
                                 <th style="width:170px">Date</th>
