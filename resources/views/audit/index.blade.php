@@ -13,7 +13,10 @@
     </div>
     <div class="col-md-3"><input type="date" name="from" class="form-control form-control-sm" value="{{ request('from') }}" placeholder="From"></div>
     <div class="col-md-3"><input type="date" name="to" class="form-control form-control-sm" value="{{ request('to') }}" placeholder="To"></div>
-    <div class="col-md-3"><button class="btn btn-primary btn-sm w-100"><i class="bi bi-funnel me-1"></i> Filter</button></div>
+    <div class="col-md-3 d-flex gap-2">
+        <button class="btn btn-primary btn-sm w-100"><i class="bi bi-funnel me-1"></i> Filter</button>
+        <a href="{{ route('audit.export', request()->only(['action','causer','from','to'])) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
+    </div>
 </form>
 
 <div class="card shadow-sm">

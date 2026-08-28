@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/sessions/logout-others', [App\Http\Controllers\SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware(['can:session.revoke', 'feature:sessions']);
 
     Route::get('/audit', [App\Http\Controllers\AuditController::class, 'index'])->name('audit.index')->middleware(['can:audit.view', 'feature:audit']);
+    Route::get('/audit/export', [App\Http\Controllers\AuditController::class, 'export'])->name('audit.export')->middleware(['can:audit.view', 'feature:audit']);
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index')->middleware(['can:audit.view', 'feature:audit']);
     Route::get('/api-tokens', [App\Http\Controllers\ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware(['can:api-token.view', 'feature:api-tokens']);
     Route::resource('api-tokens', App\Http\Controllers\ApiTokenController::class)
