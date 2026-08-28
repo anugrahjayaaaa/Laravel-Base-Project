@@ -35,6 +35,15 @@ class UserObserver
         ])->performedOn($user)->log('user_restored');
     }
 
+    /**
+     * Log a permanent (hard) delete of a user to the audit trail.
+     *
+     * @param  \App\Models\User  $user  The soft-deleted-then-force-deleted user
+     * @return void
+     *
+     * @details Writes a 'user_force_deleted' activity row into DB table `activity_log`
+     * (spatie/activitylog). Unlike `deleted()` (soft delete), this is unrecoverable.
+     */
     public function forceDeleted($user)
     {
         activity()->causedBy(auth()->user())->withProperties([
