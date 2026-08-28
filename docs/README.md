@@ -22,6 +22,8 @@ with docs, **docs win** (change via an ADR).
 | audit-trail.md | Logging all user actions |
 | notifications.md | Native Laravel notifications (bell + page) |
 | api-tokens.md | Sanctum personal tokens (web UI) + mobile |
+| api.md | Full REST API `/api/v1` reference |
+| log-viewer.md | Web log viewer (`/logs`) |
 | frontend-theme.md | AdminLTE 4.9.1, dark default, responsive, sidebar |
 | observability.md | Logger + Sentry + health check |
 | api-mobile.md | Sanctum API /api/v1 for mobile |

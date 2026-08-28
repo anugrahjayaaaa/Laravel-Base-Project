@@ -175,6 +175,9 @@
                         <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>Settings</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="Features" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>Features</span></a></li>
+                            @can('logs.view')
+                            <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="Logs" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>Logs</span></a></li>
+                            @endcan
                         </ul>
                     </li>
                     @endcan

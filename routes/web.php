@@ -58,6 +58,10 @@ Route::middleware('auth')->group(function () {
         ->only(['store', 'destroy'])
         ->middleware(['can:api-token.create', 'feature:api-tokens']);
 
+    // Web log viewer (rap2hpoutre/laravel-log-viewer)
+    Route::get('/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index'])
+        ->name('logs.index')->middleware('can:logs.view');
+
     // Feature flags management (self-gated: feature.manage permission)
     Route::get('/features', [App\Http\Controllers\FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
     Route::post('/features/{slug}/toggle', [App\Http\Controllers\FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
