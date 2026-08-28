@@ -1,0 +1,20 @@
+<?php
+
+return [
+    'dashboard' => 'Dasbor',
+    'users' => 'Pengguna',
+    'roles' => 'Peran',
+    'permissions' => 'Izin',
+    'audit_log' => 'Log Audit',
+    'logs' => 'Log',
+    'profile' => 'Profil',
+    'sessions' => 'Sesi',
+    'api_tokens' => 'Token API',
+    'settings' => 'Pengaturan',
+    'features' => 'Fitur',
+    'logout' => 'Keluar',
+    'system_logs' => 'Log Sistem',
+    'language' => 'Bahasa',
+    'english' => 'Inggris',
+    'indonesian' => 'Indonesia',
+];

@@ -66,6 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/features', [App\Http\Controllers\FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
     Route::post('/features/{slug}/toggle', [App\Http\Controllers\FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
 
+    Route::post('/locale', [App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
+
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');
 });
 
