@@ -60,6 +60,14 @@ body {
 }
 .app-header .container-fluid { flex-wrap: nowrap; gap: 0.5rem; }
 .app-header .navbar-nav { flex-wrap: nowrap; }
+/* neutralize AdminLTE's fixed 2.5rem nav-link height that breaks header alignment */
+.app-header .nav-link {
+  height: auto;
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 .app-sidebar.sidebar {
   background: var(--lbp-surface) !important;
   border-right: 1px solid var(--lbp-border);
