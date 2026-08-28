@@ -30,7 +30,7 @@ class RoleController extends Controller
         $data = $request->validated();
 
         $role = Role::create(['name' => $data['name'], 'guard_name' => 'web']);
-        $role->syncPermissions($data['permissions'] ?? []);
+        $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
 
         return redirect()->route('roles.index')->with('success', 'Role created.');
     }
@@ -47,7 +47,7 @@ class RoleController extends Controller
         $data = $request->validated();
 
         $role->update(['name' => $data['name']]);
-        $role->syncPermissions($data['permissions'] ?? []);
+        $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
 
         return redirect()->route('roles.index')->with('success', 'Role updated.');
     }
