@@ -24,6 +24,7 @@ use as the foundation for internal web applications.
 - **RBAC** — dynamic roles & permissions (spatie). `super-admin`, `admin`, `staff` are
   seeded. Every action is gated via `can:*` (route middleware + Form Request `authorize()`).
 - **User management** — CRUD, soft-delete, restore, permanent delete (force-delete), admin lock/unlock.
+- **Feature flags** — `features` table + `/features` UI (gated by `feature.manage`). A flag sits **above** RBAC: a module needs both `permission` AND `feature enabled`; when off, the route 404s and its sidebar item hides — even for super-admin.
 - **Audit trail** — every mutation (create/update/delete/restore/force-delete, admin lock/unlock, login,
   logout, reset) is automatically recorded into `activity_log` via observers.
 - **Thin controllers** — all input validation lives in **Form Requests**
@@ -89,7 +90,7 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **66 tests / 192 assertions** (login, RBAC, profile, audit, logging, API).
+Current coverage: **73 tests / 206 assertions** (login, RBAC, profile, audit, logging, API, feature flags).
 
 ## Logs, cache & state — where to look
 
@@ -123,7 +124,7 @@ app/
       LogHttpErrors.php # logs 4xx to the daily log
   Models/              # User, Role, Permission (SoftDeletes)
   Observers/            # log force-delete into activity_log
-docs/                  # CONTRIBUTING, auth, architecture, audit-trail, observability, etc.
+docs/                  # CONTRIBUTING, auth, architecture, audit-trail, authorization, feature-flags, observability, etc.
 ```
 
 ## Contributing

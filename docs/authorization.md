@@ -25,6 +25,9 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
 - `permission:` middleware on sensitive routes.
 - `Policy` per resource for ownership checks.
 - Every role/permission change → audit trail.
+- **Feature flags** sit above RBAC: a module route is also wrapped in
+  `feature:{slug}` (see `docs/feature-flags.md`). Permission alone is not enough —
+  the feature must be enabled, or the route 404s and its sidebar item hides.
 
 ## Initial seed
 - Roles `super-admin`, `admin`, `staff` + default permissions.

@@ -25,36 +25,40 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Stub routes for sidebar links (filled in by later phases: users/roles/permissions/audit/profile/sessions/api-tokens)
-    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index')->middleware('can:user.view');
+    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index')->middleware(['can:user.view', 'feature:users']);
     Route::resource('users', App\Http\Controllers\UserController::class)
         ->except(['show'])
-        ->middleware('can:user.view');
-    Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware('can:user.restore');
-    Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware('can:user.force-delete');
-    Route::post('/users/{user}/lock', [App\Http\Controllers\UserController::class, 'lock'])->name('users.lock')->middleware('can:user.lock');
-    Route::post('/users/{user}/unlock', [App\Http\Controllers\UserController::class, 'unlock'])->name('users.unlock')->middleware('can:user.lock');
-    Route::post('/users/{user}/reset-link', [App\Http\Controllers\UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware('can:user.edit');
+        ->middleware(['can:user.view', 'feature:users']);
+    Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware(['can:user.restore', 'feature:users']);
+    Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['can:user.force-delete', 'feature:users']);
+    Route::post('/users/{user}/lock', [App\Http\Controllers\UserController::class, 'lock'])->name('users.lock')->middleware(['can:user.lock', 'feature:users']);
+    Route::post('/users/{user}/unlock', [App\Http\Controllers\UserController::class, 'unlock'])->name('users.unlock')->middleware(['can:user.lock', 'feature:users']);
+    Route::post('/users/{user}/reset-link', [App\Http\Controllers\UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware(['can:user.edit', 'feature:users']);
 
-    Route::resource('roles', RoleController::class)->middleware('can:role.view');
-    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware('can:role.restore');
-    Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware('can:role.force-delete');
+    Route::resource('roles', RoleController::class)->middleware(['can:role.view', 'feature:roles']);
+    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware(['can:role.restore', 'feature:roles']);
+    Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware(['can:role.force-delete', 'feature:roles']);
 
-    Route::resource('permissions', PermissionController::class)->middleware('can:permission.view');
-    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware('can:permission.restore');
-    Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware('can:permission.force-delete');
+    Route::resource('permissions', PermissionController::class)->middleware(['can:permission.view', 'feature:permissions']);
+    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware(['can:permission.restore', 'feature:permissions']);
+    Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware(['can:permission.force-delete', 'feature:permissions']);
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/password', [App\Http\Controllers\ProfileController::class, 'changePassword'])->name('profile.password');
 
-    Route::get('/sessions', [App\Http\Controllers\SessionController::class, 'index'])->name('sessions.index')->middleware('can:session.view');
-    Route::post('/sessions/logout-others', [App\Http\Controllers\SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware('can:session.revoke');
+    Route::get('/sessions', [App\Http\Controllers\SessionController::class, 'index'])->name('sessions.index')->middleware(['can:session.view', 'feature:sessions']);
+    Route::post('/sessions/logout-others', [App\Http\Controllers\SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware(['can:session.revoke', 'feature:sessions']);
 
-    Route::get('/audit', [App\Http\Controllers\AuditController::class, 'index'])->name('audit.index')->middleware('can:audit.view');
-    Route::get('/api-tokens', [App\Http\Controllers\ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware('can:api-token.view');
+    Route::get('/audit', [App\Http\Controllers\AuditController::class, 'index'])->name('audit.index')->middleware(['can:audit.view', 'feature:audit']);
+    Route::get('/api-tokens', [App\Http\Controllers\ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware(['can:api-token.view', 'feature:api-tokens']);
     Route::resource('api-tokens', App\Http\Controllers\ApiTokenController::class)
         ->only(['store', 'destroy'])
-        ->middleware('can:api-token.create');
+        ->middleware(['can:api-token.create', 'feature:api-tokens']);
+
+    // Feature flags management (self-gated: feature.manage permission)
+    Route::get('/features', [App\Http\Controllers\FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
+    Route::post('/features/{slug}/toggle', [App\Http\Controllers\FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
 
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');
 });
