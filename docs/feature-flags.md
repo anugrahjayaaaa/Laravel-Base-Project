@@ -31,6 +31,9 @@ feature('users');   // true/false; missing feature => false (fail-closed)
 - A `feature.manage` holder is exempt from the off-gate (see Bypass) so they can still
   use modules while a flag is off.
 
+## Known flags
+- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`.
+
 ## Gate
 - Every module route is wrapped in `feature:` — RED if a module route lacks it.
 - A flag off must block the route AND hide its sidebar entry.

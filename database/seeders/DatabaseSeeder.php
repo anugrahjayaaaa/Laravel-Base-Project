@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         'api-token.view', 'api-token.create', 'api-token.delete',
         'feature.manage',
         'logs.view',
+        'translation.view', 'translation.edit',
     ];
 
     // Module-level feature flags: slug => label. Toggling off blocks the whole module
@@ -31,6 +32,8 @@ class DatabaseSeeder extends Seeder
         'audit' => 'Audit Log',
         'sessions' => 'Sessions',
         'api-tokens' => 'API Tokens',
+        'translations' => 'Translations',
+        'logs' => 'Logs',
     ];
 
     public function run(): void

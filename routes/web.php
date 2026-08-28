@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
 
     // Web log viewer
     Route::get('/logs', [App\Http\Controllers\LogViewerController::class, 'index'])
-        ->name('logs.index')->middleware('can:logs.view');
+        ->name('logs.index')->middleware(['can:logs.view', 'feature:logs']);
 
     // Feature flags management (self-gated: feature.manage permission)
     Route::get('/features', [App\Http\Controllers\FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
@@ -68,11 +68,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/locale', [App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
 
-    // Translations management (under Settings, gated feature.manage)
-    Route::prefix('settings')->middleware('can:feature.manage')->group(function () {
+    // Translations management (under Settings, gated by RBAC + feature flag)
+    Route::prefix('settings')->middleware(['can:translation.view', 'feature:translations'])->group(function () {
         Route::get('/translations', [App\Http\Controllers\TranslationController::class, 'index'])->name('translations.index');
-        Route::get('/translations/{languageLine}/edit', [App\Http\Controllers\TranslationController::class, 'edit'])->name('translations.edit');
-        Route::put('/translations/{languageLine}', [App\Http\Controllers\TranslationController::class, 'update'])->name('translations.update');
+        Route::get('/translations/{languageLine}/edit', [App\Http\Controllers\TranslationController::class, 'edit'])->name('translations.edit')->middleware('can:translation.edit');
+        Route::put('/translations/{languageLine}', [App\Http\Controllers\TranslationController::class, 'update'])->name('translations.update')->middleware('can:translation.edit');
     });
 
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');

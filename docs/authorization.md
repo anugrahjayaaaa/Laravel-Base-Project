@@ -33,5 +33,9 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
 - Roles `super-admin`, `admin`, `staff` + default permissions.
 - First seeded user = super-admin.
 
+## Translations (Settings)
+- Permissions: `translation.view`, `translation.edit` (edit-only module — no create/delete routes).
+- Also gated by the `translations` feature flag (`feature:translations`).
+
 ## Gate
 - Every route/action is protected by a permission. RED if any action lacks authz.

@@ -176,7 +176,9 @@
                     @endif
                     @endcan
                     @can('logs.view')
+                    @if(featureVisible('logs'))
                     <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="Logs" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>Logs</span></a></li>
+                    @endif
                     @endcan
                     <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="Profile" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
                     @can('session.view')
@@ -189,15 +191,19 @@
                     <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="API Tokens" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
                     @endif
                     @endcan
-                    @can('feature.manage')
-                    <li class="nav-item {{ request()->routeIs('features.*') ? 'menu-open' : '' }}">
+                    @canany(['feature.manage', 'translation.view'])
+                    <li class="nav-item {{ request()->routeIs('features.*', 'translations.*') ? 'menu-open' : '' }}">
                         <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>Settings</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
+                            @can('translation.view')
+                            @if(featureVisible('translations'))
                             <li class="nav-item"><a href="{{ route('translations.index') }}" data-menu-text="{{ __('messages.translations') }}" class="nav-link {{ request()->routeIs('translations.*') ? 'active' : '' }}"><i class="nav-icon bi bi-translate"></i> <span>{{ __('messages.translations') }}</span></a></li>
+                            @endif
+                            @endcan
                         </ul>
                     </li>
-                    @endcan
+                    @endcanany
 
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
