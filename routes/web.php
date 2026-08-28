@@ -23,16 +23,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', App\Http\Controllers\UserController::class)
         ->except(['show'])
         ->middleware('can:user.view');
-    Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware('can:user.edit');
-    Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware('can:user.delete');
+    Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware('can:user.restore');
+    Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware('can:user.force-delete');
 
     Route::resource('roles', RoleController::class)->middleware('can:role.view');
-    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware('can:role.edit');
-    Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware('can:role.delete');
+    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware('can:role.restore');
+    Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware('can:role.force-delete');
 
     Route::resource('permissions', PermissionController::class)->middleware('can:permission.view');
-    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware('can:permission.edit');
-    Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware('can:permission.delete');
+    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware('can:permission.restore');
+    Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware('can:permission.force-delete');
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');

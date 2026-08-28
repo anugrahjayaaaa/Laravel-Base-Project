@@ -27,9 +27,9 @@
                     <td class="text-end">
                         <x-action-buttons
                             :edit="$perm->trashed() ? null : route('permissions.edit', $perm)"
-                            :restore="$perm->trashed() ? route('permissions.restore', $perm->id) : null"
+                            :restore="$perm->trashed() && auth()->user()->can('permission.restore') ? route('permissions.restore', $perm->id) : null"
                             :delete="$perm->trashed() ? null : route('permissions.destroy', $perm)"
-                            :forceDelete="$perm->trashed() ? route('permissions.forceDelete', $perm->id) : null" />
+                            :forceDelete="$perm->trashed() && auth()->user()->can('permission.force-delete') ? route('permissions.forceDelete', $perm->id) : null" />
                     </td>
                 </tr>
                 @empty

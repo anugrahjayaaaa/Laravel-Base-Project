@@ -27,9 +27,9 @@
                     <td class="text-end">
                         <x-action-buttons
                             :edit="$role->trashed() ? null : route('roles.edit', $role)"
-                            :restore="$role->trashed() ? route('roles.restore', $role->id) : null"
+                            :restore="$role->trashed() && auth()->user()->can('role.restore') ? route('roles.restore', $role->id) : null"
                             :delete="!$role->trashed() && $role->name !== 'super-admin' ? route('roles.destroy', $role) : null"
-                            :forceDelete="$role->trashed() ? route('roles.forceDelete', $role->id) : null" />
+                            :forceDelete="$role->trashed() && auth()->user()->can('role.force-delete') ? route('roles.forceDelete', $role->id) : null" />
                     </td>
                 </tr>
                 @empty
