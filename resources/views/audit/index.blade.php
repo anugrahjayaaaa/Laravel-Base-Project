@@ -29,11 +29,26 @@
                     <td class="text-muted">{{ $activities->firstItem() + $loop->index }}</td>
                     <td class="text-muted small">{{ $log->created_at->format('Y-m-d H:i') }}</td>
                     <td>
-                        @php $c = \Illuminate\Support\Str::contains($log->description, ['delete','removed']) ? 'danger' : (\Illuminate\Support\Str::contains($log->description, ['create','login','added']) ? 'success' : 'secondary'); @endphp
-                        <span class="badge bg-{{ $c }}-subtle text-{{ $c }} border border-{{ $c }}-subtle">{{ $log->description }}</span>
+                        @php
+                            $actionColor = [
+                                'role_created' => 'success', 'permission_created' => 'success', 'user_created' => 'success', 'login_success' => 'success',
+                                'role_updated' => 'warning', 'permission_updated' => 'warning', 'user_updated' => 'warning',
+                                'role_deleted' => 'danger', 'permission_deleted' => 'danger', 'user_deleted' => 'danger', 'login_failed' => 'danger',
+                                'user_restored' => 'info',
+                                'logout' => 'secondary', 'password_reset' => 'secondary', 'email_verified' => 'secondary',
+                            ];
+                            $c = $actionColor[$log->description] ?? 'dark';
+                        @endphp
+                        <span class="badge text-bg-{{ $c }}">{{ $log->description }}</span>
                     </td>
                     <td>{{ $log->causer->username ?? ($log->properties['identifier'] ?? '-') }}</td>
-                    <td class="text-muted">{{ class_basename($log->subject_type) }} #{{ $log->subject_id }}</td>
+                    <td>
+                        <span class="text-muted small">{{ class_basename($log->subject_type) }}</span>
+                        @if ($log->subject)
+                            <span class="fw-semibold text-body">{{ $log->subject->name ?? $log->subject->username ?? '' }}</span>
+                        @endif
+                        <span class="text-muted">#{{ $log->subject_id }}</span>
+                    </td>
                     <td class="text-muted small">{{ $log->properties['ip'] ?? '-' }}</td>
                 </tr>
                 @empty

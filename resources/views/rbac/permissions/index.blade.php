@@ -20,7 +20,7 @@
                 <tr>
                     <td class="text-muted">{{ $permissions->firstItem() + $loop->index }}</td>
                     <td>{{ $perm->name }}</td>
-                    <td><span class="badge bg-light border text-muted">{{ $perm->guard_name }}</span></td>
+                    <td><span class="badge text-bg-secondary">{{ $perm->guard_name }}</span></td>
                     <td class="text-end">
                         <x-action-buttons
                             :edit="route('permissions.edit', $perm)"

@@ -19,8 +19,8 @@
 <div class="card shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
+        <table class="table table-hover align-middle m-0">
+            <thead>
                 <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th class="text-end">Actions</th></tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                             <span class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:32px;height:32px">{{ strtoupper(substr($user->name,0,1)) }}</span>
                             <div>
                                 <div class="fw-medium">{{ $user->name }}</div>
-                                @if($user->trashed())<span class="badge bg-danger">deleted</span>@endif
+                                @if($user->trashed())<span class="badge text-bg-danger">deleted</span>@endif
                             </div>
                         </div>
                     </td>
@@ -40,7 +40,7 @@
                     <td class="text-muted">{{ $user->email }}</td>
                     <td>
                         @foreach ($user->roles as $role)
-                            <span class="badge bg-info-subtle text-info border border-info-subtle me-1">{{ $role->name }}</span>
+                            <span class="badge text-bg-info me-1">{{ $role->name }}</span>
                         @endforeach
                         @if ($user->roles->isEmpty())<span class="text-muted">-</span>@endif
                     </td>
