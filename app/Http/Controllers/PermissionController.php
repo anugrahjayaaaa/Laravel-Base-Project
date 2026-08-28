@@ -12,9 +12,11 @@ use App\Models\Permission;
 
 class PermissionController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $permissions = Permission::withTrashed()->orderBy('name')->paginate(10);
+        $permissions = Permission::withTrashed()
+            ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%' . $request->q . '%'))
+            ->orderBy('name')->paginate(10)->withQueryString();
         return view('rbac.permissions.index', compact('permissions'));
     }
 

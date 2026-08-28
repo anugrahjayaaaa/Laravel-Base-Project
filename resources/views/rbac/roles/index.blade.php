@@ -3,9 +3,14 @@
 @include('partials.flash-message')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Roles</h3>
-    @can('role.create')
-    <a href="{{ route('roles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Role</a>
-    @endcan
+    <div class="d-flex gap-2">
+        <form method="GET" class="d-flex" role="search">
+            <input type="search" name="q" value="{{ request('q') }}" class="form-control form-control-sm" placeholder="Search name…" aria-label="Search roles">
+        </form>
+        @can('role.create')
+        <a href="{{ route('roles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Role</a>
+        @endcan
+    </div>
 </div>
 
 <div class="card shadow-sm">
