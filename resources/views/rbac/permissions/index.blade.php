@@ -11,7 +11,7 @@
 <form method="GET" class="mb-3">
     <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-        <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search name…" value="{{ request('q') }}" aria-label="Search permissions">
+        <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search permission name…" value="{{ request('q') }}" aria-label="Search permissions">
         <button class="btn btn-primary px-3" type="submit">Search</button>
     </div>
 </form>
