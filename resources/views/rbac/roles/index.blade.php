@@ -3,19 +3,18 @@
 @include('partials.flash-message')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Roles</h3>
-    <div class="d-flex gap-2">
-        <form method="GET" class="mb-0">
-            <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
-                <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-                <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search name…" value="{{ request('q') }}" aria-label="Search roles">
-                <button class="btn btn-primary px-3" type="submit">Search</button>
-            </div>
-        </form>
-        @can('role.create')
-        <a href="{{ route('roles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Role</a>
-        @endcan
-    </div>
+    @can('role.create')
+    <a href="{{ route('roles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Role</a>
+    @endcan
 </div>
+
+<form method="GET" class="mb-3">
+    <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
+        <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search name…" value="{{ request('q') }}" aria-label="Search roles">
+        <button class="btn btn-primary px-3" type="submit">Search</button>
+    </div>
+</form>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
