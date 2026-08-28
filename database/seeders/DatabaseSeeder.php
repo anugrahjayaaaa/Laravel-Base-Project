@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Feature;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +18,18 @@ class DatabaseSeeder extends Seeder
         'audit.view',
         'session.view', 'session.revoke',
         'api-token.view', 'api-token.create', 'api-token.delete',
+        'feature.manage',
+    ];
+
+    // Module-level feature flags: slug => label. Toggling off blocks the whole module
+    // even for users who hold the relevant permission (flag off => inaccessible).
+    private const FEATURES = [
+        'users' => 'Users',
+        'roles' => 'Roles',
+        'permissions' => 'Permissions',
+        'audit' => 'Audit Log',
+        'sessions' => 'Sessions',
+        'api-tokens' => 'API Tokens',
     ];
 
     public function run(): void
@@ -26,13 +39,18 @@ class DatabaseSeeder extends Seeder
             Permission::findOrCreate($perm, 'web');
         }
 
+        // Feature flags (all on by default)
+        foreach (self::FEATURES as $slug => $label) {
+            Feature::updateOrCreate(['slug' => $slug], ['label' => $label, 'enabled' => true]);
+        }
+
         // Roles
         $superAdmin = Role::findOrCreate('super-admin', 'web');
         $admin = Role::findOrCreate('admin', 'web');
         $staff = Role::findOrCreate('staff', 'web');
 
         $admin->syncPermissions(self::PERMISSIONS);
-        $staff->syncPermissions(['user.view', 'audit.view']);
+        $staff->syncPermissions(['user.view', 'audit.view', 'feature.manage']);
         $superAdmin->syncPermissions(self::PERMISSIONS);
 
         // Super-admin user (first-run)
