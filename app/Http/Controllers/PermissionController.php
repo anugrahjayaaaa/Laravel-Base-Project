@@ -31,7 +31,7 @@ class PermissionController extends Controller
 
         Permission::create(['name' => $data['name'], 'guard_name' => 'web']);
 
-        return redirect()->route('permissions.index')->with('success', 'Permission created.');
+        return redirect()->route('permissions.index')->with('success', __('messages.permission_created'));
     }
 
     public function edit(Permission $permission): View
@@ -45,24 +45,24 @@ class PermissionController extends Controller
 
         $permission->update(['name' => $data['name']]);
 
-        return redirect()->route('permissions.index')->with('success', 'Permission updated.');
+        return redirect()->route('permissions.index')->with('success', __('messages.permission_updated'));
     }
 
     public function destroy(Permission $permission): RedirectResponse
     {
         $permission->delete();
-        return redirect()->route('permissions.index')->with('success', 'Permission deleted.');
+        return redirect()->route('permissions.index')->with('success', __('messages.permission_deleted'));
     }
 
     public function restore(int $id): RedirectResponse
     {
         Permission::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('permissions.index')->with('success', 'Permission restored.');
+        return redirect()->route('permissions.index')->with('success', __('messages.permission_restored'));
     }
 
     public function forceDelete(int $id): RedirectResponse
     {
         Permission::withTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->route('permissions.index')->with('success', 'Permission permanently deleted.');
+        return redirect()->route('permissions.index')->with('success', __('messages.permission_permanently_deleted'));
     }
 }

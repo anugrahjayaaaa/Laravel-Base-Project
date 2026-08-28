@@ -20,7 +20,7 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         $user->update($request->validated());
-        return redirect()->route('profile.show')->with('success', 'Profile updated.');
+        return redirect()->route('profile.show')->with('success', __('messages.profile_updated'));
     }
 
     public function changePassword(PasswordChangeRequest $request): RedirectResponse
@@ -32,6 +32,6 @@ class ProfileController extends Controller
             $user->tokens()->delete();
         }
         auth()->logoutOtherDevices($request->validated()['password']);
-        return redirect()->route('profile.show')->with('success', 'Password changed.');
+        return redirect()->route('profile.show')->with('success', __('messages.password_changed'));
     }
 }

@@ -31,6 +31,6 @@ class ApiTokenController extends Controller
     public function destroy(int $token): RedirectResponse
     {
         auth()->user()->tokens()->where('id', $token)->delete();
-        return redirect()->route('api-tokens.index')->with('status', 'Token revoked.');
+        return redirect()->route('api-tokens.index')->with('status', __('messages.token_revoked'));
     }
 }

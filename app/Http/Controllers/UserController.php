@@ -47,7 +47,7 @@ class UserController extends Controller
         ]);
         $user->syncRoles(array_map('intval', $data['roles'] ?? []));
 
-        return redirect()->route('users.index')->with('success', 'User created.');
+        return redirect()->route('users.index')->with('success', __('messages.user_created'));
     }
 
     public function edit(User $user): View
@@ -74,7 +74,7 @@ class UserController extends Controller
         $user->update($payload);
         $user->syncRoles(array_map('intval', $data['roles'] ?? []));
 
-        return redirect()->route('users.index')->with('success', 'User updated.');
+        return redirect()->route('users.index')->with('success', __('messages.user_updated'));
     }
 
     /**
@@ -89,7 +89,7 @@ class UserController extends Controller
             ->performedOn($user)
             ->log('user_unlocked');
 
-        return redirect()->route('users.index')->with('success', 'User unlocked.');
+        return redirect()->route('users.index')->with('success', __('messages.user_unlocked'));
     }
 
     /**
@@ -98,7 +98,7 @@ class UserController extends Controller
     public function lock(int $id): RedirectResponse
     {
         if ($id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Cannot lock yourself.');
+            return redirect()->route('users.index')->with('error', __('messages.cannot_lock_self'));
         }
         $user = User::withTrashed()->findOrFail($id);
         $user->update(['locked_until' => null, 'locked_permanently' => true]);
@@ -107,7 +107,7 @@ class UserController extends Controller
             ->performedOn($user)
             ->log('user_locked');
 
-        return redirect()->route('users.index')->with('success', 'User locked.');
+        return redirect()->route('users.index')->with('success', __('messages.user_locked'));
     }
 
     /**
@@ -126,33 +126,33 @@ class UserController extends Controller
                 ->performedOn($user)
                 ->log('user_reset_link_sent');
 
-            return redirect()->route('users.index')->with('success', 'Reset link sent to ' . $user->email . '.');
+            return redirect()->route('users.index')->with('success', __('messages.reset_link_sent', ['email' => $user->email]));
         }
 
-        return redirect()->route('users.index')->with('error', 'Could not send reset link (' . __($status) . ').');
+        return redirect()->route('users.index')->with('error', __('messages.could_not_send_reset_link', ['status' => __($status)]));
     }
 
     public function destroy(User $user): RedirectResponse
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Cannot delete yourself.');
+            return redirect()->route('users.index')->with('error', __('messages.cannot_delete_self'));
         }
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted.');
+        return redirect()->route('users.index')->with('success', __('messages.user_deleted'));
     }
 
     public function restore(int $id): RedirectResponse
     {
         User::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('users.index')->with('success', 'User restored.');
+        return redirect()->route('users.index')->with('success', __('messages.user_restored'));
     }
 
     public function forceDelete(int $id): RedirectResponse
     {
         if ($id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Cannot delete yourself permanently.');
+            return redirect()->route('users.index')->with('error', __('messages.cannot_delete_self_permanently'));
         }
         User::withTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->route('users.index')->with('success', 'User permanently deleted.');
+        return redirect()->route('users.index')->with('success', __('messages.user_permanently_deleted'));
     }
 }

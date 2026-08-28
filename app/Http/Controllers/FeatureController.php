@@ -22,6 +22,6 @@ class FeatureController extends Controller
         $feature = Feature::findOrFail($slug);
         $feature->update(['enabled' => (bool) $request->boolean('enabled')]);
 
-        return redirect()->route('features.index')->with('success', $feature->label.' '.($feature->enabled ? 'enabled.' : 'disabled.'));
+        return redirect()->route('features.index')->with('success', $feature->enabled ? __('messages.feature_enabled', ['label' => $feature->label]) : __('messages.feature_disabled', ['label' => $feature->label]));
     }
 }

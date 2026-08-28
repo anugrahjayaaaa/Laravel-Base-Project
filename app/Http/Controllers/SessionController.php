@@ -33,6 +33,6 @@ class SessionController extends Controller
             Auth::logoutOtherDevices($request->password);
         }
 
-        return redirect()->route('sessions.index')->with('success', 'Other sessions logged out.');
+        return redirect()->route('sessions.index')->with('success', __('messages.sessions_logged_out'));
     }
 }
