@@ -26,7 +26,14 @@ use as the foundation for internal web applications.
 - **User management** — CRUD, soft-delete, restore, permanent delete (force-delete), admin lock/unlock.
 - **Feature flags** — `features` table + `/features` UI (under **Settings** submenu, gated by `feature.manage`). A flag sits **above** RBAC: a module needs both `permission` AND `feature enabled`; when off, the route 404s and its sidebar item hides — except for `feature.manage` holders, who stay exempt (they can reach/use modules even while off).
 - **Audit trail** — every mutation (create/update/delete/restore/force-delete, admin lock/unlock, login,
-  logout, reset) is automatically recorded into `activity_log` via observers.
+  logout, reset) is automatically recorded into `activity_log` via observers. The **Audit** page
+  (`/audit`) supports filtering by action/date and **CSV export** (honors active filters). Old records
+  are purged by the daily `audit:purge` command (keep `AUDIT_RETENTION_DAYS`, default 365).
+- **Notifications** — native Laravel notifications (database channel) for auth events (login, logout,
+  failed login, password reset, email verified). Bell in the header shows an unread count; the
+  **Notifications** page (`/notifications`) lists them and marks read on view.
+- **API Tokens** — web UI (`/api-tokens`) to create/revoke Sanctum personal tokens; the plain token
+  is shown once on creation with a copy button. Mobile clients authenticate via Sanctum `/api/v1`.
 - **Thin controllers** — all input validation lives in **Form Requests**
   (`app/Http/Requests/<Domain>/`); controllers only call `validated()` and dispatch.
 - **Error logging** — 4xx responses (except 404) are auto-logged to the daily log via the
@@ -90,7 +97,7 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **75 tests / 208 assertions** (login, RBAC, profile, audit, logging, API, feature flags).
+Current coverage: **86 tests / 237 assertions** (login, RBAC, profile, audit, logging, API, feature flags, notifications, API tokens).
 
 ## Logs, cache & state — where to look
 

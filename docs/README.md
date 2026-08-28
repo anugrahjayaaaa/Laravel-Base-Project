@@ -20,6 +20,8 @@ with docs, **docs win** (change via an ADR).
 | authorization.md | Dynamic RBAC + management UI |
 | feature-flags.md | Feature flags (layer above RBAC) |
 | audit-trail.md | Logging all user actions |
+| notifications.md | Native Laravel notifications (bell + page) |
+| api-tokens.md | Sanctum personal tokens (web UI) + mobile |
 | frontend-theme.md | AdminLTE 4.9.1, dark default, responsive, sidebar |
 | observability.md | Logger + Sentry + health check |
 | api-mobile.md | Sanctum API /api/v1 for mobile |
