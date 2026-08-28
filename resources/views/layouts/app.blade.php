@@ -148,6 +148,13 @@
                     <li class="nav-item"><a href="{{ route('api-tokens.index') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
                     @endcan
 
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}" class="m-0">
+                            @csrf
+                            <button type="submit" class="nav-link border-0 bg-transparent text-start w-100"><i class="nav-icon bi bi-box-arrow-right"></i> <span>Logout</span></button>
+                        </form>
+                    </li>
+
                     <li class="nav-header">TEMPLATE</li>
 
                     {{-- Widgets --}}
