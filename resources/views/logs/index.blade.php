@@ -57,10 +57,10 @@
                                 <tr>
                                     <td><span class="badge text-bg-{{ $cls }}">{{ $log['level'] ?? '—' }}</span></td>
                                     <td class="text-nowrap text-muted small">{{ $log['date'] ?? '' }}</td>
-                                    <td style="white-space:pre-wrap;word-break:break-word">
-                                        {{ ltrim($log['text'] ?? '') }}
+                                    <td style="word-break:break-word">
+                                        {{ trim($log['text'] ?? '') }}
                                         @if(!empty($log['in_file']))
-                                            <div class="text-muted small mt-1">{{ ltrim($log['in_file']) }}</div>
+                                            <div class="text-muted small mt-1">{{ trim($log['in_file']) }}</div>
                                         @endif
                                         @if(!empty($log['stack']))
                                             <details class="mt-1">
