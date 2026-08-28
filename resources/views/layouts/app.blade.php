@@ -37,13 +37,14 @@
                 </li>
             </ul>
 
-            {{-- Global menu search (live sidebar filter, no backend) --}}
+            {{-- Global menu search (dropdown of matches; click navigates. No backend.) --}}
             <ul class="navbar-nav ms-auto flex-grow-1 px-2 d-none d-md-flex">
-                <li class="nav-item w-100" style="max-width:420px">
+                <li class="nav-item w-100 position-relative" style="max-width:420px">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="Search menu…" autocomplete="off" aria-label="Search menu">
+                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="Search menu…" autocomplete="off" aria-label="Search menu" aria-expanded="false" aria-controls="menu-search-results">
                     </div>
+                    <ul id="menu-search-results" class="dropdown-menu w-100 py-1 shadow-sm" style="display:none;max-height:320px;overflow:auto"></ul>
                 </li>
             </ul>
 
@@ -133,7 +134,6 @@
             <nav class="mt-3 sidebar-nav">
                 <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false">
                     <li class="nav-header">MAIN MENU</li>
-                    <li id="menu-search-empty" class="nav-item d-none"><span class="nav-link text-muted"><i class="nav-icon bi bi-emoji-frown"></i> <span>No menu found</span></span></li>
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" data-menu-text="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-speedometer2"></i> <span>Dashboard</span>
@@ -369,39 +369,28 @@
         // tooltips for action/icon buttons
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-        // Live header search -> filter sidebar menu (real features only; demo/template links hidden during search)
+        // Live header search -> dropdown of matching menu links (no sidebar filtering; click navigates)
         (function () {
             const input = document.getElementById('menu-search');
-            const sidebar = document.querySelector('.sidebar-nav');
-            const empty = document.getElementById('menu-search-empty');
-            if (!input || !sidebar) return;
-            const headers = sidebar.querySelectorAll('.nav-header');
-            const leafLi = [...sidebar.querySelectorAll('li.nav-item')].filter(li => li.querySelector(':scope > a[data-menu-text]'));
-            const containerLi = [...sidebar.querySelectorAll('li.nav-item')].filter(li => li.querySelector(':scope > ul.nav-treeview'));
+            const results = document.getElementById('menu-search-results');
+            if (!input || !results) return;
+            const items = [...document.querySelectorAll('.sidebar-nav a[data-menu-text]')]
+                .map(a => ({ text: a.dataset.menuText, href: a.getAttribute('href') }));
 
-            input.addEventListener('input', () => {
-                const q = input.value.trim().toLowerCase();
-                if (q === '') {
-                    sidebar.querySelectorAll('.nav-header, li.nav-item').forEach(el => el.classList.remove('d-none'));
-                    containerLi.forEach(li => li.classList.remove('menu-open'));
-                    if (empty) empty.classList.add('d-none');
-                    return;
-                }
-                headers.forEach(h => h.classList.add('d-none'));
-                let visible = 0;
-                leafLi.forEach(li => {
-                    const a = li.querySelector(':scope > a[data-menu-text]');
-                    const match = a.dataset.menuText.toLowerCase().includes(q);
-                    li.classList.toggle('d-none', !match);
-                    if (match) visible++;
-                });
-                containerLi.forEach(li => {
-                    const anyVisible = li.querySelector('li.nav-item:not(.d-none)');
-                    li.classList.toggle('d-none', !anyVisible);
-                    li.classList.toggle('menu-open', !!anyVisible);
-                });
-                if (empty) empty.classList.toggle('d-none', visible === 0);
-            });
+            const render = (q) => {
+                const matches = q === '' ? [] : items.filter(i => i.text.toLowerCase().includes(q));
+                results.innerHTML = matches.length
+                    ? matches.map(i => `<li><a class="dropdown-item py-2" href="${i.href}"><i class="bi bi-box-arrow-up-right me-2 opacity-50"></i>${i.text}</a></li>`).join('')
+                    : `<li><span class="dropdown-item text-muted">No menu found</span></li>`;
+                results.style.display = 'block';
+                input.setAttribute('aria-expanded', 'true');
+            };
+            const close = () => { results.style.display = 'none'; input.setAttribute('aria-expanded', 'false'); };
+
+            input.addEventListener('input', () => render(input.value.trim().toLowerCase()));
+            input.addEventListener('focus', () => { if (input.value.trim() !== '') render(input.value.trim().toLowerCase()); });
+            input.addEventListener('keydown', e => { if (e.key === 'Escape') { input.value = ''; close(); } });
+            document.addEventListener('click', e => { if (!e.target.closest('.position-relative')) close(); });
         })();
     })();
 </script>
