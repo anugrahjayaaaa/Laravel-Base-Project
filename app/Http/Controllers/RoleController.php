@@ -71,4 +71,13 @@ class RoleController extends Controller
         Role::withTrashed()->findOrFail($id)->restore();
         return redirect()->route('roles.index')->with('success', 'Role restored.');
     }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        if (Role::withTrashed()->findOrFail($id)->name === 'super-admin') {
+            return redirect()->route('roles.index')->with('error', 'Cannot permanently delete super-admin.');
+        }
+        Role::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('roles.index')->with('success', 'Role permanently deleted.');
+    }
 }

@@ -48,7 +48,8 @@
                         <x-action-buttons
                             :edit="!$user->trashed() ? route('users.edit', $user) : null"
                             :restore="$user->trashed() ? route('users.restore', $user->id) : null"
-                            :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null" />
+                            :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null"
+                            :forceDelete="$user->trashed() ? route('users.forceDelete', $user->id) : null" />
                     </td>
                 </tr>
                 @empty
@@ -62,4 +63,5 @@
 @include('partials.pagination-info', ['items' => $users])
 {{ $users->links() }}
 @include('partials.delete-modal')
+@include('partials.force-delete-modal')
 @endsection

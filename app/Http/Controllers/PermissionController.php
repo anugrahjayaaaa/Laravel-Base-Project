@@ -58,4 +58,10 @@ class PermissionController extends Controller
         Permission::withTrashed()->findOrFail($id)->restore();
         return redirect()->route('permissions.index')->with('success', 'Permission restored.');
     }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        Permission::withTrashed()->findOrFail($id)->forceDelete();
+        return redirect()->route('permissions.index')->with('success', 'Permission permanently deleted.');
+    }
 }

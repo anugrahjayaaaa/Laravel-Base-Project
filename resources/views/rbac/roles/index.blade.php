@@ -28,7 +28,8 @@
                         <x-action-buttons
                             :edit="$role->trashed() ? null : route('roles.edit', $role)"
                             :restore="$role->trashed() ? route('roles.restore', $role->id) : null"
-                            :delete="!$role->trashed() && $role->name !== 'super-admin' ? route('roles.destroy', $role) : null" />
+                            :delete="!$role->trashed() && $role->name !== 'super-admin' ? route('roles.destroy', $role) : null"
+                            :forceDelete="$role->trashed() ? route('roles.forceDelete', $role->id) : null" />
                     </td>
                 </tr>
                 @empty
@@ -42,4 +43,5 @@
 @include('partials.pagination-info', ['items' => $roles])
 {{ $roles->links() }}
 @include('partials.delete-modal')
+@include('partials.force-delete-modal')
 @endsection
