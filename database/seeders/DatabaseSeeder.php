@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         'session.view', 'session.revoke',
         'api-token.view', 'api-token.create', 'api-token.delete',
         'feature.manage',
+        'logs.view',
     ];
 
     // Module-level feature flags: slug => label. Toggling off blocks the whole module
