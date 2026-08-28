@@ -50,6 +50,11 @@
     document.querySelectorAll('.feature-toggle').forEach(function (el) {
         el.addEventListener('change', function () {
             var form = el.closest('.features-toggle-form');
+            var next = el.checked ? 'enable' : 'disable';
+            if (! confirm('Are you sure you want to ' + next + ' this feature?')) {
+                el.checked = ! el.checked; // revert the switch
+                return;
+            }
             form.querySelector('input[name="enabled"]').value = el.checked ? '1' : '0';
             form.submit();
         });
