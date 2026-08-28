@@ -20,7 +20,10 @@ id | causer_id | causer_name | action | subject_type | subject_id
 ## Access
 - "Audit Log" page (read-only) for specific roles.
 - Filters: user, action, date range. Keyset pagination.
-- Log is permanent; purge via retention job (not user soft-deletable).
+- **CSV export** — the Export button downloads the current filtered set (`/audit/export`).
+- Log is permanent; purged by the daily `audit:purge` command (keep last
+  `AUDIT_RETENTION_DAYS` days, default 365 in `.env.example`). Run manually with
+  `php artisan audit:purge --days=90`.
 
 ## Gate
 - Every state mutation is logged. RED if any write path lacks a log.
