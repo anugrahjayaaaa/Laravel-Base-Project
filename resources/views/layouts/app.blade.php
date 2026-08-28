@@ -75,7 +75,7 @@
                                 <div class="d-flex gap-2">
                                     <i class="bi bi-activity text-primary mt-1"></i>
                                     <div class="flex-grow-1">
-                                        <div class="small">{{ \Illuminate\Support\Str::limit($n->description, 40) }}</div>
+                                        <div class="small">{{ \Illuminate\Support\Str::limit($n->data['action'] ?? 'notification', 40) }}</div>
                                         <div class="text-muted" style="font-size:11px">{{ $n->created_at->diffForHumans() }}</div>
                                     </div>
                                 </div>

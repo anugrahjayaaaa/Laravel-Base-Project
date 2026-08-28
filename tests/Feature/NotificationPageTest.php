@@ -1,39 +1,51 @@
 <?php
 
 use App\Models\User;
-use App\Models\NotificationRead;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Activitylog\Models\Activity;
+use App\Notifications\AuditNotification;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => $this->seed());
 
-it('shows notifications page with recent activity', function () {
+it('shows notifications page with native notifications', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
+    $u->notify(new AuditNotification('login_success', '127.0.0.1'));
+
     $this->actingAs($u)
         ->get(route('notifications.index'))
         ->assertOk()
         ->assertSee('Notifications')
-        ->assertSee('permission_created'); // guaranteed seeded audit row
+        ->assertSee('login_success');
 });
 
-it('marks notifications read for the user on view', function () {
+it('marks notifications read on view (unread count drops to 0)', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
+    $u->notify(new AuditNotification('logout', '127.0.0.1'));
 
-    expect(NotificationRead::where('user_id', $u->id)->count())->toBe(0);
+    expect($u->unreadNotifications()->count())->toBe(1);
 
     $this->actingAs($u)->get(route('notifications.index'));
 
-    // all visible activities (up to 30) now have a read row for this user
-    expect(NotificationRead::where('user_id', $u->id)->whereNotNull('read_at')->count())->toBeGreaterThan(0);
+    expect($u->fresh()->unreadNotifications()->count())->toBe(0);
 });
 
 it('denies notifications page to user without audit.view', function () {
     $noPerms = User::create([
-        'name' => 'No Perms', 'username' => 'noperms3',
-        'email' => 'noperms3@example.com', 'password' => bcrypt('password'),
+        'name' => 'No Perms', 'username' => 'noperms4',
+        'email' => 'noperms4@example.com', 'password' => bcrypt('password'),
     ]); // no roles -> no audit.view
     $this->actingAs($noPerms)
         ->get(route('notifications.index'))
         ->assertForbidden();
+});
+
+it('backfill command copies auth activity into notifications', function () {
+    \Spatie\Activitylog\Models\Activity::create([
+        'log_name' => 'default', 'description' => 'login_success',
+        'causer_type' => User::class, 'causer_id' => User::where('email', 'admin@laravel-base.local')->first()->id,
+        'created_at' => now(),
+    ]);
+
+    $this->artisan('notifications:backfill')->assertSuccessful();
+    expect(User::where('email', 'admin@laravel-base.local')->first()->notifications()->count())->toBeGreaterThan(0);
 });
