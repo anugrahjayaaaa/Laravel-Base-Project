@@ -47,9 +47,28 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer">
-            <button class="btn btn-primary">Save</button>
-            <a href="{{ route('users.index') }}" class="btn btn-link">Cancel</a>
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <div>
+                @if ($user->isLocked())
+                    <span class="badge text-bg-warning me-1">locked</span>
+                @else
+                    <span class="badge text-bg-success me-1">active</span>
+                @endif
+                @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.edit'))
+                    <form method="POST" action="{{ route('users.reset-link', $user) }}" class="d-inline">@csrf
+                        <button class="btn btn-sm btn-outline-secondary">Send reset link</button>
+                    </form>
+                    @if ($user->isLocked())
+                    <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
+                        <button class="btn btn-sm btn-outline-warning">Unlock</button>
+                    </form>
+                    @endif
+                @endif
+            </div>
+            <div>
+                <button class="btn btn-primary">Save</button>
+                <a href="{{ route('users.index') }}" class="btn btn-link">Cancel</a>
+            </div>
         </div>
     </div>
 </form>

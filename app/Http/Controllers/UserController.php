@@ -59,20 +59,59 @@ class UserController extends Controller
 
     public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
+        // ponytail: single update() call — avoid firing the `updated` observer twice
+        // (password would otherwise trigger a second observer event after name/email).
         $data = $request->validated();
-
-        $user->update([
-            'name' => $data['name'],
+        $payload = [
+            'name'     => $data['name'],
             'username' => $data['username'],
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
-        ]);
+            'email'    => $data['email'],
+            'phone'    => $data['phone'] ?? null,
+        ];
         if (! empty($data['password'])) {
-            $user->update(['password' => bcrypt($data['password'])]);
+            $payload['password'] = bcrypt($data['password']);
         }
+        $user->update($payload);
         $user->syncRoles($data['roles'] ?? []);
 
         return redirect()->route('users.index')->with('success', 'User updated.');
+    }
+
+    /**
+     * Unlock a locked account (clear locked_until). Admin action.
+     */
+    public function unlock(int $id): RedirectResponse
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->update(['locked_until' => null]);
+
+        activity()->causedBy(auth()->user())
+            ->performedOn($user)
+            ->log('user_unlocked');
+
+        return redirect()->route('users.index')->with('success', 'User unlocked.');
+    }
+
+    /**
+     * Send a password reset link to the user's email (admin-triggered).
+     * Requires MAIL_* to be configured for actual delivery.
+     */
+    public function sendResetLink(int $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+        $status = \Illuminate\Support\Facades\Password::broker('users')->sendResetLink([
+            'email' => $user->email,
+        ]);
+
+        if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+            activity()->causedBy(auth()->user())
+                ->performedOn($user)
+                ->log('user_reset_link_sent');
+
+            return redirect()->route('users.index')->with('success', 'Reset link sent to ' . $user->email . '.');
+        }
+
+        return redirect()->route('users.index')->with('error', 'Could not send reset link (' . __($status) . ').');
     }
 
     public function destroy(User $user): RedirectResponse

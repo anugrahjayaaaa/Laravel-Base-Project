@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle m-0">
             <thead>
-                <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th class="text-end">Actions</th></tr>
+                <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th>Status</th><th class="text-end">Actions</th></tr>
             </thead>
             <tbody>
                 @forelse ($users as $user)
@@ -44,12 +44,31 @@
                         @endforeach
                         @if ($user->roles->isEmpty())<span class="text-muted">-</span>@endif
                     </td>
+                    <td>
+                        @if ($user->isLocked())
+                            <span class="badge text-bg-warning">locked</span>
+                        @else
+                            <span class="badge text-bg-success">active</span>
+                        @endif
+                    </td>
                     <td class="text-end">
                         <x-action-buttons
                             :edit="!$user->trashed() ? route('users.edit', $user) : null"
                             :restore="$user->trashed() && auth()->user()->can('user.restore') ? route('users.restore', $user->id) : null"
                             :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null"
                             :forceDelete="$user->trashed() && auth()->user()->can('user.force-delete') ? route('users.forceDelete', $user->id) : null" />
+                        <div class="btn-group btn-group-sm mt-1">
+                            @if (!$user->trashed() && $user->id !== auth()->id())
+                                <form method="POST" action="{{ route('users.reset-link', $user) }}">@csrf
+                                    <button class="btn btn-outline-secondary" title="Send password reset link">Reset</button>
+                                </form>
+                                @if ($user->isLocked() && auth()->user()->can('user.edit'))
+                                <form method="POST" action="{{ route('users.unlock', $user) }}">@csrf
+                                    <button class="btn btn-outline-warning" title="Unlock account">Unlock</button>
+                                </form>
+                                @endif
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty

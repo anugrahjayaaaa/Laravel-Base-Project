@@ -17,6 +17,7 @@
 ## Flow
 - Login: **email OR username** + password (phone removed).
 - Lockout: 5 consecutive fails → account locked 15m (DB column `users.locked_until`, survives IP rotation; auto-unlocks when it expires). IP+identifier throttle (cache key `login:{ip}:{identifier}`) still applies as a first layer. Fails are not audited individually (throttle state lives in cache).
+- Admin can **unlock** via `POST /users/{user}/unlock` (clears `locked_until`) and **send a reset link** via `POST /users/{user}/reset-link` (uses the `users` password broker; requires `MAIL_*` to deliver). Both actions are written to `activity_log` (`user_unlocked`, `user_reset_link_sent`).
 - Rate limit: /login, /password/* (e.g. 10/15m).
 - Reset: hashed token, 60m expiry, single-use, stored in DB table `password_reset_tokens`.
 - Verify: email activation before full access.
