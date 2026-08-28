@@ -140,38 +140,43 @@
                         </a>
                     </li>
                     @can('user.view')
-                    @if(feature('users'))
+                    @if(featureVisible('users'))
                     <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="Users" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
                     @endif
                     @endcan
                     @can('role.view')
-                    @if(feature('roles'))
+                    @if(featureVisible('roles'))
                     <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="Roles" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
                     @endif
                     @endcan
                     @can('permission.view')
-                    @if(feature('permissions'))
+                    @if(featureVisible('permissions'))
                     <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="Permissions" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
                     @endif
                     @endcan
                     @can('audit.view')
-                    @if(feature('audit'))
+                    @if(featureVisible('audit'))
                     <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="Audit Log" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
                     @endif
                     @endcan
                     <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="Profile" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
                     @can('session.view')
-                    @if(feature('sessions'))
+                    @if(featureVisible('sessions'))
                     <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="Sessions" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
                     @endif
                     @endcan
                     @can('api-token.view')
-                    @if(feature('api-tokens'))
+                    @if(featureVisible('api-tokens'))
                     <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="API Tokens" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
                     @endif
                     @endcan
                     @can('feature.manage')
-                    <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="Features" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>Features</span></a></li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-gear"></i> <span>Settings</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="Features" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>Features</span></a></li>
+                        </ul>
+                    </li>
                     @endcan
 
                     <li class="nav-item">

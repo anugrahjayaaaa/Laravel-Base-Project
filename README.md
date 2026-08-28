@@ -24,7 +24,7 @@ use as the foundation for internal web applications.
 - **RBAC** — dynamic roles & permissions (spatie). `super-admin`, `admin`, `staff` are
   seeded. Every action is gated via `can:*` (route middleware + Form Request `authorize()`).
 - **User management** — CRUD, soft-delete, restore, permanent delete (force-delete), admin lock/unlock.
-- **Feature flags** — `features` table + `/features` UI (gated by `feature.manage`). A flag sits **above** RBAC: a module needs both `permission` AND `feature enabled`; when off, the route 404s and its sidebar item hides — even for super-admin.
+- **Feature flags** — `features` table + `/features` UI (under **Settings** submenu, gated by `feature.manage`). A flag sits **above** RBAC: a module needs both `permission` AND `feature enabled`; when off, the route 404s and its sidebar item hides — except for `feature.manage` holders, who stay exempt (they can reach/use modules even while off).
 - **Audit trail** — every mutation (create/update/delete/restore/force-delete, admin lock/unlock, login,
   logout, reset) is automatically recorded into `activity_log` via observers.
 - **Thin controllers** — all input validation lives in **Form Requests**

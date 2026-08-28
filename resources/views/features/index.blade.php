@@ -17,12 +17,14 @@
                     <td>{{ $feature->label }}</td>
                     <td><span class="text-muted small">{{ $feature->slug }}</span></td>
                     <td class="text-end">
-                        <form method="POST" action="{{ route('features.toggle', $feature->slug) }}">
+                        <form method="POST" action="{{ route('features.toggle', $feature->slug) }}" class="d-inline features-toggle-form">
                             @csrf
-                            <input type="hidden" name="enabled" value="{{ $feature->enabled ? '0' : '1' }}">
-                            <button type="submit" class="btn btn-sm {{ $feature->enabled ? 'btn-success' : 'btn-outline-secondary' }}">
-                                {{ $feature->enabled ? 'Enabled' : 'Disabled' }}
-                            </button>
+                            <input type="hidden" name="enabled" value="{{ $feature->enabled ? '1' : '0' }}">
+                            <div class="form-check form-switch d-inline-flex align-items-center justify-content-end mb-0">
+                                <input class="form-check-input feature-toggle" type="checkbox" role="switch"
+                                       id="feat-{{ $feature->slug }}" {{ $feature->enabled ? 'checked' : '' }}
+                                       aria-label="Toggle {{ $feature->label }}">
+                            </div>
                         </form>
                     </td>
                 </tr>
@@ -35,3 +37,15 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.querySelectorAll('.feature-toggle').forEach(function (el) {
+        el.addEventListener('change', function () {
+            var form = el.closest('.features-toggle-form');
+            form.querySelector('input[name="enabled"]').value = el.checked ? '1' : '0';
+            form.submit();
+        });
+    });
+</script>
+@endpush
