@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Feature;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\TranslationLoader\LanguageLine;
@@ -39,4 +41,25 @@ it('denies translations to unauthorized user', function () {
     $this->actingAs($user)
         ->get(route('translations.index'))
         ->assertForbidden();
+});
+
+it('blocks a translation.view holder when the flag is off (404)', function () {
+    $role = Role::findOrCreate('translator', 'web');
+    $role->syncPermissions(['translation.view']);
+    $u = User::factory()->create(['username' => 'translator'.time()]);
+    $u->assignRole($role);
+
+    // flag on -> allowed
+    $this->actingAs($u)->get(route('translations.index'))->assertOk();
+
+    // flag off -> 404 (fail-closed), not a permission error
+    Feature::where('slug', 'translations')->update(['enabled' => false]);
+    $this->actingAs($u)->get(route('translations.index'))->assertNotFound();
+});
+
+it('lets a feature.manage holder reach translations while the flag is off', function () {
+    Feature::where('slug', 'translations')->update(['enabled' => false]);
+    $u = User::where('email', 'admin@laravel-base.local')->first(); // holds feature.manage
+
+    $this->actingAs($u)->get(route('translations.index'))->assertOk();
 });
