@@ -84,6 +84,8 @@ class LoginController extends Controller
         if ($user->locked_until !== null) {
             $user->update(['locked_until' => null]);
         }
+        // ponytail: record last successful login for security visibility
+        $user->update(['last_login_at' => now(), 'last_login_ip' => $request->ip()]);
         // Regenerate SESSION (driver='database' -> table `sessions`) to prevent fixation
         $request->session()->regenerate();
 
