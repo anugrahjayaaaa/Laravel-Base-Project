@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\User\UserStoreRequest;
+use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,17 +34,9 @@ class UserController extends Controller
         return view('users.create', compact('roles'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(UserStoreRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|unique:users,phone',
-            'password' => 'required|string|min:12|confirmed',
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
-        ]);
+        $data = $request->validated();
 
         $user = User::create([
             'name' => $data['name'],
@@ -62,17 +57,9 @@ class UserController extends Controller
         return view('users.edit', compact('user', 'roles'));
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|unique:users,phone,' . $user->id,
-            'password' => 'nullable|string|min:12|confirmed',
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
-        ]);
+        $data = $request->validated();
 
         $user->update([
             'name' => $data['name'],

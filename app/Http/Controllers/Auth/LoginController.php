@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
@@ -20,7 +20,7 @@ class LoginController extends Controller
     /**
      * Authenticate a user via email or username and start a session.
      *
-     * @param  Request  $request  Must contain: identifier (email|username), password, optional remember (bool)
+     * @param  LoginRequest  $request  Validated: identifier (email|username), password, optional remember (bool)
      * @return RedirectResponse  Redirect to intended page (dashboard) on success,
      *                            or back with 'identifier' error on failure / lockout.
      *
@@ -32,9 +32,8 @@ class LoginController extends Controller
      *   currently 'database' -> table `cache`, key column). Max 5 hits; on fail adds a 900s (15m) window.
      * - On success: clears the rate-limiter key, regenerates SESSION (driver='database' -> table `sessions`).
      */
-    public function store(Request $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
-        // Throttle key stored in CACHE (table `cache`): login:{ip}:{identifier}
         $identifier = (string) $request->input('identifier');
         $throttleKey = 'login:' . $request->ip() . ':' . strtolower($identifier);
 
@@ -71,13 +70,13 @@ class LoginController extends Controller
     /**
      * Log the current user out and destroy the session.
      *
-     * @param  Request  $request
+     * @param  LoginRequest  $request  (only CSRF/abort; no body validated)
      * @return RedirectResponse  Redirect to '/'
      *
      * @details Invalidates SESSION (driver='database' -> table `sessions`) and
      * regenerates the CSRF token.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(LoginRequest $request): RedirectResponse
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();

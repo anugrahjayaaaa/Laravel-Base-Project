@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ApiToken\ApiTokenStoreRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -17,11 +19,9 @@ class ApiTokenController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ApiTokenStoreRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:100',
-        ]);
+        $data = $request->validated();
 
         $plain = auth()->user()->createToken($data['name'], ['mobile'])->plainTextToken;
         // ponytail: show plain token once (no DB retrieval), flash only

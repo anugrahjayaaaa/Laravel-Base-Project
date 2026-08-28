@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Rbac\PermissionStoreRequest;
+use App\Http\Requests\Rbac\PermissionUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,11 +23,9 @@ class PermissionController extends Controller
         return view('rbac.permissions.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(PermissionStoreRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name',
-        ]);
+        $data = $request->validated();
 
         Permission::create(['name' => $data['name'], 'guard_name' => 'web']);
 
@@ -36,11 +37,9 @@ class PermissionController extends Controller
         return view('rbac.permissions.edit', compact('permission'));
     }
 
-    public function update(Request $request, Permission $permission): RedirectResponse
+    public function update(PermissionUpdateRequest $request, Permission $permission): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
-        ]);
+        $data = $request->validated();
 
         $permission->update(['name' => $data['name']]);
 
