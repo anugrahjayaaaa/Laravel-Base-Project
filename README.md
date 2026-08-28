@@ -1,58 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Base Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Base AdminLTE + RBAC starter kit untuk Laravel 13. Berisi autentikasi, role/permission
+(spatie), audit trail, soft-delete, dan logging terpusat — siap jadi fondasi aplikasi web internal.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Layer | Tech |
+|-------|------|
+| PHP | 8.3+ |
+| Framework | Laravel 13 (`laravel/framework` ^13.17) |
+| Frontend | Bootstrap 5.3 + Bootstrap Icons + AdminLTE 4.9.1 (Blade), Vite |
+| Auth | Laravel built-in + `spatie/laravel-permission` + `laravel/sanctum` (API) |
+| Audit | `spatie/laravel-activitylog` |
+| Monitoring | Laravel Log (`daily`) + Sentry (`sentry/sentry-laravel`) + `/up` health check |
+| Tests | Pest |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fitur
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Autentikasi** — login via **email atau username**, lockout 5× gagal (15 menit),
+  lupa/reset password (token di DB), ganti password (wajib password lama).
+- **RBAC** — role & permission dinamis (spatie). Super-admin, admin, staff sudah diseed.
+  Setiap aksi di-gate via `can:*` (route middleware + Form Request `authorize()`).
+- **Manajemen User** — CRUD, soft-delete, restore, permanent-delete (force-delete).
+- **Audit Trail** — semua mutasi (create/update/delete/restore/force-delete, login, logout,
+  reset) dicatat ke `activity_log` otomatis via observer.
+- **Thin controllers** — semua validasi input ada di **Form Request**
+  (`app/Http/Requests/<Domain>/`), controller hanya `validated()` + dispatch.
+- **Logging error** — 4xx (kecuali 404) otomatis ke log harian via middleware
+  `LogHttpErrors`.
+- **API** — Sanctum `/api/v1` (login, me, logout, change-password) untuk mobile.
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Instalasi
 
 ```bash
-composer require laravel/boost --dev
+# 1. Dependency
+composer install
+npm install
 
-php artisan boost:install
+# 2. Environment
+cp .env.example .env
+php artisan key:generate
+
+# 3. Database (default sqlite :memory: untuk test; untuk dev pakai MySQL/sqlite file)
+# Edit .env: DB_CONNECTION=mysql (atau biarkan sqlite)
+php artisan migrate --seed
+
+# 4. Frontend assets
+npm run build        # atau npm run dev untuk watch
+
+# 5. Jalankan
+php artisan serve    # http://localhost:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Login default (dari seeder): `admin@laravel-base.local` / `Admin@base12345` (super-admin).
 
-## Contributing
+### .env yang perlu diisi
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Variabel | Keterangan |
+|----------|-----------|
+| `DB_*` | Koneksi database (default sqlite) |
+| `CACHE_STORE` | `database` (default) → table `cache` |
+| `SESSION_DRIVER` | `database` (default) → table `sessions` |
+| `MAIL_*` | Diperlukan agar email reset password benar-benar terkirim |
+| `SENTRY_DSN` | Aktifkan monitoring Sentry (opsional, kosong = nonaktif) |
 
-## Code of Conduct
+## Perintah Umum
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan serve              # jalankan dev server
+php artisan migrate --seed     # migrasi + isi data awal (role/permission/user)
+php artisan route:list         # lihat semua route
+php artisan test               # jalankan semua test (Pest)
+npm run dev                    # Vite watch (frontend)
+npm run build                  # build asset produksi
+composer test                  # sama dengan php artisan test
+```
 
-## Security Vulnerabilities
+## Menjalankan Tests
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Test pakai **Pest**, database **sqlite `:memory:`** (diisolasi per test, otomatis seed).
+
+```bash
+php artisan test                          # semua test
+php artisan test --filter="ProfileTest"   # hanya test tertentu
+php artisan test tests/Feature/AuthLoginTest.php  # file tertentu
+```
+
+Lokasi: `tests/Feature/` (HTTP/controller) dan `tests/Unit/`.
+Coverage saat ini: **55 test / 139 assertions** (login, RBAC, profile, audit, logging, API).
+
+## Log, Cache & State — где lihat?
+
+| Yang dicari | Lokasi |
+|------------|--------|
+| **Error / HTTP log** (file) | `storage/logs/laravel-YYYY-MM-DD.log` (rotasi harian, `LOG_STACK=daily`) |
+| **Error (dashboard)** | Sentry (jika `SENTRY_DSN` diset) |
+| **Health check** | `/up` → `{"status":"ok"}` |
+| **User action audit** | menu **Audit Log** (`/audit`) atau DB table `activity_log` |
+| **Rate-limit login** | cache key `login:{ip}:{identifier}` → table `cache` |
+| **Session** | table `sessions` (`SESSION_DRIVER=database`) |
+| **Reset-password token** | table `password_reset_tokens` |
+| **Log viewer web** | belum ada (pakai file log / Sentry) |
+
+### Monitoring error di local
+
+```bash
+tail -f storage/logs/laravel-$(date +%Y-%m-%d).log
+```
+
+Atau kalau `APP_DEBUG=true`, error 500 langsung tampil di browser.
+
+## Struktur Penting
+
+```
+app/
+  Http/
+    Controllers/        # thin controllers
+    Requests/           # Form Request per domain (Auth, User, Rbac, Profile, ApiToken)
+    Middleware/
+      LogHttpErrors.php # log 4xx ke daily log
+  Models/              # User, Role, Permission (SoftDeletes)
+  Observers/            # log force-delete ke activity_log
+docs/                  # CONTRIBUTING, auth, architecture, audit-trail, observability, dll
+```
+
+## Kontribusi
+
+Lihat `docs/CONTRIBUTING.md` — aturan inti: **validation di Form Request**, controller tipis,
+setiap PR wajib tests hijau + docs sync.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT.
