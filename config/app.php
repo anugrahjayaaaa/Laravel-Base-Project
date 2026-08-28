@@ -82,6 +82,12 @@ return [
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
+    /*
+     * Locales supported by the app. Adding a language = append here, then
+     * reseed (LanguageLineSeeder reads these) and translate the JSON lang files.
+     */
+    'available_locales' => ['en', 'id'],
+
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     /*

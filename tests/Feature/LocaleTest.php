@@ -31,6 +31,20 @@ it('SetLocale middleware applies session locale to the app', function () {
     expect($called)->toBeTrue();
 });
 
+it('switches UI language end-to-end via session', function () {
+    $u = User::where('email', 'admin@laravel-base.local')->first();
+    $this->actingAs($u);
+
+    // default locale is English
+    $this->get(route('dashboard'))->assertSee('Dashboard');
+
+    // choose Indonesian -> session persists to the next request
+    $this->post(route('locale.update'), ['locale' => 'id'])->assertRedirect();
+
+    // SetLocale must read the session *after* StartSession, so the menu renders ID
+    $this->get(route('dashboard'))->assertSee('Dasbor');
+});
+
 it('rejects unsupported locale', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($u)
