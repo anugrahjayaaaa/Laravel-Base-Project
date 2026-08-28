@@ -89,7 +89,7 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **55 tests / 139 assertions** (login, RBAC, profile, audit, logging, API).
+Current coverage: **66 tests / 192 assertions** (login, RBAC, profile, audit, logging, API).
 
 ## Logs, cache & state — where to look
 

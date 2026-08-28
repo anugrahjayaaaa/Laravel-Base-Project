@@ -35,6 +35,13 @@ All write a row to **DB table `activity_log`** (spatie/laravel-activitylog).
 ### `UserObserver`, `RoleObserver`, `PermissionObserver`
 Each has: `created`, `updated`, `deleted` (soft), `restored`, `forceDeleted`.
 
+**`updated($model)`** (before/after diff)
+- Logs `old` (from `getOriginal()`) and `new` (the dirty fields) into `properties`.
+- `password` and `remember_token` are always stripped from both maps — never logged.
+- The Audit Log page renders these in the **Detail modal** (eye button per row): a
+  `Field | Old | New` table, plus Time, Causer, IP, and User agent.
+- Events without a field delta (login, delete, restore, …) show "No field changes recorded."
+
 **`forceDeleted($model)`** (added for permanent-delete compliance)
 - Purpose: log an unrecoverable (hard) delete to the audit trail.
 - Input: the soft-deleted-then-force-deleted model.
@@ -45,3 +52,9 @@ Each has: `created`, `updated`, `deleted` (soft), `restored`, `forceDeleted`.
   - `PermissionObserver` → action `permission_force_deleted`
   - `properties` = `{ ip, user_agent }`; `causer` = currently auth'd user.
 - Unlike `deleted()` (soft delete, recoverable), this is permanent.
+
+## Subject & causer resolution
+- Audit rows eager-load `subject` and `causer`. `subject` uses `withoutGlobalScopes()`
+  so **soft-deleted** subjects (a deleted user/role/permission) still resolve to their
+  name in the Subject column — otherwise only `#id` would show.
+- Auth events (login/logout/reset) have no subject by design → Subject shows `#`.
