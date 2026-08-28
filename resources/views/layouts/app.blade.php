@@ -16,6 +16,11 @@
         /* keep header user dropdown above header bar (AdminLTE can clip it) */
         .app-header { overflow: visible; }
         .app-header .dropdown-menu { z-index: 1030; }
+        /* native <details> user menu (no Bootstrap/Popper dependency) */
+        .user-menu > summary { list-style: none; cursor: pointer; }
+        .user-menu > summary::-webkit-details-marker { display: none; }
+        .user-menu .dropdown-menu { display: none; position: absolute; right: 0; z-index: 1030; }
+        .user-menu[open] .dropdown-menu { display: block; }
     </style>
 </head>
 <body class="layout-fixed sidebar-open">
@@ -85,32 +90,34 @@
                     </div>
                 </li>
 
-                {{-- User menu --}}
+                {{-- User menu (native <details>, no JS dependency) --}}
                 @auth
-                <li class="nav-item dropdown">
-                    <button type="button" class="nav-link d-flex align-items-center gap-2 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
+                <details class="nav-item dropdown user-menu">
+                    <summary class="nav-link d-flex align-items-center gap-2" aria-label="User menu">
                         <span class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:34px;height:34px">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                         <span class="d-none d-md-inline fw-medium">{{ auth()->user()->name }}</span>
                         <i class="bi bi-chevron-down small opacity-75"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end py-1" style="min-width:220px">
-                        <div class="dropdown-item-text d-flex align-items-center gap-2 pb-2">
+                    </summary>
+                    <ul class="dropdown-menu dropdown-menu-end py-1" style="min-width:220px">
+                        <li class="dropdown-item-text d-flex align-items-center gap-2 pb-2">
                             <span class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:38px;height:38px">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                             <div class="text-truncate">
                                 <div class="fw-medium">{{ auth()->user()->name }}</div>
                                 <div class="text-muted small text-truncate" style="max-width:150px">{{ auth()->user()->email }}</div>
                             </div>
-                        </div>
-                        <div class="dropdown-divider my-0"></div>
-                        <a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> Profile</a>
-                        <a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> Sessions</a>
-                        <div class="dropdown-divider my-0"></div>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button class="dropdown-item py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
-                        </form>
-                    </div>
-                </li>
+                        </li>
+                        <li><hr class="dropdown-divider my-0"></li>
+                        <li><a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> Profile</a></li>
+                        <li><a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> Sessions</a></li>
+                        <li><hr class="dropdown-divider my-0"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="dropdown-item py-2 text-danger w-100 text-start"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </details>
                 @endauth
             </ul>
         </div>
