@@ -12,6 +12,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{{ asset('vendor/app-theme.css') }}">
+    <style>
+        /* keep header user dropdown above header bar (AdminLTE can clip it) */
+        .app-header { overflow: visible; }
+        .app-header .dropdown-menu { z-index: 1030; }
+    </style>
 </head>
 <body class="layout-fixed sidebar-open">
 <div class="app-wrapper">
@@ -83,11 +88,11 @@
                 {{-- User menu --}}
                 @auth
                 <li class="nav-item dropdown">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="nav-link d-flex align-items-center gap-2 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
                         <span class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:34px;height:34px">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                         <span class="d-none d-md-inline fw-medium">{{ auth()->user()->name }}</span>
                         <i class="bi bi-chevron-down small opacity-75"></i>
-                    </a>
+                    </button>
                     <div class="dropdown-menu dropdown-menu-end py-1" style="min-width:220px">
                         <div class="dropdown-item-text d-flex align-items-center gap-2 pb-2">
                             <span class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:38px;height:38px">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
