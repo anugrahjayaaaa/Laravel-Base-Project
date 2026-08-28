@@ -17,4 +17,7 @@ return [
     'language' => 'Language',
     'english' => 'English',
     'indonesian' => 'Indonesian',
+    'main_menu' => 'Main Menu',
+    'template' => 'Template',
+    'login' => 'Login',
 ];

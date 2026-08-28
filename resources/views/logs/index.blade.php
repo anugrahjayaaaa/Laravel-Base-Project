@@ -5,7 +5,7 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <h1 class="m-0 h3">System Logs</h1>
+        <h1 class="m-0 h3">{{ __('messages.system_logs') }}</h1>
     </div>
 </div>
 
