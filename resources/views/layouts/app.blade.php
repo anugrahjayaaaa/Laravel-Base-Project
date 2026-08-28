@@ -106,7 +106,7 @@
                             </div>
                         </li>
                         <li><hr class="dropdown-divider my-0"></li>
-                        <li><a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> {{ __('messages.profile') }}</a></li>
+                        <li><a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> Profile</a></li>
                         <li><a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> {{ __('messages.sessions') }}</a></li>
                         <li><hr class="dropdown-divider my-0"></li>
                         <li class="dropdown-item-text pb-1">
@@ -115,12 +115,12 @@
                                 <form method="POST" action="{{ route('locale.update') }}" class="flex-fill">
                                     @csrf
                                     <input type="hidden" name="locale" value="en">
-                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'en' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">{{ __('messages.english') }}</button>
+                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'en' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">EN</button>
                                 </form>
                                 <form method="POST" action="{{ route('locale.update') }}" class="flex-fill">
                                     @csrf
                                     <input type="hidden" name="locale" value="id">
-                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'id' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">{{ __('messages.indonesian') }}</button>
+                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'id' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">ID</button>
                                 </form>
                             </div>
                         </li>
@@ -128,7 +128,7 @@
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="dropdown-item py-2 text-danger w-100 text-start"><i class="bi bi-box-arrow-right me-2"></i> {{ __('messages.logout') }}</button>
+                                <button class="dropdown-item py-2 text-danger w-100 text-start"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
                             </form>
                         </li>
                     </ul>
@@ -149,51 +149,52 @@
         <div class="sidebar-wrapper">
             <nav class="mt-3 sidebar-nav">
                 <ul class="nav sidebar-menu nav-indent flex-column" data-lte-toggle="treeview" data-accordion="false">
-                    <li class="nav-header">{{ __('messages.main_menu') }}</li>
+                    <li class="nav-header">MAIN MENU</li>
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" data-menu-text="{{ __('messages.dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-speedometer2"></i> <span>{{ __('messages.dashboard') }}</span>
+                        <a href="{{ route('dashboard') }}" data-menu-text="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer2"></i> <span>Dashboard</span>
                         </a>
                     </li>
                     @can('user.view')
                     @if(featureVisible('users'))
-                    <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="{{ __('messages.users') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>{{ __('messages.users') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="Users" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
                     @endif
                     @endcan
                     @can('role.view')
                     @if(featureVisible('roles'))
-                    <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="{{ __('messages.roles') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>{{ __('messages.roles') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="Roles" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
                     @endif
                     @endcan
                     @can('permission.view')
                     @if(featureVisible('permissions'))
-                    <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="{{ __('messages.permissions') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>{{ __('messages.permissions') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="Permissions" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
                     @endif
                     @endcan
                     @can('audit.view')
                     @if(featureVisible('audit'))
-                    <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="{{ __('messages.audit_log') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>{{ __('messages.audit_log') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="Audit Log" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
                     @endif
                     @endcan
                     @can('logs.view')
-                    <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="{{ __('messages.logs') }}" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>{{ __('messages.logs') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="Logs" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>Logs</span></a></li>
                     @endcan
-                    <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="Profile" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
                     @can('session.view')
                     @if(featureVisible('sessions'))
-                    <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="{{ __('messages.sessions') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>{{ __('messages.sessions') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="Sessions" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
                     @endif
                     @endcan
                     @can('api-token.view')
                     @if(featureVisible('api-tokens'))
-                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="{{ __('messages.api_tokens') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>{{ __('messages.api_tokens') }}</span></a></li>
+                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="API Tokens" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
                     @endif
                     @endcan
                     @can('feature.manage')
                     <li class="nav-item {{ request()->routeIs('features.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                        <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>Settings</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
+                            <li class="nav-item"><a href="{{ route('translations.index') }}" data-menu-text="{{ __('messages.translations') }}" class="nav-link {{ request()->routeIs('translations.*') ? 'active' : '' }}"><i class="nav-icon bi bi-translate"></i> <span>{{ __('messages.translations') }}</span></a></li>
                         </ul>
                     </li>
                     @endcan
@@ -201,11 +202,11 @@
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
                             @csrf
-                            <button type="submit" class="nav-link border-0 bg-transparent text-start w-100"><i class="nav-icon bi bi-box-arrow-right"></i> <span>{{ __('messages.logout') }}</span></button>
+                            <button type="submit" class="nav-link border-0 bg-transparent text-start w-100"><i class="nav-icon bi bi-box-arrow-right"></i> <span>Logout</span></button>
                         </form>
                     </li>
 
-                    <li class="nav-header">{{ __('messages.template') }}</li>
+                    <li class="nav-header">TEMPLATE</li>
 
                     {{-- Widgets --}}
                     <li class="nav-item">
@@ -323,7 +324,7 @@
                             <li class="nav-item">
                                 <a href="#" class="nav-link"><i class="nav-icon bi bi-box-arrow-in-right"></i> <span>Version 1</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                                 <ul class="nav nav-treeview">
-                                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/login.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>{{ __('messages.login') }}</span></a></li>
+                                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/login.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>Login</span></a></li>
                                     <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/register.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>Register</span></a></li>
                                     <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/forgot-password.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>Forgot Password</span></a></li>
                                 </ul>
@@ -331,7 +332,7 @@
                             <li class="nav-item">
                                 <a href="#" class="nav-link"><i class="nav-icon bi bi-box-arrow-in-right"></i> <span>Version 2</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                                 <ul class="nav nav-treeview">
-                                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/login-v2.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>{{ __('messages.login') }}</span></a></li>
+                                    <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/login-v2.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>Login</span></a></li>
                                     <li class="nav-item"><a href="{{ asset('vendor/adminlte/examples/register-v2.html') }}" class="nav-link" target="_blank"><i class="nav-icon bi bi-circle"></i> <span>Register</span></a></li>
                                 </ul>
                             </li>

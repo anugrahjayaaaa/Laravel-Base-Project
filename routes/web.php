@@ -68,6 +68,13 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/locale', [App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
 
+    // Translations management (under Settings, gated feature.manage)
+    Route::prefix('settings')->middleware('can:feature.manage')->group(function () {
+        Route::get('/translations', [App\Http\Controllers\TranslationController::class, 'index'])->name('translations.index');
+        Route::get('/translations/{languageLine}/edit', [App\Http\Controllers\TranslationController::class, 'edit'])->name('translations.edit');
+        Route::put('/translations/{languageLine}', [App\Http\Controllers\TranslationController::class, 'update'])->name('translations.update');
+    });
+
     Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');
 });
 
