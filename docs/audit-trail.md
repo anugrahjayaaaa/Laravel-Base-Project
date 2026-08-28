@@ -24,3 +24,24 @@ id | causer_id | causer_name | action | subject_type | subject_id
 
 ## Gate
 - Every state mutation is logged. RED if any write path lacks a log.
+
+---
+
+## Implementation Reference (functions)
+
+Observers live in `app/Observers/` and are registered in `AppServiceProvider`.
+All write a row to **DB table `activity_log`** (spatie/laravel-activitylog).
+
+### `UserObserver`, `RoleObserver`, `PermissionObserver`
+Each has: `created`, `updated`, `deleted` (soft), `restored`, `forceDeleted`.
+
+**`forceDeleted($model)`** (added for permanent-delete compliance)
+- Purpose: log an unrecoverable (hard) delete to the audit trail.
+- Input: the soft-deleted-then-force-deleted model.
+- Output: `void`.
+- State: writes one row to **DB table `activity_log`**:
+  - `UserObserver` → action `user_force_deleted`
+  - `RoleObserver` → action `role_force_deleted`
+  - `PermissionObserver` → action `permission_force_deleted`
+  - `properties` = `{ ip, user_agent }`; `causer` = currently auth'd user.
+- Unlike `deleted()` (soft delete, recoverable), this is permanent.

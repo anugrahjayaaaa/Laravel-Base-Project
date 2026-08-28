@@ -2,7 +2,7 @@
 
 ## User fields
 - `username` (unique, login identifier #1)
-- `phone` (unique, login identifier #2, E.164)
+- `phone` (unique, stored but NOT a login identifier — removed from login flow)
 - `email` (unique, verification/reset)
 - `password` (argon2id/bcrypt, NEVER plaintext)
 - `email_verified_at`, `phone_verified_at`
@@ -15,12 +15,12 @@
 - Argon2id default Laravel cost.
 
 ## Flow
-- Login: username OR phone + password.
+- Login: **email OR username** + password (phone removed).
 - Lockout: 5 consecutive fails → 15m lock (throttle key = ip+identifier). Fails & locks → audit.
-- Rate limit: /login, /password/*, /register (e.g. 10/15m).
-- Reset: hashed token, 60m expiry, single-use.
+- Rate limit: /login, /password/* (e.g. 10/15m).
+- Reset: hashed token, 60m expiry, single-use, stored in DB table `password_reset_tokens`.
 - Verify: email activation before full access.
-- Logout: invalidate session + Sanctum token; audit.
+- Logout: invalidate session + regenerate CSRF token; audit.
 - Change password: old password required; audit; revoke other sessions.
 
 ## Self-service
@@ -32,3 +32,41 @@
 - Cookie: httpOnly, secure, sameSite=lax.
 - No secrets in code/VCS (.env gitignored).
 - Rate limit active on auth endpoints.
+
+---
+
+## Implementation Reference (functions)
+
+### `App\Http\Controllers\Auth\LoginController`
+
+**`show()`**
+- Purpose: render login page.
+- Input: none.
+- Output: `view('auth.login')`.
+
+**`store(Request $request)`**
+- Purpose: authenticate user via email or username, start session.
+- Input: `identifier` (email|username), `password`, optional `remember` (bool).
+- Output: redirect to dashboard (success) or back with `identifier` error.
+- Throws: `ValidationException` on bad credentials / lockout.
+- State:
+  - Rate limiter key `login:{ip}:{identifier}` → **CACHE** (driver `database` → table `cache`).
+    Max 5 hits; on fail adds 900s (15m) window. Cleared on success.
+  - Session regenerated → **DB table `sessions`** (`config('session.driver')`).
+  - Fires `Illuminate\Auth\Events\Login` (so audit observer logs it).
+
+**`destroy(Request $request)`**
+- Purpose: logout, destroy session.
+- Input: none (auth'd user).
+- Output: redirect to `/`.
+- State: invalidates **DB table `sessions`**, regenerates CSRF token.
+
+### `App\Http\Controllers\Auth\ForgotPasswordController`
+
+**`create()`** — show forgot-password form (`auth.forgot-password`).
+**`store(Request $request)`** — validate `email`, send reset link via `Password::broker('users')`.
+  - State: reset token → **DB table `password_reset_tokens`** (keyed by email).
+  - Email sent via default `ResetPassword` notification (needs `MAIL_*` config to deliver).
+**`edit(Request $request, string $token)`** — show reset form (`auth.reset-password`).
+**`update(Request $request)`** — verify token + set new password (min 8, confirmed).
+  - State: verifies token against **`password_reset_tokens`**, then clears the row.
