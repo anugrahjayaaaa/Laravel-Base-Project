@@ -49,20 +49,24 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer d-flex flex-column gap-2">
-            <div>
+        <div class="card-footer bg-light d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
                 @if ($user->isLocked())
-                    <span class="badge text-bg-warning me-1">locked</span>
+                    <span class="badge text-bg-warning"><i class="bi bi-lock-fill me-1"></i>Locked</span>
                 @else
-                    <span class="badge text-bg-success me-1">active</span>
+                    <span class="badge text-bg-success"><i class="bi bi-unlock-fill me-1"></i>Active</span>
                 @endif
                 @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.edit'))
                     <form method="POST" action="{{ route('users.reset-link', $user) }}" class="d-inline">@csrf
-                        <button class="btn btn-sm btn-outline-secondary">Send reset link</button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" data-bs-title="Send reset link" aria-label="Send reset link">
+                            <i class="bi bi-envelope"></i>
+                        </button>
                     </form>
                     @if ($user->isLocked())
                     <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
-                        <button class="btn btn-sm btn-outline-warning">Unlock</button>
+                        <button type="submit" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" data-bs-title="Unlock account" aria-label="Unlock account">
+                            <i class="bi bi-unlock-fill"></i>
+                        </button>
                     </form>
                     @endif
                 @endif
