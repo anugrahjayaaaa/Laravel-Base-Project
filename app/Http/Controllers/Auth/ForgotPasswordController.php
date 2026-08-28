@@ -43,6 +43,11 @@ class ForgotPasswordController extends Controller
         );
 
         if ($status === Password::RESET_LINK_SENT) {
+            // ponytail: broker does not fire an event for "link requested"; log it so audit trail is complete
+            activity()
+                ->withProperties(['ip' => $request->ip(), 'user_agent' => $request->userAgent(), 'email' => $request->email])
+                ->log('password_reset_request');
+
             return back()->with('status', __($status));
         }
 
