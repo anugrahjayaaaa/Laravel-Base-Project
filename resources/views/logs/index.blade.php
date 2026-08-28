@@ -65,7 +65,7 @@
                                         @if(!empty($log['stack']))
                                             <details class="mt-1">
                                                 <summary class="small text-primary" style="cursor:pointer">Stack trace</summary>
-                                                <pre class="small bg-dark text-light p-2 mt-1 mb-0" style="white-space:pre-wrap;overflow:auto">{{ trim($log['stack']) }}</pre>
+                                                <pre class="small bg-dark text-light p-2 mt-1 mb-0" style="white-space:pre-wrap;overflow:auto;max-height:300px">{{ trim($log['stack']) }}</pre>
                                             </details>
                                         @endif
                                     </td>
