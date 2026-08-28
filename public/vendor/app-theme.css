@@ -52,11 +52,13 @@ body {
 }
 /* keep header items horizontal even if a grid/flex override kicks in */
 .app-header.navbar,
+.app-header .container-fluid,
 .app-header .navbar-nav {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
+.app-header .container-fluid { flex-wrap: nowrap; gap: 0.5rem; }
 .app-header .navbar-nav { flex-wrap: nowrap; }
 .app-sidebar.sidebar {
   background: var(--lbp-surface) !important;
