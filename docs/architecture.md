@@ -20,6 +20,8 @@ HTTP (web Blade / API JSON)
     → Service / Action (business logic)
       → Eloquent Models (SoftDeletes)
         → MySQL
+- Custom models: `App\Models\User`, `App\Models\Role`, `App\Models\Permission` all use `SoftDeletes`;
+  `config/permission.php` maps spatie to the custom Role/Permission.
 Cross-cutting: auth, rbac(permission), force-json, log-activity middleware;
 Exceptions → Sentry + structured log; Policies per resource.
 ```
