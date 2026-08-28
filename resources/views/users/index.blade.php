@@ -45,7 +45,9 @@
                         @if ($user->roles->isEmpty())<span class="text-muted">-</span>@endif
                     </td>
                     <td>
-                        @if ($user->isLocked())
+                        @if ($user->isPermanentlyLocked())
+                            <span class="badge text-bg-danger">perm locked</span>
+                        @elseif ($user->isLocked())
                             <span class="badge text-bg-warning">locked</span>
                         @else
                             <span class="badge text-bg-success">active</span>
@@ -64,10 +66,18 @@
                                     <i class="bi bi-envelope"></i>
                                 </button>
                             </form>
+                            @endif
+                            @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.lock'))
                             @if ($user->isLocked())
                             <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
                                 <button type="submit" class="btn btn-sm btn-light border rounded-2 text-warning" data-bs-toggle="tooltip" data-bs-title="Unlock account" aria-label="Unlock account" style="min-width:38px">
                                     <i class="bi bi-unlock-fill"></i>
+                                </button>
+                            </form>
+                            @else
+                            <form method="POST" action="{{ route('users.lock', $user) }}" class="d-inline">@csrf
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Lock account" aria-label="Lock account" style="min-width:38px">
+                                    <i class="bi bi-lock-fill"></i>
                                 </button>
                             </form>
                             @endif

@@ -83,13 +83,31 @@ class UserController extends Controller
     public function unlock(int $id): RedirectResponse
     {
         $user = User::withTrashed()->findOrFail($id);
-        $user->update(['locked_until' => null]);
+        $user->update(['locked_until' => null, 'locked_permanently' => false]);
 
         activity()->causedBy(auth()->user())
             ->performedOn($user)
             ->log('user_unlocked');
 
         return redirect()->route('users.index')->with('success', 'User unlocked.');
+    }
+
+    /**
+     * Permanently lock an account (admin action). Only unlock() clears it.
+     */
+    public function lock(int $id): RedirectResponse
+    {
+        if ($id === auth()->id()) {
+            return redirect()->route('users.index')->with('error', 'Cannot lock yourself.');
+        }
+        $user = User::withTrashed()->findOrFail($id);
+        $user->update(['locked_until' => null, 'locked_permanently' => true]);
+
+        activity()->causedBy(auth()->user())
+            ->performedOn($user)
+            ->log('user_locked');
+
+        return redirect()->route('users.index')->with('success', 'User locked.');
     }
 
     /**

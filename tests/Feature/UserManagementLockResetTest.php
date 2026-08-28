@@ -64,3 +64,54 @@ it('logs unlock and reset-link actions to audit', function () {
     expect($descs)->toContain('user_unlocked');
     expect($descs)->toContain('user_reset_link_sent');
 });
+
+it('permanently locks an account (user.lock permission, self excluded)', function () {
+    $admin = User::where('email', 'admin@laravel-base.local')->first();
+    $this->actingAs($admin);
+
+    // Self-lock is blocked (cannot lock yourself).
+    $this->post(route('users.lock', $admin))
+        ->assertRedirect(route('users.index'))
+        ->assertSessionHas('error');
+    expect($admin->fresh()->isLocked())->toBeFalse();
+
+    $u = User::factory()->create(['username' => 'plk'.time()]);
+    $this->post(route('users.lock', $u))
+        ->assertRedirect(route('users.index'))
+        ->assertSessionHas('success');
+
+    $locked = $u->fresh();
+    expect($locked->isLocked())->toBeTrue();
+    expect($locked->isPermanentlyLocked())->toBeTrue();
+    expect($locked->locked_permanently)->toBeTrue(); // flag, not a sentinel date
+    expect(\Spatie\Activitylog\Models\Activity::where('subject_id', $u->id)
+        ->where('description', 'user_locked')->exists())->toBeTrue();
+
+    // Unlock clears the permanent flag.
+    $this->post(route('users.unlock', $u))->assertRedirect(route('users.index'));
+    expect($u->fresh()->isPermanentlyLocked())->toBeFalse();
+    expect($u->fresh()->isLocked())->toBeFalse();
+});
+
+it('blocks login for a permanently locked account with admin message', function () {
+    $u = User::where('email', 'admin@laravel-base.local')->first();
+    $u->update(['password' => \Illuminate\Support\Facades\Hash::make('RightPass@12345'), 'locked_until' => null, 'locked_permanently' => true]);
+
+    $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'RightPass@12345'])
+        ->assertSessionHasErrors('identifier');
+
+    $errors = session('errors')->get('identifier');
+    expect($errors[0])->toContain('permanently locked');
+});
+
+it('staff without user.lock cannot lock an account', function () {
+    $staff = User::factory()->create(['username' => 'lkst'.time()]);
+    $staff->assignRole('staff'); // only user.view, audit.view
+    $target = User::factory()->create(['username' => 'lkta'.time()]);
+
+    $this->actingAs($staff)
+        ->post(route('users.lock', $target))
+        ->assertForbidden();
+
+    expect($target->fresh()->isLocked())->toBeFalse();
+});

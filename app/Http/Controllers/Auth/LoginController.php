@@ -51,9 +51,11 @@ class LoginController extends Controller
 
         // Account-level lockout (survives IP rotation; auto-unlocks when locked_until passes)
         if ($user && $user->isLocked()) {
-            $seconds = $user->locked_until->diffInSeconds(now());
+            $message = $user->isPermanentlyLocked()
+                ? 'Account permanently locked. Contact an administrator.'
+                : 'Account locked. Try again in ' . $user->locked_until->diffInSeconds(now()) . 's.';
             throw ValidationException::withMessages([
-                'identifier' => "Account locked. Try again in {$seconds}s.",
+                'identifier' => $message,
             ]);
         }
 

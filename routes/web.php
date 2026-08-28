@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:user.view');
     Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware('can:user.restore');
     Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware('can:user.force-delete');
-    Route::post('/users/{user}/unlock', [App\Http\Controllers\UserController::class, 'unlock'])->name('users.unlock')->middleware('can:user.edit');
+    Route::post('/users/{user}/lock', [App\Http\Controllers\UserController::class, 'lock'])->name('users.lock')->middleware('can:user.lock');
+    Route::post('/users/{user}/unlock', [App\Http\Controllers\UserController::class, 'unlock'])->name('users.unlock')->middleware('can:user.lock');
     Route::post('/users/{user}/reset-link', [App\Http\Controllers\UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware('can:user.edit');
 
     Route::resource('roles', RoleController::class)->middleware('can:role.view');
