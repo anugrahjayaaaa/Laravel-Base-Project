@@ -15,6 +15,19 @@ Goal: fast root cause when an issue/bug happens in prod.
   (404 skipped to avoid noise from missing assets/crawlers.) 5xx already logged by
   Laravel's exception handler.
 
+## Implementation Reference (functions)
+
+### `App\Http\Middleware\LogHttpErrors::handle(Request $request, Closure $next)`
+- Purpose: capture response, log 4xx client errors (except 404) for monitoring.
+- Input: `$request` (HTTP request), `$next` (next middleware).
+- Output: unchanged `Response` (pass-through).
+- State / where:
+  - Logs to **daily log channel** → file `storage/logs/laravel-YYYY-MM-DD.log`
+    (driver `config('logging.default')`, default `daily`).
+  - Context: `url`, `method`, `ip`, `user_id`.
+  - 5xx already handled by Laravel exception handler; 404 skipped (noise).
+- Registered globally in `bootstrap/app.php`.
+
 ## Error tracking — Sentry
 - Init in bootstrap; `release = app.version`; small `traces_sample_rate` (0.2).
 - Tag `user_id` to filter per user.

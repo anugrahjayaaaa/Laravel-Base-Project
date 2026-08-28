@@ -26,6 +26,20 @@ Cross-cutting: auth, rbac(permission), force-json, log-activity middleware;
 Exceptions → Sentry + structured log; Policies per resource.
 ```
 
+---
+
+## Implementation Reference (functions / models)
+
+### Custom models `App\Models\Role` & `App\Models\Permission`
+- Extend spatie's `Role`/`Permission` and add `SoftDeletes` (trash/restore/force-delete).
+- **Why custom (not spatie base):** `config/permission.php` (`models.role` / `models.permission`)
+  points here, so every RBAC query/mutation routes through these classes — required so the
+  `RoleObserver` / `PermissionObserver` fire (spatie base would skip them).
+- State: rows soft-deleted get `deleted_at` set; `forceDeleted()` clears the row permanently
+  and is logged to **DB table `activity_log`** (see audit-trail.md).
+- Observers registered in `AppServiceProvider` (not spatie's base provider).
+
+
 ## v1 modules
 1. Auth (login username|phone, logout, register, reset pwd, failed-login lockout, email verify, profile self-service, session mgmt)
 2. RBAC (roles, permissions, assignment UI — dynamic)
