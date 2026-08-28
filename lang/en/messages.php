@@ -20,4 +20,7 @@ return [
     'main_menu' => 'Main Menu',
     'template' => 'Template',
     'login' => 'Login',
+    'saved' => 'Saved.',
+    'translations' => 'Translations',
+    'save' => 'Save',
 ];

@@ -20,4 +20,7 @@ return [
     'main_menu' => 'Menu Utama',
     'template' => 'Template',
     'login' => 'Masuk',
+    'saved' => 'Tersimpan.',
+    'translations' => 'Terjemahan',
+    'save' => 'Simpan',
 ];
