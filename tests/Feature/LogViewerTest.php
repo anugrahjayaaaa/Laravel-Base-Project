@@ -15,7 +15,7 @@ it('shows logs page to user with logs.view', function () {
     $this->actingAs($u)
         ->get('/logs')
         ->assertOk()
-        ->assertSee('laravel'); // package renders a log viewer page
+        ->assertSee('System Logs'); // our AdminLTE view title
 });
 
 it('forbids logs page to user without logs.view', function () {
