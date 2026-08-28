@@ -30,9 +30,8 @@ class LoginController extends Controller
             ]);
         }
 
-        // Resolve login field: username OR phone OR email
-        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email'
-            : (preg_match('/^\+?\d{8,15}$/', $identifier) ? 'phone' : 'username');
+        // Resolve login field: email OR username
+        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         $user = User::where($field, $identifier)->first();
 

@@ -26,5 +26,6 @@
 <body class="login-page">
     @yield('content')
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>

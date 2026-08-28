@@ -13,6 +13,12 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
     Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'store'])
         ->middleware('throttle:10,15')->name('login.store');
+
+    // Password reset
+    Route::get('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'store'])->name('password.email');
+    Route::get('reset-password/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'edit'])->name('password.reset');
+    Route::post('reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'update'])->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
