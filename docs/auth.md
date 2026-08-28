@@ -16,7 +16,7 @@
 
 ## Flow
 - Login: **email OR username** + password (phone removed).
-- Lockout: 5 consecutive fails → 15m lock (throttle key = ip+identifier). Fails & locks → audit.
+- Lockout: 5 consecutive fails → account locked 15m (DB column `users.locked_until`, survives IP rotation; auto-unlocks when it expires). IP+identifier throttle (cache key `login:{ip}:{identifier}`) still applies as a first layer. Fails are not audited individually (throttle state lives in cache).
 - Rate limit: /login, /password/* (e.g. 10/15m).
 - Reset: hashed token, 60m expiry, single-use, stored in DB table `password_reset_tokens`.
 - Verify: email activation before full access.

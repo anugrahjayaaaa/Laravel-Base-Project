@@ -49,9 +49,23 @@ class LoginController extends Controller
 
         $user = User::where($field, $identifier)->first();
 
+        // Account-level lockout (survives IP rotation; auto-unlocks when locked_until passes)
+        if ($user && $user->isLocked()) {
+            $seconds = $user->locked_until->diffInSeconds(now());
+            throw ValidationException::withMessages([
+                'identifier' => "Account locked. Try again in {$seconds}s.",
+            ]);
+        }
+
         if (! $user || ! Auth::guard('web')->attempt([$field => $identifier, 'password' => $request->password], $request->boolean('remember'))) {
             // Failed attempt -> increment lock window in CACHE (table `cache`), 900s
             RateLimiter::hit($throttleKey, 900);
+
+            // On the 5th failed attempt, lock the account for 15 minutes (DB-persisted)
+            if (RateLimiter::attempts($throttleKey) >= 5 && $user) {
+                $user->update(['locked_until' => now()->addMinutes(15)]);
+            }
+
             throw ValidationException::withMessages([
                 'identifier' => 'These credentials do not match our records.',
             ]);
@@ -61,6 +75,10 @@ class LoginController extends Controller
         event(new \Illuminate\Auth\Events\Login('web', $user, $request->boolean('remember')));
 
         RateLimiter::clear($throttleKey);
+        // Clear any expired lock marker on successful login
+        if ($user->locked_until !== null) {
+            $user->update(['locked_until' => null]);
+        }
         // Regenerate SESSION (driver='database' -> table `sessions`) to prevent fixation
         $request->session()->regenerate();
 
