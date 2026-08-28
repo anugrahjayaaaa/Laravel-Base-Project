@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'username', 'email', 'phone', 'password', 'locked_until'])]
+#[Fillable(['name', 'username', 'email', 'phone', 'password', 'locked_until', 'locked_permanently'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
             'locked_until' => 'datetime',
+            'locked_permanently' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -35,6 +36,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isLocked(): bool
     {
-        return $this->locked_until !== null && $this->locked_until->isFuture();
+        return $this->locked_permanently || ($this->locked_until !== null && $this->locked_until->isFuture());
+    }
+
+    /** True when locked permanently by an admin (not the 15m auto-lock from failed logins). */
+    public function isPermanentlyLocked(): bool
+    {
+        return (bool) $this->locked_permanently;
     }
 }

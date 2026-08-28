@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
 {
     // ponytail: flat permission list; expand per-module as features land
     private const PERMISSIONS = [
-        'user.view', 'user.create', 'user.edit', 'user.delete', 'user.restore', 'user.force-delete',
+        'user.view', 'user.create', 'user.edit', 'user.delete', 'user.restore', 'user.force-delete', 'user.lock',
         'role.view', 'role.create', 'role.edit', 'role.delete', 'role.restore', 'role.force-delete',
         'permission.view', 'permission.create', 'permission.edit', 'permission.delete', 'permission.restore', 'permission.force-delete',
         'audit.view',

@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle m-0">
             <thead>
-                <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th class="text-end">Actions</th></tr>
+                <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th>Status</th><th class="text-end">Actions</th></tr>
             </thead>
             <tbody>
                 @forelse ($users as $user)
@@ -44,12 +44,45 @@
                         @endforeach
                         @if ($user->roles->isEmpty())<span class="text-muted">-</span>@endif
                     </td>
+                    <td>
+                        @if ($user->isPermanentlyLocked())
+                            <span class="badge text-bg-danger">perm locked</span>
+                        @elseif ($user->isLocked())
+                            <span class="badge text-bg-warning">locked</span>
+                        @else
+                            <span class="badge text-bg-success">active</span>
+                        @endif
+                    </td>
                     <td class="text-end">
-                        <x-action-buttons
-                            :edit="!$user->trashed() ? route('users.edit', $user) : null"
-                            :restore="$user->trashed() && auth()->user()->can('user.restore') ? route('users.restore', $user->id) : null"
-                            :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null"
-                            :forceDelete="$user->trashed() && auth()->user()->can('user.force-delete') ? route('users.forceDelete', $user->id) : null" />
+                        <div class="d-flex justify-content-end gap-1">
+                            <x-action-buttons
+                                :edit="!$user->trashed() ? route('users.edit', $user) : null"
+                                :restore="$user->trashed() && auth()->user()->can('user.restore') ? route('users.restore', $user->id) : null"
+                                :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null"
+                                :forceDelete="$user->trashed() && auth()->user()->can('user.force-delete') ? route('users.forceDelete', $user->id) : null" />
+                            @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.edit'))
+                            <form method="POST" action="{{ route('users.reset-link', $user) }}" class="d-inline">@csrf
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2" data-bs-toggle="tooltip" data-bs-title="Send reset link" aria-label="Send reset link" style="min-width:38px">
+                                    <i class="bi bi-envelope"></i>
+                                </button>
+                            </form>
+                            @endif
+                            @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.lock'))
+                            @if ($user->isLocked())
+                            <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-warning" data-bs-toggle="tooltip" data-bs-title="Unlock account" aria-label="Unlock account" style="min-width:38px">
+                                    <i class="bi bi-unlock-fill"></i>
+                                </button>
+                            </form>
+                            @else
+                            <form method="POST" action="{{ route('users.lock', $user) }}" class="d-inline">@csrf
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Lock account" aria-label="Lock account" style="min-width:38px">
+                                    <i class="bi bi-lock-fill"></i>
+                                </button>
+                            </form>
+                            @endif
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty

@@ -25,9 +25,9 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer">
-            <button class="btn btn-primary">Save</button>
+        <div class="card-footer d-flex justify-content-end gap-2">
             <a href="{{ route('roles.index') }}" class="btn btn-link">Cancel</a>
+            <button class="btn btn-primary">Save</button>
         </div>
     </div>
 </form>
