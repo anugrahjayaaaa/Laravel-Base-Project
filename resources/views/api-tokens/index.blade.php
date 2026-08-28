@@ -4,9 +4,14 @@
 <h3>API Tokens</h3>
 
 @if($newToken)
-<div class="alert alert-success">
-    <strong>New token (copy now):</strong>
-    <code class="d-block mt-1">{{ $newToken }}</code>
+<div class="alert alert-success d-flex align-items-start justify-content-between gap-2" id="newTokenAlert">
+    <div>
+        <strong>New token (copy now):</strong>
+        <code class="d-block mt-1" id="newTokenValue">{{ $newToken }}</code>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary" id="copyTokenBtn" data-clipboard-target="#newTokenValue">
+        <i class="bi bi-clipboard"></i> Copy
+    </button>
 </div>
 @endif
 
@@ -46,3 +51,26 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('copyTokenBtn')?.addEventListener('click', function () {
+    const text = document.getElementById('newTokenValue').textContent.trim();
+    const btn = this;
+    const done = () => {
+        const icon = btn.querySelector('i');
+        icon.className = 'bi bi-check2';
+        btn.textContent = ' Copied';
+        setTimeout(() => { icon.className = 'bi bi-clipboard'; btn.textContent = ' Copy'; }, 1500);
+    };
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => {});
+    } else {
+        const ta = document.createElement('textarea'); // ponytail: fallback for non-secure context
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        ta.remove();
+    }
+});
+</script>
+@endpush

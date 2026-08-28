@@ -2,8 +2,9 @@
 @section('content')
 @include('partials.flash-message')
 <h3>Audit Log</h3>
-<form method="GET" class="row g-2 mb-3">
+<form method="GET" class="row g-2 mb-3 align-items-end">
     <div class="col-md-3">
+        <label class="form-label small text-muted mb-1">Action</label>
         <select name="action" class="form-select form-select-sm">
             <option value="">All actions</option>
             @foreach ($actions as $a)
@@ -11,11 +12,20 @@
             @endforeach
         </select>
     </div>
-    <div class="col-md-3"><input type="date" name="from" class="form-control form-control-sm" value="{{ request('from') }}" placeholder="From"></div>
-    <div class="col-md-3"><input type="date" name="to" class="form-control form-control-sm" value="{{ request('to') }}" placeholder="To"></div>
+    <div class="col-md-3">
+        <label class="form-label small text-muted mb-1">From</label>
+        <input type="date" name="from" class="form-control form-control-sm" value="{{ request('from') }}">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label small text-muted mb-1">To</label>
+        <input type="date" name="to" class="form-control form-control-sm" value="{{ request('to') }}">
+    </div>
     <div class="col-md-3 d-flex gap-2">
-        <button class="btn btn-primary btn-sm w-100"><i class="bi bi-funnel me-1"></i> Filter</button>
+        <button class="btn btn-primary btn-sm"><i class="bi bi-funnel me-1"></i> Filter</button>
         <a href="{{ route('audit.export', request()->only(['action','causer','from','to'])) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
+        @if(request()->anyFilled(['action','from','to']))
+            <a href="{{ route('audit.index') }}" class="btn btn-link btn-sm text-muted" title="Clear filters"><i class="bi bi-x-circle"></i></a>
+        @endif
     </div>
 </form>
 
