@@ -16,13 +16,6 @@ class LogViewerController extends Controller
         }
 
         $logs = $log->all();
-        // ponytail: trim whitespace the parser leaves on text/stack/in_file
-        $logs = array_map(fn ($e) => [
-            ...$e,
-            'text' => isset($e['text']) ? ltrim($e['text']) : $e['text'],
-            'stack' => isset($e['stack']) ? trim($e['stack']) : $e['stack'],
-            'in_file' => isset($e['in_file']) ? ltrim($e['in_file']) : $e['in_file'],
-        ], $logs);
         $level = $request->get('level');
 
         if ($level) {
