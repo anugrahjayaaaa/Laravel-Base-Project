@@ -16,7 +16,7 @@ One app: web (session) + mobile (Sanctum token).
 - Mobile failed login follows lockout + audit (same as web).
 
 ## Core v1 endpoints
-- `POST /api/v1/login` (username|phone + password)
+- `POST /api/v1/login` (username|email + password)
 - `POST /api/v1/logout`
 - `GET  /api/v1/me` (profile + theme preference)
 - `POST /api/v1/password/change`

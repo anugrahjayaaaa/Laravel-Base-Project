@@ -33,6 +33,6 @@ compatible with Laravel 13 + PHP 8.3.
 
 ## Notes
 - Install order: `composer require spatie/laravel-permission spatie/laravel-activitylog
-  sentry/sentry-laravel opcodesio/log-viewer sarker/laravel-role-permission-ui`.
+  sentry/sentry-laravel rap2hpoutre/laravel-log-viewer`.
 - Run each package's `vendor:publish` + `migrate` after require.
 - Lockout/verify/soft-delete/health use Laravel native — DON'T add packages for these.
