@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer bg-light d-flex flex-column gap-2">
+        <div class="card-footer d-flex flex-column gap-2">
             <div class="d-flex align-items-center gap-3 flex-wrap">
                 <span>Status:
                     @if ($user->isLocked())
@@ -75,7 +75,7 @@
                 </span>
             </div>
             @endif
-            <div class="d-flex justify-content-end gap-2 border-top pt-2">
+            <div class="d-flex justify-content-end gap-2">
                 <a href="{{ route('users.index') }}" class="btn btn-link">Cancel</a>
                 <button class="btn btn-primary">Save</button>
             </div>
