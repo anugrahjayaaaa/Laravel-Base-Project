@@ -6,6 +6,14 @@ Goal: fast root cause when an issue/bug happens in prod.
 - `Log::info/error` with context array (not string concat).
 - `daily` channel in prod; never log secrets/PII.
 - Exception handler → log + Sentry (stack + release + user tag).
+- **Where to look:**
+  - File: `storage/logs/laravel-YYYY-MM-DD.log` (rotated daily, `LOG_STACK=daily`).
+  - Sentry: Issues stream (if `SENTRY_DSN` set) — tagged `user_id`, `release`.
+  - `/up` for health; `laravel-<date>.log` for everything else.
+- **4xx client errors (except 404) are logged automatically** via `LogHttpErrors`
+  middleware: 405/403/422 etc. land in the daily log with url/method/ip/user_id.
+  (404 skipped to avoid noise from missing assets/crawlers.) 5xx already logged by
+  Laravel's exception handler.
 
 ## Error tracking — Sentry
 - Init in bootstrap; `release = app.version`; small `traces_sample_rate` (0.2).
