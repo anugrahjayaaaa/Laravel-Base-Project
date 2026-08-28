@@ -33,5 +33,10 @@ class LogAuthentication
                 'identifier' => is_object($user) ? $user->username ?? $user->email : $user,
             ])
             ->log($action);
+
+        // native Laravel notification (database channel) for the account owner
+        if ($event->user instanceof \App\Models\User) {
+            $event->user->notify(new \App\Notifications\AuditNotification($action, Request::ip()));
+        }
     }
 }
