@@ -10,7 +10,7 @@ class AuditController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Activity::with(['causer', 'subject'])->latest();
+        $query = Activity::with(['causer', 'subject' => fn ($q) => $q->withoutGlobalScopes()])->latest();
 
         if ($request->filled('action')) {
             $query->where('description', $request->action);

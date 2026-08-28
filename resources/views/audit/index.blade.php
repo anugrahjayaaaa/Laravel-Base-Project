@@ -59,13 +59,11 @@
                                 data-ip="{{ $log->properties['ip'] ?? '' }}"
                                 data-agent="{{ $log->properties['user_agent'] ?? '' }}">
                             <i class="bi bi-eye"></i>
-                            <script type="application/json" class="audit-detail-data">{{
-                                json_encode([
-                                    'old' => $log->properties['old'] ?? new \stdClass(),
-                                    'new' => $log->properties['new'] ?? new \stdClass(),
-                                ], JSON_FORCE_OBJECT)
-                            }}</script>
                         </button>
+                        <script type="application/json" class="audit-detail-data">@json([
+                            'old' => $log->properties['old'] ?? new \stdClass(),
+                            'new' => $log->properties['new'] ?? new \stdClass(),
+                        ])</script>
                     </td>
                 </tr>
                 @empty
@@ -111,7 +109,7 @@ document.getElementById('auditDetailModal')?.addEventListener('show.bs.modal', f
     document.getElementById('auditDetailIp').textContent = b.dataset.ip || '-';
     document.getElementById('auditDetailAgent').textContent = b.dataset.agent || '-';
 
-    const changes = JSON.parse(b.querySelector('.audit-detail-data')?.textContent || '{}');
+    const changes = JSON.parse(b.parentElement.querySelector('.audit-detail-data')?.textContent || '{}');
     const oldMap = changes.old ?? {};
     const newMap = changes.new ?? {};
     const keys = [...new Set([...Object.keys(oldMap), ...Object.keys(newMap)])];
