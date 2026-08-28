@@ -37,15 +37,13 @@
                 </li>
             </ul>
 
-            {{-- Global search --}}
+            {{-- Global menu search (live sidebar filter, no backend) --}}
             <ul class="navbar-nav ms-auto flex-grow-1 px-2 d-none d-md-flex">
                 <li class="nav-item w-100" style="max-width:420px">
-                    <form action="{{ route('users.index') }}" method="GET" class="d-flex">
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-                            <input type="search" name="q" class="form-control bg-body border-0" placeholder="Search users, roles…" value="{{ request('q') }}">
-                        </div>
-                    </form>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
+                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="Search menu…" autocomplete="off" aria-label="Search menu">
+                    </div>
                 </li>
             </ul>
 
@@ -135,29 +133,30 @@
             <nav class="mt-3 sidebar-nav">
                 <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" data-accordion="false">
                     <li class="nav-header">MAIN MENU</li>
+                    <li id="menu-search-empty" class="nav-item d-none"><span class="nav-link text-muted"><i class="nav-icon bi bi-emoji-frown"></i> <span>No menu found</span></span></li>
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('dashboard') }}" data-menu-text="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                             <i class="nav-icon bi bi-speedometer2"></i> <span>Dashboard</span>
                         </a>
                     </li>
                     @can('user.view')
-                    <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
+                    <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="Users" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
                     @endcan
                     @can('role.view')
-                    <li class="nav-item"><a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
+                    <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="Roles" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
                     @endcan
                     @can('permission.view')
-                    <li class="nav-item"><a href="{{ route('permissions.index') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
+                    <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="Permissions" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
                     @endcan
                     @can('audit.view')
-                    <li class="nav-item"><a href="{{ route('audit.index') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
+                    <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="Audit Log" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
                     @endcan
-                    <li class="nav-item"><a href="{{ route('profile.show') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
+                    <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="Profile" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
                     @can('session.view')
-                    <li class="nav-item"><a href="{{ route('sessions.index') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
+                    <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="Sessions" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
                     @endcan
                     @can('api-token.view')
-                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
+                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="API Tokens" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
                     @endcan
 
                     <li class="nav-item">
@@ -369,6 +368,41 @@
         });
         // tooltips for action/icon buttons
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+        // Live header search -> filter sidebar menu (real features only; demo/template links hidden during search)
+        (function () {
+            const input = document.getElementById('menu-search');
+            const sidebar = document.querySelector('.sidebar-nav');
+            const empty = document.getElementById('menu-search-empty');
+            if (!input || !sidebar) return;
+            const headers = sidebar.querySelectorAll('.nav-header');
+            const leafLi = [...sidebar.querySelectorAll('li.nav-item')].filter(li => li.querySelector(':scope > a[data-menu-text]'));
+            const containerLi = [...sidebar.querySelectorAll('li.nav-item')].filter(li => li.querySelector(':scope > ul.nav-treeview'));
+
+            input.addEventListener('input', () => {
+                const q = input.value.trim().toLowerCase();
+                if (q === '') {
+                    sidebar.querySelectorAll('.nav-header, li.nav-item').forEach(el => el.classList.remove('d-none'));
+                    containerLi.forEach(li => li.classList.remove('menu-open'));
+                    if (empty) empty.classList.add('d-none');
+                    return;
+                }
+                headers.forEach(h => h.classList.add('d-none'));
+                let visible = 0;
+                leafLi.forEach(li => {
+                    const a = li.querySelector(':scope > a[data-menu-text]');
+                    const match = a.dataset.menuText.toLowerCase().includes(q);
+                    li.classList.toggle('d-none', !match);
+                    if (match) visible++;
+                });
+                containerLi.forEach(li => {
+                    const anyVisible = li.querySelector('li.nav-item:not(.d-none)');
+                    li.classList.toggle('d-none', !anyVisible);
+                    li.classList.toggle('menu-open', !!anyVisible);
+                });
+                if (empty) empty.classList.toggle('d-none', visible === 0);
+            });
+        })();
     })();
 </script>
 @stack('scripts')
