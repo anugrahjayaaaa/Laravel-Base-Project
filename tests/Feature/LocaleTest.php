@@ -37,3 +37,17 @@ it('rejects unsupported locale', function () {
         ->post(route('locale.update'), ['locale' => 'fr'])
         ->assertStatus(422);
 });
+
+it('reads translations from database (language_lines)', function () {
+    // seeded by DatabaseSeeder -> LanguageLineSeeder
+    $line = \Spatie\TranslationLoader\LanguageLine::where('group', 'messages')->where('key', 'users')->first();
+    expect($line)->not->toBeNull();
+    expect($line->text)->toBe(['en' => 'Users', 'id' => 'Pengguna']);
+
+    // DB overrides the file: __() returns DB value
+    Session::put('locale', 'id');
+    $request = Request::create('/dashboard');
+    (new \App\Http\Middleware\SetLocale())->handle($request, function ($req) {
+        expect(__('messages.users'))->toBe('Pengguna');
+    });
+});
