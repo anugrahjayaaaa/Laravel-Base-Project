@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr><th>#</th><th>Time</th><th>Action</th><th>Causer</th><th>Subject</th><th>IP</th></tr>
+                <tr><th>#</th><th>Time</th><th>Action</th><th>Causer</th><th>Subject</th><th>IP</th><th></th></tr>
             </thead>
             <tbody>
                 @forelse ($activities as $log)
@@ -50,9 +50,22 @@
                         <span class="text-muted">#{{ $log->subject_id }}</span>
                     </td>
                     <td class="text-muted small">{{ $log->properties['ip'] ?? '-' }}</td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-light border rounded-2"
+                                data-bs-toggle="modal" data-bs-target="#auditDetailModal"
+                                data-action="{{ $log->description }}"
+                                data-time="{{ $log->created_at->format('Y-m-d H:i:s') }}"
+                                data-causer="{{ $log->causer->username ?? ($log->properties['identifier'] ?? '-') }}"
+                                data-ip="{{ $log->properties['ip'] ?? '' }}"
+                                data-agent="{{ $log->properties['user_agent'] ?? '' }}"
+                                data-old='{{ json_encode($log->properties['old'] ?? new \stdClass(), JSON_FORCE_OBJECT) }}'
+                                data-new='{{ json_encode($log->properties['new'] ?? new \stdClass(), JSON_FORCE_OBJECT) }}'>
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="text-center text-muted py-4">No activity.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">No activity.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -61,4 +74,51 @@
 </div>
 @include('partials.pagination-info', ['items' => $activities])
 {{ $activities->links() }}
+
+{{-- Detail modal --}}
+<div class="modal fade" id="auditDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="auditDetailAction"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body small">
+                <dl class="row mb-2">
+                    <dt class="col-4 text-muted">Time</dt><dd class="col-8" id="auditDetailTime"></dd>
+                    <dt class="col-4 text-muted">Causer</dt><dd class="col-8" id="auditDetailCauser"></dd>
+                    <dt class="col-4 text-muted">IP</dt><dd class="col-8" id="auditDetailIp"></dd>
+                    <dt class="col-4 text-muted">User agent</dt><dd class="col-8 text-break" id="auditDetailAgent"></dd>
+                </dl>
+                <div id="auditDetailChanges"></div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('auditDetailModal')?.addEventListener('show.bs.modal', function (e) {
+    const b = e.relatedTarget;
+    document.getElementById('auditDetailAction').textContent = b.dataset.action;
+    document.getElementById('auditDetailTime').textContent = b.dataset.time;
+    document.getElementById('auditDetailCauser').textContent = b.dataset.causer;
+    document.getElementById('auditDetailIp').textContent = b.dataset.ip || '-';
+    document.getElementById('auditDetailAgent').textContent = b.dataset.agent || '-';
+
+    const oldV = JSON.parse(b.dataset.old || '{}');
+    const newV = JSON.parse(b.dataset.new || '{}');
+    const keys = [...new Set([...Object.keys(oldV), ...Object.keys(newV)])];
+    const box = document.getElementById('auditDetailChanges');
+    if (!keys.length) { box.innerHTML = '<p class="text-muted mb-0">No field changes recorded.</p>'; return; }
+
+    const cell = (v) => v === null ? '<em class="text-muted">null</em>' : String(v);
+    let html = '<table class="table table-sm mb-0"><thead><tr><th>Field</th><th>Old</th><th>New</th></tr></thead><tbody>';
+    keys.forEach(k => {
+        html += `<tr><td class="text-capitalize text-muted">${k}</td><td class="text-break">${cell(oldV[k])}</td><td class="text-break">${cell(newV[k])}</td></tr>`;
+    });
+    box.innerHTML = html + '</tbody></table>';
+});
+</script>
+@endpush

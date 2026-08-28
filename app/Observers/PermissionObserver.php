@@ -14,11 +14,17 @@ class PermissionObserver
         ])->performedOn($permission)->log('permission_created');
     }
 
-    public function updated(Permission $permission)
+    public function updated($permission)
     {
+        $dirty = $permission->getDirty();
+        unset($dirty['password'], $dirty['remember_token']); // ponytail: never log secrets
+        $old = [];
+        foreach ($dirty as $k => $v) {
+            $old[$k] = $permission->getOriginal($k);
+        }
         activity()->causedBy(auth()->user())->withProperties([
             'ip' => Request::ip(), 'user_agent' => Request::userAgent(),
-            'changes' => $permission->getDirty(),
+            'old' => $old, 'new' => $dirty,
         ])->performedOn($permission)->log('permission_updated');
     }
 
