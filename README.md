@@ -38,7 +38,7 @@ use as the foundation for internal web applications.
   is shown once on creation with a copy button. Mobile clients authenticate via Sanctum `/api/v1`.
 - **Thin controllers** — all input validation lives in **Form Requests**
   (`app/Http/Requests/<Domain>/`); controllers only call `validated()` and dispatch.
-- **Dev tooling** — **Laravel Telescope** (`laravel/telescope`, require-dev) profiler at `/telescope`: inspect queries (sort by duration to find slow ones), N+1 duplicates, requests, exceptions, jobs, cache, and models. Access requires the `telescope.view` permission **and** the `telescope` feature flag (toggleable from the Features UI like any module); entry storage is disabled outside `local` so PII is never persisted in shared envs, and `telescope:prune` runs daily.
+- **Dev tooling** — **Laravel Telescope** (`laravel/telescope`, require-dev) profiler at `/telescope`: inspect queries, N+1 duplicates, requests, exceptions, jobs, cache, and models. The Queries tab's **Duration** column is sortable (client-side, on the loaded page) to spot slow queries; the **Duplicates** badge flags N+1. Caveat: Telescope has **no backend time-range filter or duration sort** — listing is paginated by a "load older" cursor (`created_at`), so for a wide window query the `telescope_entries` table directly. Access requires the `telescope.view` permission **and** the `telescope` feature flag (toggleable from the Features UI like any module); entry storage is disabled outside `local` so PII is never persisted in shared envs, and `telescope:prune` runs daily.
 - **Internationalization (i18n)** — UI and REST API support **English + Indonesian** (`en`/`id`,
   persists in the session; API clients pass `X-Locale` (or `Accept-Language`). Page copy lives in
   `lang/{locale}/ui.php` (via the `ui()` helper) and domain/API messages in `messages.php`
@@ -145,7 +145,7 @@ sonar-scanner -Dsonar.login=<TOKEN>
 | **Sessions** | `sessions` table (`SESSION_DRIVER=database`) |
 | **Reset-password token** | `password_reset_tokens` table |
 | **Web log viewer** | `/logs` (rap2hpoutre/laravel-log-viewer) |
-| **Dev profiler (queries/N+1)** | **Telescope** menu (`/telescope`, under `telescope.view` permission + `telescope` feature flag). Local-only: storage disabled outside `local` to avoid persisting PII. Use the **Queries** tab → sort by **Duration** to find slow queries, and watch the **Duplicates** badge for N+1. |
+| **Dev profiler (queries/N+1)** | **Telescope** menu (`/telescope`, under `telescope.view` permission + `telescope` feature flag). Local-only: storage disabled outside `local` to avoid persisting PII. Find slow queries in the **Queries** tab — the **Duration** column is sortable (client-side, on the loaded page); watch the **Duplicates** badge for N+1. Note: Telescope has **no backend time-range filter or duration sort** — it's paginated by a "load older" cursor, so for a wide window use the Query or `php artisan tinker` against the `telescope_entries` table. |
 
 ### Watch errors locally
 
