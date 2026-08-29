@@ -28,7 +28,7 @@ class ApiTokenApiController extends Controller
         $plain = $request->user()->createToken($request->validated()['name'], ['mobile'])->plainTextToken;
 
         return response()->json([
-            'message' => 'Token created. Store it now — it won\'t be shown again.',
+            'message' => __('messages.token_created'),
             'plain_token' => $plain,
         ], 201);
     }
@@ -38,6 +38,6 @@ class ApiTokenApiController extends Controller
     {
         $request->user()->tokens()->where('id', $token)->delete();
 
-        return response()->json(['message' => 'Token revoked.']);
+        return response()->json(['message' => __('messages.token_revoked')]);
     }
 }

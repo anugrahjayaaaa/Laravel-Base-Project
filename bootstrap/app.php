@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // SetLocale MUST run after StartSession (web group), so the session is
         // readable. As global middleware it ran before session start -> always 'en'.
         $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
+        // API is stateless (Sanctum) — resolve locale from X-Locale / Accept-Language.
+        $middleware->api(append: [\App\Http\Middleware\SetApiLocale::class]);
         $middleware->alias([
             'feature' => \App\Http\Middleware\EnsureFeatureEnabled::class,
         ]);

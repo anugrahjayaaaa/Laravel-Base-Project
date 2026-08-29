@@ -23,7 +23,7 @@ class AuthController extends Controller
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-            return response()->json(['error' => ['code' => 'RATE_LIMITED', 'message' => "Too many attempts. Try again in {$seconds}s."]], 429);
+            return response()->json(['error' => ['code' => 'RATE_LIMITED', 'message' => __('messages.too_many_attempts', ['seconds' => $seconds])]], 429);
         }
 
         $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email'
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
             RateLimiter::hit($throttleKey, 900);
-            throw ValidationException::withMessages(['identifier' => 'Invalid credentials.']);
+            throw ValidationException::withMessages(['identifier' => __('messages.invalid_credentials')]);
         }
 
         RateLimiter::clear($throttleKey);
@@ -59,7 +59,7 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out.']);
+        return response()->json(['message' => __('messages.logged_out')]);
     }
 
     public function changePassword(Request $request): JsonResponse
@@ -70,6 +70,6 @@ class AuthController extends Controller
         ]);
         $request->user()->update(['password' => bcrypt($data['password'])]);
         $request->user()->tokens()->delete(); // revoke all mobile tokens
-        return response()->json(['message' => 'Password changed.']);
+        return response()->json(['message' => __('messages.password_changed')]);
     }
 }

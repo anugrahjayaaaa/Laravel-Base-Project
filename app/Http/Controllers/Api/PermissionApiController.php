@@ -53,20 +53,20 @@ class PermissionApiController extends Controller
     {
         $permission->delete();
 
-        return response()->json(['message' => 'Permission deleted.']);
+        return response()->json(['message' => __('messages.permission_deleted')]);
     }
 
     public function restore(int $id): JsonResponse
     {
         Permission::withTrashed()->findOrFail($id)->restore();
 
-        return response()->json(['message' => 'Permission restored.']);
+        return response()->json(['message' => __('messages.permission_restored')]);
     }
 
     public function forceDelete(int $id): JsonResponse
     {
         Permission::withTrashed()->findOrFail($id)->forceDelete();
 
-        return response()->json(['message' => 'Permission permanently deleted.']);
+        return response()->json(['message' => __('messages.permission_permanently_deleted')]);
     }
 }

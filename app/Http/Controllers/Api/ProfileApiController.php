@@ -40,6 +40,6 @@ class ProfileApiController extends Controller
         $user->tokens()->delete();
         auth()->logoutOtherDevices($request->validated()['password']);
 
-        return response()->json(['message' => 'Password changed.']);
+        return response()->json(['message' => __('messages.password_changed')]);
     }
 }

@@ -67,4 +67,7 @@ return [
     'email_already_verified' => 'Email already verified.',
     'invalid_verification_link' => 'Invalid or expired verification link.',
     'verification_link_sent' => 'Verification link sent.',
+    'logged_out' => 'Logged out.',
+    'reset_link_sent_simple' => 'Reset link sent.',
+    'token_created' => 'Token created. Store it now — it won\'t be shown again.',
 ];
