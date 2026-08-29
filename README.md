@@ -38,8 +38,8 @@ use as the foundation for internal web applications.
   is shown once on creation with a copy button. Mobile clients authenticate via Sanctum `/api/v1`.
 - **Thin controllers** — all input validation lives in **Form Requests**
   (`app/Http/Requests/<Domain>/`); controllers only call `validated()` and dispatch.
+- **Dev tooling** — **Laravel Telescope** (`laravel/telescope`, require-dev) profiler at `/telescope`: inspect queries (sort by duration to find slow ones), N+1 duplicates, requests, exceptions, jobs, cache, and models. Access requires the `telescope.view` permission **and** the `telescope` feature flag (toggleable from the Features UI like any module); entry storage is disabled outside `local` so PII is never persisted in shared envs, and `telescope:prune` runs daily.
 - **Internationalization (i18n)** — UI and REST API support **English + Indonesian** (`en`/`id`,
-  configurable via `config('app.available_locales')`). The language switch (under the user menu)
   persists in the session; API clients pass `X-Locale` (or `Accept-Language`). Page copy lives in
   `lang/{locale}/ui.php` (via the `ui()` helper) and domain/API messages in `messages.php`
   (`__('messages.*')`); both are overridable at runtime from the `language_lines` DB table
@@ -145,6 +145,7 @@ sonar-scanner -Dsonar.login=<TOKEN>
 | **Sessions** | `sessions` table (`SESSION_DRIVER=database`) |
 | **Reset-password token** | `password_reset_tokens` table |
 | **Web log viewer** | `/logs` (rap2hpoutre/laravel-log-viewer) |
+| **Dev profiler (queries/N+1)** | **Telescope** menu (`/telescope`, under `telescope.view` permission + `telescope` feature flag). Local-only: storage disabled outside `local` to avoid persisting PII. Use the **Queries** tab → sort by **Duration** to find slow queries, and watch the **Duplicates** badge for N+1. |
 
 ### Watch errors locally
 
