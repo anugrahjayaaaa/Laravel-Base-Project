@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Feature;
 use App\Models\Permission;
+use App\Models\Plan;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -51,6 +53,22 @@ class DatabaseSeeder extends Seeder
         foreach (self::FEATURES as $slug => $label) {
             Feature::updateOrCreate(['slug' => $slug], ['label' => $label, 'enabled' => true]);
         }
+
+        // Default plans: 'free' is always present (price 0, no PG needed).
+        // slug/price/limits/features are fully custom via CRUD (doc §9b).
+        Plan::updateOrCreate(
+            ['slug' => 'free'],
+            [
+                'name' => 'Free',
+                'price_monthly' => 0,
+                'is_active' => true,
+                'limits' => ['max_members' => 2, 'max_projects' => 1, 'max_storage_mb' => 500],
+                'features' => ['audit', 'telescope'],
+            ]
+        );
+
+        // Default active plan = free (Model 1 instance setting).
+        Setting::updateOrCreate(['key' => 'active_plan'], ['value' => 'free']);
 
         // Roles
         $superAdmin = Role::findOrCreate('super-admin', 'web');

@@ -17,6 +17,9 @@ class DashboardController extends Controller
             'roleCount' => Role::count(),
             'auditCount' => Activity::count(),
             'dbName' => DB::connection()->getDatabaseName(),
+            'licenseStatus' => \App\Services\LicenseService::status(),
+            'licenseDaysLeft' => \App\Services\LicenseService::daysLeft(),
+            'activePlan' => \App\Models\Setting::get('active_plan', 'free'),
         ]);
     }
 }

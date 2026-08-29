@@ -124,6 +124,26 @@ return [
     'confirm_enable_feature' => 'Yakin ingin mengaktifkan fitur ini?',
     'confirm_disable_feature' => 'Yakin ingin menonaktifkan fitur ini?',
 
+    // ── plans / licensing ──
+    'plans' => 'Paket',
+    'plans_intro' => 'Kelola paket berlangganan. Slug, harga, limit, dan fitur sepenuhnya custom.',
+    'new_plan' => 'Paket Baru',
+    'edit_plan' => 'Edit Paket',
+    'price_monthly' => 'Harga (bulanan)',
+    'limits' => 'Limit',
+    'features' => 'Fitur',
+    'active' => 'Aktif',
+    'inactive' => 'Nonaktif',
+    'slug_help' => 'Identifier unik, mis. starter-2026. Huruf, angka, dash/underscore.',
+    'limits_help' => 'Satu per baris: key: nilai (mis. max_members: 5)',
+    'features_help' => 'Satu per baris (mis. kanban)',
+    'no_plans' => 'Belum ada paket.',
+    'cancel' => 'Batal',
+    'save' => 'Simpan',
+    'edit' => 'Edit',
+    'delete' => 'Hapus',
+    'confirm_delete' => 'Hapus paket ini?',
+
     // ── sessions ──
     'active_sessions' => 'Sesi Aktif',
     'ip' => 'IP',
