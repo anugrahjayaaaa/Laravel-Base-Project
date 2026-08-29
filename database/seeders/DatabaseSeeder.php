@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         'feature.manage',
         'logs.view',
         'translation.view', 'translation.edit',
+        'telescope.view',
     ];
 
     // Module-level feature flags: slug => label. Toggling off blocks the whole module
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
         'api-tokens' => 'API Tokens',
         'translations' => 'Translations',
         'logs' => 'Logs',
+        'telescope' => 'Telescope',
     ];
 
     public function run(): void
