@@ -1,16 +1,16 @@
 @extends('layouts.app')
 @section('content')
 @include('partials.flash-message')
-<h3>API Tokens</h3>
+<h3>{{ ui('api_tokens') }}</h3>
 
 @if($newToken)
 <div class="alert alert-success d-flex align-items-start justify-content-between gap-2" id="newTokenAlert">
     <div>
-        <strong>New token (copy now):</strong>
+        <strong>{{ ui('new_token_copy_now') }}</strong>
         <code class="d-block mt-1" id="newTokenValue">{{ $newToken }}</code>
     </div>
     <button type="button" class="btn btn-sm btn-outline-secondary" id="copyTokenBtn" data-clipboard-target="#newTokenValue">
-        <i class="bi bi-clipboard"></i> Copy
+        <i class="bi bi-clipboard"></i> {{ ui('copy') }}
     </button>
 </div>
 @endif
@@ -18,17 +18,17 @@
 <form method="POST" action="{{ route('api-tokens.store') }}" class="row g-2 mb-3">
     @csrf
     <div class="col-md-4">
-        <input type="text" name="name" class="form-control" placeholder="Token name (e.g. mobile-iphone)" required>
+        <input type="text" name="name" class="form-control" placeholder="{{ ui('token_name') }}" required>
     </div>
     <div class="col-auto">
-        <button class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create</button>
+        <button class="btn btn-primary"><i class="bi bi-plus-circle"></i> {{ ui('create') }}</button>
     </div>
 </form>
 
 <div class="card">
     <div class="card-body p-0">
         <table class="table mb-0">
-            <thead><tr><th>Name</th><th>Abilities</th><th>Created</th><th>Last used</th><th></th></tr></thead>
+            <thead><tr><th>{{ ui('name') }}</th><th>{{ ui('abilities') }}</th><th>{{ ui('created') }}</th><th>{{ ui('last_used') }}</th><th></th></tr></thead>
             <tbody>
             @forelse($tokens as $token)
                 <tr>
@@ -37,14 +37,14 @@
                     <td>{{ $token->created_at?->format('Y-m-d H:i') ?? '—' }}</td>
                     <td>{{ $token->last_used_at?->diffForHumans() ?? 'never' }}</td>
                     <td>
-                        <form method="POST" action="{{ route('api-tokens.destroy', $token) }}" onsubmit="return confirm('Revoke this token?')">
+                        <form method="POST" action="{{ route('api-tokens.destroy', $token) }}" onsubmit="return confirm('{{ ui('revoke_this_token') }}')">
                             @csrf @method('DELETE')
                             <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                         </form>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="text-muted">No tokens yet.</td></tr>
+                <tr><td colspan="5" class="text-muted">{{ ui('no_tokens_yet') }}</td></tr>
             @endforelse
             </tbody>
         </table>
@@ -60,8 +60,8 @@ document.getElementById('copyTokenBtn')?.addEventListener('click', function () {
     const done = () => {
         const icon = btn.querySelector('i');
         icon.className = 'bi bi-check2';
-        btn.textContent = ' Copied';
-        setTimeout(() => { icon.className = 'bi bi-clipboard'; btn.textContent = ' Copy'; }, 1500);
+        btn.textContent = ' {{ ui('copied') }}';
+        setTimeout(() => { icon.className = 'bi bi-clipboard'; btn.textContent = ' {{ ui('copy') }}'; }, 1500);
     };
     if (navigator.clipboard?.writeText) {
         navigator.clipboard.writeText(text).then(done).catch(() => {});

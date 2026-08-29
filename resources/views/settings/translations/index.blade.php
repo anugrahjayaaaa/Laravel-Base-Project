@@ -20,11 +20,11 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Group</th>
-                                <th>Key</th>
+                                <th>{{ ui('group') }}</th>
+                                <th>{{ ui('key') }}</th>
                                 <th>EN</th>
                                 <th>ID</th>
-                                <th class="text-end">Action</th>
+                                <th class="text-end">{{ ui('action') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,11 +35,11 @@
                                     <td>{{ $line->text['en'] ?? '' }}</td>
                                     <td>{{ $line->text['id'] ?? '' }}</td>
                                     <td class="text-end">
-                                        <a href="{{ route('translations.edit', $line) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <a href="{{ route('translations.edit', $line) }}" class="btn btn-sm btn-outline-primary">{{ ui('edit') }}</a>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="5" class="text-center text-muted py-4">No translations.</td></tr>
+                                <tr><td colspan="5" class="text-center text-muted py-4">{{ ui('no_translations') }}</td></tr>
                             @endforelse
                         </tbody>
                     </table>

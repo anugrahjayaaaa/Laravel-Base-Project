@@ -2,17 +2,17 @@
 @section('content')
 @include('partials.flash-message')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Users</h3>
+    <h3>{{ ui('users') }}</h3>
     @can('user.create')
-    <a href="{{ route('users.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New User</a>
+    <a href="{{ route('users.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> {{ ui('new_user') }}</a>
     @endcan
 </div>
 
 <form method="GET" class="mb-3">
     <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-        <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search name, username, email…" value="{{ request('q') }}">
-        <button class="btn btn-primary px-3" type="submit">Search</button>
+        <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_name_username_email') }}" value="{{ request('q') }}">
+        <button class="btn btn-primary px-3" type="submit">{{ ui('search') }}</button>
     </div>
 </form>
 
@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle m-0">
             <thead>
-                <tr><th>#</th><th>User</th><th>Username</th><th>Email</th><th>Roles</th><th>Status</th><th class="text-end">Actions</th></tr>
+                <tr><th>#</th><th>{{ ui('user') }}</th><th>{{ ui('username') }}</th><th>{{ ui('email') }}</th><th>{{ ui('roles_col') }}</th><th>{{ ui('status') }}</th><th class="text-end">{{ ui('action') }}</th></tr>
             </thead>
             <tbody>
                 @forelse ($users as $user)
@@ -32,7 +32,7 @@
                             <span class="avatar avatar-sm rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:32px;height:32px">{{ strtoupper(substr($user->name,0,1)) }}</span>
                             <div>
                                 <div class="fw-medium">{{ $user->name }}</div>
-                                @if($user->trashed())<span class="badge text-bg-danger">deleted</span>@endif
+                                @if($user->trashed())<span class="badge text-bg-danger">{{ ui('deleted') }}</span>@endif
                             </div>
                         </div>
                     </td>
@@ -46,11 +46,11 @@
                     </td>
                     <td>
                         @if ($user->isPermanentlyLocked())
-                            <span class="badge text-bg-danger">perm locked</span>
+                            <span class="badge text-bg-danger">{{ ui('perm_locked') }}</span>
                         @elseif ($user->isLocked())
-                            <span class="badge text-bg-warning">locked</span>
+                            <span class="badge text-bg-warning">{{ ui('locked') }}</span>
                         @else
-                            <span class="badge text-bg-success">active</span>
+                            <span class="badge text-bg-success">{{ ui('active') }}</span>
                         @endif
                     </td>
                     <td class="text-end">
@@ -86,7 +86,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
+                <tr><td colspan="6" class="text-center text-muted py-4">{{ ui('no_users_found') }}</td></tr>
                 @endforelse
             </tbody>
         </table>

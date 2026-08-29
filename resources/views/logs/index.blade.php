@@ -14,23 +14,23 @@
         <div class="card">
             <div class="card-header d-flex flex-wrap gap-2 align-items-center">
                 <form method="GET" class="d-flex flex-wrap gap-2 align-items-center mb-0">
-                    <label class="mb-0">File</label>
+                    <label class="mb-0">{{ ui('file') }}</label>
                     <select name="file" class="form-select form-select-sm" onchange="this.form.submit()">
                         @foreach($files as $f)
                             <option value="{{ $f }}" @if($f === $current) selected @endif>{{ $f }}</option>
                         @endforeach
                     </select>
 
-                    <label class="mb-0 ms-2">Level</label>
+                    <label class="mb-0 ms-2">{{ ui('level') }}</label>
                     <select name="level" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">All</option>
+                        <option value="">{{ ui('all') }}</option>
                         @foreach($levels as $l)
                             <option value="{{ $l }}" @if($l === $activeLevel) selected @endif>{{ ucfirst($l) }}</option>
                         @endforeach
                     </select>
                 </form>
                 @if($current)
-                <a href="?file={{ urlencode($current) }}&dl={{ urlencode($current) }}" class="btn btn-sm btn-outline-secondary ms-auto">Download</a>
+                <a href="?file={{ urlencode($current) }}&dl={{ urlencode($current) }}" class="btn btn-sm btn-outline-secondary ms-auto">{{ ui('download') }}</a>
                 @endif
             </div>
                 <div class="card-body p-0">
@@ -38,9 +38,9 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th style="width:90px">Level</th>
-                                <th style="width:170px">Date</th>
-                                <th>Message</th>
+                                <th style="width:90px">{{ ui('level') }}</th>
+                                <th style="width:170px">{{ ui('date') }}</th>
+                                <th>{{ ui('message') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,7 +71,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="3" class="text-center text-muted py-4">No log entries.</td></tr>
+                                <tr><td colspan="3" class="text-center text-muted py-4">{{ ui('no_log_entries') }}</td></tr>
                             @endforelse
                         </tbody>
                     </table>

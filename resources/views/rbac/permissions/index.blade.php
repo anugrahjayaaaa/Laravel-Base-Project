@@ -2,16 +2,16 @@
 @section('content')
 @include('partials.flash-message')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Permissions</h3>
+    <h3>{{ ui('permissions') }}</h3>
     @can('permission.create')
-    <a href="{{ route('permissions.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Permission</a>
+    <a href="{{ route('permissions.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> {{ ui('new_permission') }}</a>
     @endcan
 </div>
 
 <form method="GET" class="mb-3">
     <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-        <input type="text" name="q" class="form-control bg-body border-0" placeholder="Search permission name…" value="{{ request('q') }}" aria-label="Search permissions">
+        <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_permission_name') }}" value="{{ request('q') }}" aria-label="{{ ui('search') }}">
         <button class="btn btn-primary px-3" type="submit">Search</button>
     </div>
 </form>
@@ -21,7 +21,7 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr><th>#</th><th>Name</th><th>Guard</th><th class="text-end">Actions</th></tr>
+                <tr><th>#</th><th>{{ ui('name') }}</th><th>{{ ui('guard') }}</th><th class="text-end">{{ ui('action') }}</th></tr>
             </thead>
             <tbody>
                 @forelse ($permissions as $perm)
@@ -30,7 +30,7 @@
                     <td>{{ $perm->name }}</td>
                     <td>
                         <span class="badge text-bg-secondary">{{ $perm->guard_name }}</span>
-                        @if($perm->trashed())<span class="badge text-bg-danger">deleted</span>@endif
+                                @if($perm->trashed())<span class="badge text-bg-danger">{{ ui('deleted') }}</span>@endif
                     </td>
                     <td class="text-end">
                         <x-action-buttons
@@ -41,7 +41,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="4" class="text-center text-muted py-4">No permissions.</td></tr>
+                <tr><td colspan="4" class="text-center text-muted py-4">{{ ui('no_permissions') }}</td></tr>
                 @endforelse
             </tbody>
         </table>
