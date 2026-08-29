@@ -18,7 +18,8 @@
             <form method="POST" action="{{ route('password.email') }}">
                 @csrf
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="{{ ui('email') }}" value="{{ old('email') }}" required autofocus>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="{{ ui('email') }}" value="{{ old('email') }}" required autofocus>
+                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-envelope"></i></div>
                 </div>
                 <div class="row">

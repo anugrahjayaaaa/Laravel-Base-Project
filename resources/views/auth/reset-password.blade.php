@@ -15,15 +15,18 @@
                 @csrf
                 <input type="hidden" name="token" value="{{ $token }}">
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="{{ ui('email') }}" value="{{ old('email', $email) }}" required autofocus>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="{{ ui('email') }}" value="{{ old('email', $email) }}" required autofocus>
+                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-envelope"></i></div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="{{ ui('new_password') }}" required>
+                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ ui('new_password') }}" required>
+                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-lock"></i></div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" name="password_confirmation" class="form-control" placeholder="{{ ui('confirm_password') }}" required>
+                    <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="{{ ui('confirm_password') }}" required>
+                    @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-lock"></i></div>
                 </div>
                 <div class="row">

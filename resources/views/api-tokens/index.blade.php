@@ -18,7 +18,8 @@
 <form method="POST" action="{{ route('api-tokens.store') }}" class="row g-2 mb-3">
     @csrf
     <div class="col-md-4">
-        <input type="text" name="name" class="form-control" placeholder="{{ ui('token_name') }}" required>
+        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" placeholder="{{ ui('token_name') }}" required>
+        @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
     <div class="col-auto">
         <button class="btn btn-primary"><i class="bi bi-plus-circle"></i> {{ ui('create') }}</button>

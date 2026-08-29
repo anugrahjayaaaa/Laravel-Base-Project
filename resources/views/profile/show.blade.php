@@ -10,7 +10,8 @@
                     @csrf
                     <div class="mb-3">
                         <label class="form-label">{{ ui('name') }}</label>
-                        <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
+                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $user->name) }}" required>
+                        @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ ui('username') }}</label>
@@ -22,7 +23,8 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ ui('phone') }}</label>
-                        <input type="text" name="phone" class="form-control" value="{{ old('phone', $user->phone) }}">
+                        <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}">
+                        @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <button class="btn btn-primary">{{ ui('update_profile') }}</button>
                 </form>
@@ -37,15 +39,18 @@
                     @csrf
                     <div class="mb-3">
                         <label class="form-label">{{ ui('current_password') }}</label>
-                        <input type="password" name="current_password" class="form-control" required>
+                        <input type="password" name="current_password" class="form-control @error('current_password') is-invalid @enderror" required>
+                        @error('current_password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ ui('new_password_hint') }}</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+                        @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ ui('confirm') }}</label>
-                        <input type="password" name="password_confirmation" class="form-control" required>
+                        <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
+                        @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <button class="btn btn-warning">{{ ui('change_password') }}</button>
                 </form>
