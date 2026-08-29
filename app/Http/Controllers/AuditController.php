@@ -2,56 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuditQueryService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Spatie\Activitylog\Models\Activity;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AuditController extends Controller
 {
+    public function __construct(private AuditQueryService $audit) {}
+
     public function index(Request $request): View
     {
-        $query = Activity::with(['causer', 'subject' => fn ($q) => $q->withoutGlobalScopes()])->latest();
-
-        if ($request->filled('action')) {
-            $query->where('description', $request->action);
-        }
-        if ($request->filled('causer')) {
-            $query->where('causer_id', $request->causer);
-        }
-        if ($request->filled('from')) {
-            $query->whereDate('created_at', '>=', $request->from);
-        }
-        if ($request->filled('to')) {
-            $query->whereDate('created_at', '<=', $request->to);
-        }
-
         // ponytail: keyset not required at this scale; offset paginate is fine
-        $activities = $query->paginate(20)->withQueryString();
-
-        $actions = Activity::distinct()->pluck('description')->sort()->values();
+        $activities = $this->audit->forFilters($request)->paginate(20)->withQueryString();
+        $actions = $this->audit->distinctActions();
 
         return view('audit.index', compact('activities', 'actions'));
     }
 
-    public function export(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function export(Request $request): StreamedResponse
     {
-        $query = Activity::with(['causer', 'subject' => fn ($q) => $q->withoutGlobalScopes()]);
-        if ($request->filled('action')) {
-            $query->where('description', $request->action);
-        }
-        if ($request->filled('causer')) {
-            $query->where('causer_id', $request->causer);
-        }
-        if ($request->filled('from')) {
-            $query->whereDate('created_at', '>=', $request->from);
-        }
-        if ($request->filled('to')) {
-            $query->whereDate('created_at', '<=', $request->to);
-        }
-
         // ponytail: stream CSV, no package. Escape fields per RFC 4180.
-        $rows = $query->latest()->get();
-        $filename = 'audit-log-' . now()->format('Y-m-d') . '.csv';
+        $rows = $this->audit->forFilters($request)->latest()->get();
+        $filename = 'audit-log-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($rows) {
             $out = fopen('php://output', 'w');
