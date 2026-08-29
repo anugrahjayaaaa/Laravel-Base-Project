@@ -62,7 +62,7 @@
             "@php artisan test"
         ],
         "test:coverage": [
-            "pest --coverage"
+            "XDEBUG_MODE=coverage pest --coverage"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
