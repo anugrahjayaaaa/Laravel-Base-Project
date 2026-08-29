@@ -106,7 +106,32 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **117 tests / 312 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, bulk actions, i18n locale + e2e API localization, form-request coverage).
+Current coverage: **121 tests / 312+ assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, bulk actions, i18n locale + e2e API localization, form-request coverage, 3 services).
+
+### Coverage & quality
+
+```bash
+composer test:coverage                       # runs Pest with Xdebug + emits:
+                                            #   coverage/index.html  (open in browser)
+                                            #   build/logs/clover.xml (machine-readable, for SonarQube)
+php artisan test --coverage                  # quick terminal % (needs Xdebug/pcov)
+vendor/bin/pint                              # auto-fix style; vendor/bin/pint --test to check
+```
+
+### Local SonarQube scan
+
+A self-hosted SonarQube is run locally (e.g. `docker compose up` of the SonarQube stack). `sonar-project.properties` already points at `http://localhost:9000`.
+
+```bash
+# 1. generate a global analysis token at http://localhost:9000 (My Account → Security)
+# 2. ensure coverage is fresh
+composer test:coverage
+# 3. scan
+sonar-scanner -Dsonar.login=<TOKEN>
+# dashboard: http://localhost:9000/dashboard?id=laravel-base-project
+```
+
+> GitHub Actions CI is currently **disabled** (`.github/workflows/ci.yml.disabled`). Re-enable by renaming it back to `ci.yml`; the SonarCloud step is guarded by the `SONAR_TOKEN` repo secret.
 
 ## Logs, cache & state — where to look
 
