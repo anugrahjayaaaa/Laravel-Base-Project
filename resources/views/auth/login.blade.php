@@ -18,11 +18,13 @@
             <form method="POST" action="{{ route('login.store') }}">
                 @csrf
                 <div class="input-group mb-3">
-                    <input type="text" name="identifier" class="form-control" placeholder="{{ ui('email_or_username') }}" value="{{ old('identifier') }}" required autofocus>
+                    <input type="text" name="identifier" class="form-control @error('identifier') is-invalid @enderror" placeholder="{{ ui('email_or_username') }}" value="{{ old('identifier') }}" required autofocus>
+                    @error('identifier')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-person"></i></div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="{{ ui('password') }}" required>
+                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ ui('password') }}" required>
+                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <button type="button" class="input-group-text" id="toggle-password" aria-label="Show password" style="cursor:pointer">
                         <i class="bi bi-eye" id="password-icon"></i>
                     </button>

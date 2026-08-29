@@ -8,7 +8,8 @@
         <div class="card-body">
             <div class="mb-3">
                 <label class="form-label">{{ ui('name') }}</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name', $role->name ?? '') }}" required>
+                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $role->name ?? '') }}" required>
+                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="mb-3">
                 <label class="form-label">{{ ui('permissions') }}</label>
