@@ -35,6 +35,30 @@
     </div>
 </div>
 
+{{-- License status badge (REQUIRED, doc §9b) --}}
+@php
+    $licStatus = $licenseStatus ?? 'none';
+    $licBadge = match ($licStatus) {
+        'active' => 'text-bg-success',
+        'expired', 'revoked' => 'text-bg-danger',
+        'none' => 'text-bg-secondary',
+        default => 'text-bg-warning',
+    };
+    $licText = match ($licStatus) {
+        'active' => 'License: '.($licenseDaysLeft === null ? 'Lifetime' : $licenseDaysLeft.' days left'),
+        'expired' => 'Expired — downgraded to Free',
+        'revoked' => 'Revoked — downgraded to Free',
+        'none' => 'No license — Free plan',
+        default => 'License: '.$licStatus,
+    };
+@endphp
+<div class="mb-3">
+    <span class="badge {{ $licBadge }} fs-6">
+        <i class="bi bi-patch-check me-1"></i>{{ $licText }}
+        <span class="opacity-75 ms-1">({{ $activePlan ?? 'free' }})</span>
+    </span>
+</div>
+
 <div class="card shadow-sm border-0">
     <div class="card-body">
         <h5 class="mb-1">{{ ui('welcome', ['name' => auth()->user()->name]) }} 👋</h5>

@@ -10,6 +10,7 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\LogViewerController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
@@ -84,6 +85,9 @@ Route::middleware('auth')->group(function () {
     // Feature flags management (self-gated: feature.manage permission)
     Route::get('/features', [FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
     Route::post('/features/{slug}/toggle', [FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
+
+    // Plan management (full CRUD, custom slug/price/limits/features — doc §9b)
+    Route::resource('plans', PlanController::class)->middleware('can:feature.manage');
 
     Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 

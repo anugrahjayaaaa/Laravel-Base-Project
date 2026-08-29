@@ -124,6 +124,26 @@ return [
     'confirm_enable_feature' => 'Are you sure you want to enable this feature?',
     'confirm_disable_feature' => 'Are you sure you want to disable this feature?',
 
+    // ── plans / licensing ──
+    'plans' => 'Plans',
+    'plans_intro' => 'Manage subscription plans. Slug, price, limits and features are fully custom.',
+    'new_plan' => 'New Plan',
+    'edit_plan' => 'Edit Plan',
+    'price_monthly' => 'Price (monthly)',
+    'limits' => 'Limits',
+    'features' => 'Features',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'slug_help' => 'Unique identifier, e.g. starter-2026. Letters, numbers, dash/underscore.',
+    'limits_help' => 'One per line: key: value (e.g. max_members: 5)',
+    'features_help' => 'One per line (e.g. kanban)',
+    'no_plans' => 'No plans yet.',
+    'cancel' => 'Cancel',
+    'save' => 'Save',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'confirm_delete' => 'Delete this plan?',
+
     // ── sessions ──
     'active_sessions' => 'Active Sessions',
     'ip' => 'IP',
