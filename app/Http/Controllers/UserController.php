@@ -34,14 +34,14 @@ class UserController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('users.index', compact('users'));
+        return view('access.users.index', compact('users'));
     }
 
     public function create(): View
     {
         $roles = Role::orderBy('name')->get();
 
-        return view('users.create', compact('roles'));
+        return view('access.users.create', compact('roles'));
     }
 
     public function store(UserStoreRequest $request): RedirectResponse
@@ -56,7 +56,7 @@ class UserController extends Controller
         $roles = Role::orderBy('name')->get();
         $user->load('roles');
 
-        return view('users.edit', compact('user', 'roles'));
+        return view('access.users.edit', compact('user', 'roles'));
     }
 
     public function update(UserUpdateRequest $request, User $user): RedirectResponse

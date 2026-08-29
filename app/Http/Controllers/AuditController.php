@@ -17,7 +17,7 @@ class AuditController extends Controller
         $activities = $this->audit->forFilters($request)->paginate(20)->withQueryString();
         $actions = $this->audit->distinctActions();
 
-        return view('audit.index', compact('activities', 'actions'));
+        return view('monitoring.audit.index', compact('activities', 'actions'));
     }
 
     public function export(Request $request): StreamedResponse

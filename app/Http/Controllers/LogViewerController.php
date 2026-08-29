@@ -24,7 +24,7 @@ class LogViewerController extends Controller
 
         $levels = ['error', 'warning', 'info', 'debug', 'notice', 'critical', 'alert', 'emergency'];
 
-        return view('logs.index', [
+        return view('monitoring.logs.index', [
             'logs' => $logs,
             'files' => $log->getFiles(true),
             'current' => $log->getFileName(),

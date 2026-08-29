@@ -25,12 +25,12 @@ class PermissionController extends Controller
             ->when(true, fn ($q) => $this->sortIndex($q, $request, 'name', ['name', 'guard_name']))
             ->paginate(10)->withQueryString();
 
-        return view('rbac.permissions.index', compact('permissions'));
+        return view('access.permissions.index', compact('permissions'));
     }
 
     public function create(): View
     {
-        return view('rbac.permissions.create');
+        return view('access.permissions.create');
     }
 
     public function store(PermissionStoreRequest $request): RedirectResponse
@@ -44,7 +44,7 @@ class PermissionController extends Controller
 
     public function edit(Permission $permission): View
     {
-        return view('rbac.permissions.edit', compact('permission'));
+        return view('access.permissions.edit', compact('permission'));
     }
 
     public function update(PermissionUpdateRequest $request, Permission $permission): RedirectResponse

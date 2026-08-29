@@ -26,14 +26,14 @@ class RoleController extends Controller
             ->when(true, fn ($q) => $this->sortIndex($q, $request, 'name', ['name']))
             ->paginate(10)->withQueryString();
 
-        return view('rbac.roles.index', compact('roles'));
+        return view('access.roles.index', compact('roles'));
     }
 
     public function create(): View
     {
         $permissions = Permission::orderBy('name')->get();
 
-        return view('rbac.roles.create', compact('permissions'));
+        return view('access.roles.create', compact('permissions'));
     }
 
     public function store(RoleStoreRequest $request): RedirectResponse
@@ -51,7 +51,7 @@ class RoleController extends Controller
         $permissions = Permission::orderBy('name')->get();
         $role->load('permissions');
 
-        return view('rbac.roles.edit', compact('role', 'permissions'));
+        return view('access.roles.edit', compact('role', 'permissions'));
     }
 
     public function update(RoleUpdateRequest $request, Role $role): RedirectResponse
