@@ -1,23 +1,9 @@
 <?php
 
 return [
-    // Auth pages
-    'sign_in_with' => 'Masuk dengan email atau username',
-    'forgot_password_intro' => 'Lupa kata sandi? Masukkan email dan kami akan mengirimkan tautan reset.',
-    'send_reset_link' => 'Kirim tautan reset',
-    'reset_your_password' => 'Atur ulang kata sandi',
-    'back_to_login' => 'Kembali ke login',
-    'remember_me' => 'Ingat saya',
-    'email_or_username' => 'Email atau Username',
-    'password' => 'Kata Sandi',
-    'new_password' => 'Kata Sandi Baru',
-    'confirm_password' => 'Konfirmasi kata sandi',
-    'reset_password' => 'Atur ulang kata sandi',
-    'sign_in' => 'Masuk',
-    'forgot_your_password' => 'Lupa kata sandi?',
-    'leave_blank_to_keep' => 'kosongkan bila tidak diubah',
-
-    // Navigation / generic
+    // ─────────────────────────────────────────────
+    // common — shared across pages (buttons, labels)
+    // ─────────────────────────────────────────────
     'page' => 'Halaman',
     'cancel' => 'Batal',
     'save' => 'Simpan',
@@ -28,34 +14,78 @@ return [
     'delete_confirm_body' => 'Yakin ingin menghapus item ini? Tindakan tidak dapat dibatalkan.',
     'close' => 'Tutup',
     'search' => 'Cari',
-    'search_name_username_email' => 'Cari nama, username, email…',
-    'search_role_name' => 'Cari nama peran…',
-    'search_permission_name' => 'Cari nama izin…',
-    'search_menu' => 'Cari menu…',
-    'no_menu_found' => 'Menu tidak ditemukan',
+    'filter' => 'Filter',
+    'copy' => 'Salin',
+    'copied' => 'Disalin',
+    'confirm' => 'Konfirmasi',
+    'apply' => 'Terapkan',
+    'enable' => 'Aktifkan',
+    'disable' => 'Nonaktifkan',
     'showing' => 'Menampilkan',
     'to' => 'sampai',
+    'from' => 'Dari',
     'of' => 'dari',
     'results' => 'hasil',
     'previous' => 'Sebelumnya',
     'next' => 'Berikutnya',
-    'copy' => 'Salin',
-    'copied' => 'Disalin',
-    'filter' => 'Filter',
+    'all' => 'Semua',
+    'yes' => 'Ya',
+    'no' => 'Tidak',
+    'back' => 'Kembali',
 
-    // Dashboard
+    // ── auth ──
+    'sign_in_with' => 'Masuk dengan email atau username',
+    'sign_in' => 'Masuk',
+    'forgot_your_password' => 'Lupa kata sandi?',
+    'forgot_password_intro' => 'Lupa kata sandi? Masukkan email dan kami akan mengirimkan tautan reset.',
+    'send_reset_link' => 'Kirim tautan reset',
+    'reset_your_password' => 'Atur ulang kata sandi',
+    'reset_password' => 'Atur ulang kata sandi',
+    'back_to_login' => 'Kembali ke login',
+    'remember_me' => 'Ingat saya',
+    'email_or_username' => 'Email atau Username',
+    'password' => 'Kata Sandi',
+    'new_password' => 'Kata Sandi Baru',
+    'confirm_password' => 'Konfirmasi kata sandi',
+    'leave_blank_to_keep' => 'kosongkan bila tidak diubah',
+
+    // ── dashboard ──
     'welcome' => 'Selamat datang, :name',
     'dashboard_subtitle' => 'Kelola pengguna, peran, dan pantau aktivitas langsung dari sidebar.',
 
-    // Section headings / table headers / misc
+    // ── users ──
+    'users' => 'Pengguna',
+    'user' => 'Pengguna',
     'new_user' => 'Pengguna Baru',
+    'search_name_username_email' => 'Cari nama, username, email…',
+    'no_users_found' => 'Tidak ada pengguna ditemukan.',
+    'deleted' => 'dihapus',
+    'active' => 'aktif',
+    'locked' => 'terkunci',
+    'perm_locked' => 'terkunci permanen',
+    'status_label' => 'Status:',
+    'last_login' => 'Login terakhir: :time (:ip)',
+    'lock' => 'Kunci',
+    'unlock' => 'Buka kunci',
+    'send_reset_email' => 'Kirim email reset',
+    'send_reset_email_label' => 'Kirim email reset:',
+
+    // ── roles ──
+    'roles' => 'Peran',
+    'role' => 'Peran',
     'new_role' => 'Peran Baru',
-    'new_permission' => 'Izin Baru',
-    'roles_col' => 'Peran',
-    'permissions' => 'Izin',
-    'guard' => 'Guard',
+    'search_role_name' => 'Cari nama peran…',
     'no_roles' => 'Tidak ada peran.',
+
+    // ── permissions ──
+    'permissions' => 'Izin',
+    'permission' => 'Izin',
+    'new_permission' => 'Izin Baru',
+    'search_permission_name' => 'Cari nama izin…',
     'no_permissions' => 'Tidak ada izin.',
+    'guard' => 'Guard',
+
+    // ── profile ──
     'profile' => 'Profil',
     'change_password' => 'Ubah Kata Sandi',
     'name' => 'Nama',
@@ -64,23 +94,33 @@ return [
     'phone' => 'Telepon (E.164)',
     'current_password' => 'Kata Sandi Saat Ini',
     'new_password_hint' => 'Kata Sandi Baru (min. 12 huruf, campur huruf besar/kecil, angka, simbol)',
-    'confirm' => 'Konfirmasi',
     'update_profile' => 'Perbarui Profil',
+
+    // ── api tokens ──
+    'api_tokens' => 'Token API',
     'token_name' => 'Nama token (cth. mobile-iphone)',
     'abilities' => 'Hak akses',
     'created' => 'Dibuat',
     'last_used' => 'Terakhir digunakan',
     'new_token_copy_now' => 'Token baru (salin sekarang):',
-    'api_tokens' => 'Token API',
+    'no_tokens_yet' => 'Belum ada token.',
+    'revoke_this_token' => 'Cabut token ini?',
+
+    // ── features ──
     'feature_flags' => 'Fitur',
     'feature_flags_intro' => 'Fitur yang dimatikan tidak bisa diakses siapa pun — kecuali pengguna pemegang izin :code, yang tetap bisa mengelola modul walau fiturnya mati.',
     'feature' => 'Fitur',
     'slug' => 'Slug',
     'status' => 'Status',
-    'action' => 'Aksi',
     'enabled' => 'Aktif',
     'disabled' => 'Nonaktif',
     'no_features' => 'Tidak ada fitur.',
+    'confirm_feature_change' => 'Konfirmasi perubahan fitur',
+    'confirm_feature_change_body' => 'Yakin ingin mengubah fitur ini?',
+    'confirm_enable_feature' => 'Yakin ingin mengaktifkan fitur ini?',
+    'confirm_disable_feature' => 'Yakin ingin menonaktifkan fitur ini?',
+
+    // ── sessions ──
     'active_sessions' => 'Sesi Aktif',
     'ip' => 'IP',
     'user_agent' => 'User Agent',
@@ -90,32 +130,17 @@ return [
     'no_sessions' => 'Tidak ada sesi.',
     'logout_others' => 'Keluar dari lainnya',
     'confirm_password_logout' => 'Masukkan kata sandi untuk logout perangkat lain',
-    'no_tokens_yet' => 'Belum ada token.',
-    'revoke_this_token' => 'Cabut token ini?',
-    'audit_entries' => 'Entri Audit',
-    'database' => 'Basis Data',
-    'users' => 'Pengguna',
-    'roles' => 'Peran',
-    'user' => 'Pengguna',
-    'deleted' => 'dihapus',
-    'perm_locked' => 'terkunci permanen',
-    'locked' => 'terkunci',
-    'active' => 'aktif',
-    'no_users_found' => 'Tidak ada pengguna ditemukan.',
-    'send_reset_email' => 'Kirim email reset',
-    'status_label' => 'Status:',
-    'last_login' => 'Login terakhir: :time (:ip)',
-    'unlock' => 'Buka kunci',
-    'lock' => 'Kunci',
-    'send_reset_email_label' => 'Kirim email reset:',
+
+    // ── notifications ──
     'notifications' => 'Notifikasi',
     'notifications_intro' => 'Aktivitas akun dan admin terbaru Anda.',
     'unread' => 'belum dibaca',
     'no_notifications_yet' => 'Belum ada notifikasi.',
     'coming_later' => 'Akan hadir di fase berikutnya.',
+
+    // ── logs & audit ──
     'file' => 'Berkas',
     'level' => 'Level',
-    'all' => 'Semua',
     'download' => 'Unduh',
     'date' => 'Tanggal',
     'message' => 'Pesan',
@@ -127,31 +152,28 @@ return [
     'no_activity' => 'Tidak ada aktivitas.',
     'field' => 'Field',
     'no_field_changes' => 'Tidak ada perubahan field.',
+    'audit_entries' => 'Entri Audit',
+    'database' => 'Basis Data',
+    'search_menu' => 'Cari menu…',
+    'no_menu_found' => 'Menu tidak ditemukan',
+    'action' => 'Aksi',
+
+    // ── modals (shared style) ──
     'permanently_delete' => 'Hapus permanen',
     'force_delete_confirm_body' => 'Tindakan ini akan menghapus item secara permanen dan tidak bisa dibatalkan. Lanjutkan?',
-    'delete_permanently' => 'Hapus permanen',
-    'confirm_feature_change' => 'Konfirmasi perubahan fitur',
-    'confirm_feature_change_body' => 'Yakin ingin mengubah fitur ini?',
-    'confirm_enable_feature' => 'Yakin ingin mengaktifkan fitur ini?',
-    'confirm_disable_feature' => 'Yakin ingin menonaktifkan fitur ini?',
-    'enable' => 'Aktifkan',
-    'disable' => 'Nonaktifkan',
 
-    // Translations management
+    // ── translations ──
     'translations' => 'Terjemahan',
     'edit_translation' => 'Edit Terjemahan',
     'group' => 'Grup',
     'key' => 'Kunci',
     'no_translations' => 'Tidak ada terjemahan ditemukan.',
 
-    // Bulk actions
+    // ── bulk actions ──
     'bulk_action' => 'Aksi massal',
     'soft_delete' => 'Hapus (soft)',
-    'apply' => 'Terapkan',
-    'confirm_bulk_delete' => 'Hapus item terpilih? Untuk yang dihapus permanen tidak bisa dikembalikan.',
     'select_all' => 'Pilih semua',
     'selected' => 'dipilih',
     'confirm_bulk_delete_title' => 'Konfirmasi hapus massal',
     'confirm_bulk_delete_body' => 'Anda akan :action :count item. Lanjutkan?',
-    'delete' => 'Hapus',
 ];

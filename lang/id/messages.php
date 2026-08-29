@@ -1,6 +1,7 @@
 <?php
 
 return [
+    // ── common (navigation / sidebar labels) ──
     'dashboard' => 'Dasbor',
     'users' => 'Pengguna',
     'roles' => 'Peran',
@@ -20,11 +21,11 @@ return [
     'main_menu' => 'Menu Utama',
     'template' => 'Template',
     'login' => 'Masuk',
-    'saved' => 'Tersimpan.',
     'translations' => 'Terjemahan',
     'save' => 'Simpan',
+    'saved' => 'Tersimpan.',
 
-    // Flash / action messages
+    // ── flash / action messages ──
     'user_created' => 'Pengguna dibuat.',
     'user_updated' => 'Pengguna diperbarui.',
     'user_unlocked' => 'Pengguna dibuka kunci.',
@@ -56,13 +57,11 @@ return [
     'feature_enabled' => ':label diaktifkan.',
     'feature_disabled' => ':label dinonaktifkan.',
 
-    // Login lock / auth messages
+    // ── auth (login lock / verification) ──
     'too_many_attempts' => 'Terlalu banyak percobaan. Coba lagi dalam :seconds detik.',
     'account_locked_permanent' => 'Akun dikunci permanen. Hubungi administrator.',
     'account_locked_retry' => 'Akun dikunci. Coba lagi dalam :seconds dtk.',
     'invalid_credentials' => 'Kredensial ini tidak cocok dengan data kami.',
-
-    // API auth messages
     'email_verified' => 'Email terverifikasi.',
     'email_already_verified' => 'Email sudah terverifikasi.',
     'invalid_verification_link' => 'Tautan verifikasi tidak valid atau kedaluwarsa.',
@@ -71,7 +70,7 @@ return [
     'reset_link_sent_simple' => 'Tautan reset kata sandi sudah kami kirim.',
     'token_created' => 'Token dibuat. Simpan sekarang — tidak akan ditampilkan lagi.',
 
-    // Bulk delete counts
+    // ── bulk delete counts ──
     'users_deleted_count' => ':count user dipindah ke tempat sampah.',
     'users_permanently_deleted_count' => ':count user dihapus permanen.',
     'roles_deleted_count' => ':count role dipindah ke tempat sampah.',

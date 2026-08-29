@@ -1,6 +1,7 @@
 <?php
 
 return [
+    // ── common (navigation / sidebar labels) ──
     'dashboard' => 'Dashboard',
     'users' => 'Users',
     'roles' => 'Roles',
@@ -20,11 +21,11 @@ return [
     'main_menu' => 'Main Menu',
     'template' => 'Template',
     'login' => 'Login',
-    'saved' => 'Saved.',
     'translations' => 'Translations',
     'save' => 'Save',
+    'saved' => 'Saved.',
 
-    // Flash / action messages
+    // ── flash / action messages ──
     'user_created' => 'User created.',
     'user_updated' => 'User updated.',
     'user_unlocked' => 'User unlocked.',
@@ -56,13 +57,11 @@ return [
     'feature_enabled' => ':label enabled.',
     'feature_disabled' => ':label disabled.',
 
-    // Login lock / auth messages
+    // ── auth (login lock / verification) ──
     'too_many_attempts' => 'Too many attempts. Try again in :seconds s.',
     'account_locked_permanent' => 'Account permanently locked. Contact an administrator.',
     'account_locked_retry' => 'Account locked. Try again in :seconds s.',
     'invalid_credentials' => 'These credentials do not match our records.',
-
-    // API auth messages
     'email_verified' => 'Email verified.',
     'email_already_verified' => 'Email already verified.',
     'invalid_verification_link' => 'Invalid or expired verification link.',
@@ -71,7 +70,7 @@ return [
     'reset_link_sent_simple' => 'Reset link sent.',
     'token_created' => 'Token created. Store it now — it won\'t be shown again.',
 
-    // Bulk delete counts
+    // ── bulk delete counts ──
     'users_deleted_count' => ':count user(s) moved to trash.',
     'users_permanently_deleted_count' => ':count user(s) permanently deleted.',
     'roles_deleted_count' => ':count role(s) moved to trash.',
