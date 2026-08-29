@@ -57,7 +57,18 @@
                 const submit = document.getElementById('featureToggleSubmit');
                 if (body) body.textContent = next === 'enable' ? '{{ ui('confirm_enable_feature') }}' : '{{ ui('confirm_disable_feature') }}';
                 if (submit) submit.textContent = next === 'enable' ? '{{ ui('enable') }}' : '{{ ui('disable') }}';
+                // ponytail: remember the real current state so Cancel can restore the switch
+                e.target._featureChk = btn;
             }
+        });
+
+        // Cancel/backdrop/Esc must restore the switch to its real state — the
+        // checkbox already flipped when clicked, so the confirm modal owns restoring it.
+        document.addEventListener('hide.bs.modal', function (e) {
+            const chk = e.target._featureChk;
+            if (!chk) return;
+            chk.checked = chk.getAttribute('data-enabled') === '0'; // '0' => currently enabled
+            e.target._featureChk = null;
         });
     })();
 </script>
