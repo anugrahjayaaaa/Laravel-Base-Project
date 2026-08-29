@@ -5,6 +5,7 @@ return [
     // common — shared across pages (buttons, labels)
     // ─────────────────────────────────────────────
     'page' => 'Halaman',
+    'audit_log' => 'Log Audit',
     'cancel' => 'Batal',
     'save' => 'Simpan',
     'create' => 'Buat',
