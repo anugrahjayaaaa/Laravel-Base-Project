@@ -43,5 +43,5 @@
     </div>
 </div>
 
-@include('partials.feature-toggle-modal')
+@include('partials.modals.feature-toggle-modal')
 @endsection
