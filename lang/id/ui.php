@@ -15,7 +15,7 @@ return [
     'reset_password' => 'Atur ulang kata sandi',
     'sign_in' => 'Masuk',
     'forgot_your_password' => 'Lupa kata sandi?',
-    'leave_blank_to_keep' => 'kosongkan jika tetap',
+    'leave_blank_to_keep' => 'kosongkan bila tidak diubah',
 
     // Navigation / generic
     'page' => 'Halaman',
@@ -45,7 +45,7 @@ return [
 
     // Dashboard
     'welcome' => 'Selamat datang, :name',
-    'dashboard_subtitle' => 'Kerangka Laravel Base Project — kelola pengguna, peran, dan pantau aktivitas dari sidebar.',
+    'dashboard_subtitle' => 'Kelola pengguna, peran, dan pantau aktivitas langsung dari sidebar.',
 
     // Section headings / table headers / misc
     'new_user' => 'Pengguna Baru',
@@ -63,7 +63,7 @@ return [
     'email' => 'Email',
     'phone' => 'Telepon (E.164)',
     'current_password' => 'Kata Sandi Saat Ini',
-    'new_password_hint' => 'Kata Sandi Baru (min 12, huruf besar/kecil/angka/simbol)',
+    'new_password_hint' => 'Kata Sandi Baru (min. 12 huruf, campur huruf besar/kecil, angka, simbol)',
     'confirm' => 'Konfirmasi',
     'update_profile' => 'Perbarui Profil',
     'token_name' => 'Nama token (cth. mobile-iphone)',
@@ -73,7 +73,7 @@ return [
     'new_token_copy_now' => 'Token baru (salin sekarang):',
     'api_tokens' => 'Token API',
     'feature_flags' => 'Fitur',
-    'feature_flags_intro' => 'Fitur yang dinonaktifkan tidak dapat diakses oleh siapa pun — kecuali pengguna dengan izin :code, yang tetap masuk agar dapat mengoperasikan modul saat mati.',
+    'feature_flags_intro' => 'Fitur yang dimatikan tidak bisa diakses siapa pun — kecuali pengguna pemegang izin :code, yang tetap bisa mengelola modul walau fiturnya mati.',
     'feature' => 'Fitur',
     'slug' => 'Slug',
     'status' => 'Status',
@@ -89,7 +89,7 @@ return [
     'other' => 'Lainnya',
     'no_sessions' => 'Tidak ada sesi.',
     'logout_others' => 'Keluar dari lainnya',
-    'confirm_password_logout' => 'Konfirmasi kata sandi untuk keluar dari perangkat lain',
+    'confirm_password_logout' => 'Masukkan kata sandi untuk logout perangkat lain',
     'no_tokens_yet' => 'Belum ada token.',
     'revoke_this_token' => 'Cabut token ini?',
     'audit_entries' => 'Entri Audit',
@@ -128,7 +128,7 @@ return [
     'field' => 'Field',
     'no_field_changes' => 'Tidak ada perubahan field.',
     'permanently_delete' => 'Hapus permanen',
-    'force_delete_confirm_body' => 'Ini akan menghapus item secara permanen dan tidak dapat dibatalkan. Lanjut?',
+    'force_delete_confirm_body' => 'Tindakan ini akan menghapus item secara permanen dan tidak bisa dibatalkan. Lanjutkan?',
     'delete_permanently' => 'Hapus permanen',
     'confirm_feature_change' => 'Konfirmasi perubahan fitur',
     'confirm_feature_change_body' => 'Yakin ingin mengubah fitur ini?',

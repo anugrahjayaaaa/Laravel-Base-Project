@@ -57,7 +57,7 @@ return [
     'feature_disabled' => ':label dinonaktifkan.',
 
     // Login lock / auth messages
-    'too_many_attempts' => 'Terlalu banyak percobaan. Coba lagi dalam :seconds dtk.',
+    'too_many_attempts' => 'Terlalu banyak percobaan. Coba lagi dalam :seconds detik.',
     'account_locked_permanent' => 'Akun dikunci permanen. Hubungi administrator.',
     'account_locked_retry' => 'Akun dikunci. Coba lagi dalam :seconds dtk.',
     'invalid_credentials' => 'Kredensial ini tidak cocok dengan data kami.',
@@ -68,6 +68,6 @@ return [
     'invalid_verification_link' => 'Tautan verifikasi tidak valid atau kedaluwarsa.',
     'verification_link_sent' => 'Tautan verifikasi dikirim.',
     'logged_out' => 'Berhasil keluar.',
-    'reset_link_sent_simple' => 'Tautan reset dikirim.',
-    'token_created' => 'Token dibuat. Simpan sekarang — tidak akan ditampilkan lagi.',
+    'reset_link_sent_simple' => 'Tautan reset kata sandi sudah kami kirim.',
+    'token_created' => 'Token berhasil dibuat. Simpan sekarang — token tidak akan ditampilkan lagi.',
 ];

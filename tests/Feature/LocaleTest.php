@@ -80,6 +80,35 @@ it('rejects unsupported API locale', function () {
     expect($called)->toBeTrue();
 });
 
+it('returns localized API message end-to-end (login + logout)', function () {
+    $u = \App\Models\User::where('email', 'admin@laravel-base.local')->first();
+
+    $login = $this->postJson('/api/v1/login', [
+        'identifier' => $u->username,
+        'password' => 'Admin@base12345', // seeded default
+        'device_name' => 'e2e-test',
+    ])->assertOk();
+
+    $token = $login->json('token');
+    expect($token)->not->toBeNull();
+
+    $this->withHeader('Authorization', 'Bearer ' . $token)
+        ->withHeader('X-Locale', 'id')
+        ->postJson('/api/v1/logout')
+        ->assertOk()
+        ->assertJson(['message' => 'Berhasil keluar.']); // id translation of messages.logged_out
+});
+
+it('returns English API message without X-Locale', function () {
+    $u = \App\Models\User::where('email', 'admin@laravel-base.local')->first();
+    $token = $u->createToken('e2e')->plainTextToken;
+
+    $this->withHeader('Authorization', 'Bearer ' . $token)
+        ->postJson('/api/v1/logout')
+        ->assertOk()
+        ->assertJson(['message' => 'Logged out.']);
+});
+
 it('reads translations from database (language_lines)', function () {
     // seeded by DatabaseSeeder -> LanguageLineSeeder
     $line = \Spatie\TranslationLoader\LanguageLine::where('group', 'messages')->where('key', 'users')->first();
