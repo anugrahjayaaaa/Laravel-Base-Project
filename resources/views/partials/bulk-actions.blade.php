@@ -15,11 +15,26 @@
             @if ($canSoft)<option value="soft">{{ ui('soft_delete') }}</option>@endif
             @if ($canForce)<option value="force">{{ ui('permanently_delete') }}</option>@endif
         </select>
-        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ ui('confirm_bulk_delete') }}')">
-            {{ ui('apply') }}
-        </button>
+        <button type="button" id="bulk-apply" class="btn btn-sm btn-danger">{{ ui('apply') }}</button>
     </div>
 </form>
+
+{{-- Confirm modal (consistent with force-delete-modal style) --}}
+<div class="modal fade" id="bulkConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ ui('confirm_bulk_delete_title') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="bulkConfirmBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ ui('cancel') }}</button>
+                <button type="button" class="btn btn-danger" id="bulkConfirmDelete">{{ ui('delete') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endif
 
 @push('scripts')
@@ -30,6 +45,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!form) return;
     const count = document.getElementById('bulk-count');
     const rows = () => document.querySelectorAll('input[name="ids[]"]');
+    const applyBtn = document.getElementById('bulk-apply');
+    const modalEl = document.getElementById('bulkConfirmModal');
+    const modalBody = document.getElementById('bulkConfirmBody');
+    const deleteBtn = document.getElementById('bulkConfirmDelete');
 
     const sync = () => {
         const boxes = rows();
@@ -37,19 +56,33 @@ document.addEventListener('DOMContentLoaded', function () {
         if (count) count.textContent = checked ? `(${checked} {{ ui('selected') }})` : '';
         const all = document.getElementById('bulk-select-all');
         if (all) all.indeterminate = checked > 0 && checked < boxes.length;
+        if (applyBtn) applyBtn.disabled = checked === 0;
     };
 
-    // header checkbox -> toggle all rows
     document.addEventListener('change', function (e) {
         if (e.target && e.target.id === 'bulk-select-all') {
             rows().forEach(b => { b.checked = e.target.checked; });
             sync();
+        } else if (e.target && e.target.name === 'ids[]') {
+            sync();
         }
     });
-    // any row checkbox -> update count
-    document.addEventListener('change', function (e) {
-        if (e.target && e.target.name === 'ids[]') sync();
-    });
+
+    if (applyBtn && modalEl) {
+        applyBtn.addEventListener('click', () => {
+            const checked = [...rows()].filter(b => b.checked).length;
+            if (checked === 0) return;
+            const action = form.querySelector('select[name="action"]').value;
+            const label = action === 'force' ? '{{ ui('permanently_delete') }}' : '{{ ui('soft_delete') }}';
+            modalBody.textContent = `{{ ui('confirm_bulk_delete_body') }}`.replace(':count', checked).replace(':action', label);
+            new bootstrap.Modal(modalEl).show();
+        });
+    }
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            form.submit();
+        });
+    }
 
     sync();
 });

@@ -151,4 +151,7 @@ return [
     'confirm_bulk_delete' => 'Hapus item terpilih? Untuk yang dihapus permanen tidak bisa dikembalikan.',
     'select_all' => 'Pilih semua',
     'selected' => 'dipilih',
+    'confirm_bulk_delete_title' => 'Konfirmasi hapus massal',
+    'confirm_bulk_delete_body' => 'Anda akan :action :count item. Lanjutkan?',
+    'delete' => 'Hapus',
 ];
