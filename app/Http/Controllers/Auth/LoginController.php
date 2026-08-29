@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -21,10 +25,10 @@ class LoginController extends Controller
      * Authenticate a user via email or username and start a session.
      *
      * @param  LoginRequest  $request  Validated: identifier (email|username), password, optional remember (bool)
-     * @return RedirectResponse  Redirect to intended page (dashboard) on success,
-     *                            or back with 'identifier' error on failure / lockout.
+     * @return RedirectResponse Redirect to intended page (dashboard) on success,
+     *                          or back with 'identifier' error on failure / lockout.
      *
-     * @throws ValidationException  On bad credentials or too many attempts (429-style lockout)
+     * @throws ValidationException On bad credentials or too many attempts (429-style lockout)
      *
      * @details
      * - Login field resolved: email if value looks like an email, else username (phone removed).
@@ -35,8 +39,8 @@ class LoginController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $identifier = (string) $request->input('identifier');
-        $throttleKey = 'login:' . $request->ip() . ':' . strtolower($identifier);
-        $userKey = 'login:user:' . strtolower($identifier); // ponytail: account-centric; survives IP rotation
+        $throttleKey = 'login:'.$request->ip().':'.strtolower($identifier);
+        $userKey = 'login:user:'.strtolower($identifier); // ponytail: account-centric; survives IP rotation
 
         if (RateLimiter::tooManyAttempts($userKey, 5) || RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = max(RateLimiter::availableIn($userKey), RateLimiter::availableIn($throttleKey));
@@ -76,7 +80,7 @@ class LoginController extends Controller
         }
 
         // ponytail: attempt() may not fire Login event under test session guard; dispatch explicitly so audit is consistent
-        event(new \Illuminate\Auth\Events\Login('web', $user, $request->boolean('remember')));
+        event(new Login('web', $user, $request->boolean('remember')));
 
         RateLimiter::clear($userKey);
         RateLimiter::clear($throttleKey);
@@ -93,13 +97,46 @@ class LoginController extends Controller
     }
 
     /**
+     * Verify email via the built-in signed URL (route name `verification.verify`).
+     * Uses URL::hasValidSignature so the `signature` + `expires` params are honored.
+     */
+    public function verify(Request $request, int $id): RedirectResponse
+    {
+        if (! URL::hasValidSignature($request)) {
+            abort(403, __('messages.invalid_verification_link'));
+        }
+
+        $user = User::findOrFail($id);
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            activity()->causedBy($user)->performedOn($user)->log('email_verified');
+        }
+
+        return redirect()->route('login')
+            ->with('status', __('messages.email_verified'));
+    }
+
+    /**
+     * Resend the verification email (authenticated user only).
+     */
+    public function resendVerification(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route('profile.show')
+                ->with('status', __('messages.email_already_verified'));
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return redirect()->route('profile.show')
+            ->with('status', __('messages.verification_link_sent'));
+    }
+
+    /**
      * Log the current user out and destroy the session.
-     *
-     * @param  LoginRequest  $request  (only CSRF/abort; no body validated)
-     * @return RedirectResponse  Redirect to '/'
-     *
-     * @details Invalidates SESSION (driver='database' -> table `sessions`) and
-     * regenerates the CSRF token.
      */
     public function destroy(LoginRequest $request): RedirectResponse
     {

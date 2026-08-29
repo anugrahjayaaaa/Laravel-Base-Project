@@ -20,6 +20,15 @@
                     <div class="mb-3">
                         <label class="form-label">{{ ui('email') }}</label>
                         <input type="text" class="form-control" value="{{ $user->email }}" disabled>
+                        @if ($user->hasVerifiedEmail())
+                            <div class="form-text text-success">{{ ui('email_verified') }}</div>
+                        @else
+                            <div class="form-text text-warning">{{ ui('email_not_verified') }}</div>
+                            <form method="POST" action="{{ route('verification.resend') }}" class="mt-2">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">{{ ui('resend_verification') }}</button>
+                            </form>
+                        @endif
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ ui('phone') }}</label>

@@ -25,7 +25,7 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [AuthApiController::class, 'login'])->middleware('throttle:10,15');
     Route::post('forgot-password', [AuthApiController::class, 'forgotPassword'])->middleware('throttle:10,15');
     Route::post('reset-password', [AuthApiController::class, 'resetPassword'])->middleware('throttle:10,15');
-    Route::get('email/verify', [AuthApiController::class, 'verifyEmail'])->name('verification.verify');
+    Route::get('email/verify', [AuthApiController::class, 'verifyEmail'])->name('api.verification.verify');
 
     // Authenticated
     Route::middleware('auth:sanctum')->name('api.')->group(function () {

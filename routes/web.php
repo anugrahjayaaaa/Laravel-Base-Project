@@ -1,40 +1,56 @@
 <?php
 
+use App\Http\Controllers\ApiTokenController;
+use App\Http\Controllers\AuditController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RoleController;
+use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\LogViewerController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\TranslationController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Health check (no auth)
 Route::get('/up', fn () => response()->json(['status' => 'ok']));
 
+// Email verification (web) — built-in signed URL, name required by VerifyEmail notification
+Route::get('/email/verify/{id}/{hash}', [LoginController::class, 'verify'])
+    ->name('verification.verify');
+
 // Auth
 Route::middleware('guest')->group(function () {
-    Route::get('login', [App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
-    Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'store'])
+    Route::get('login', [LoginController::class, 'show'])->name('login');
+    Route::post('login', [LoginController::class, 'store'])
         ->middleware('throttle:10,15')->name('login.store');
 
     // Password reset (guest only). Token state lives in DB table `password_reset_tokens`.
-    Route::get('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'create'])->name('password.request');
-    Route::post('forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'store'])->middleware('throttle:10,15')->name('password.email');
-    Route::get('reset-password/{token}', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'edit'])->name('password.reset');
-    Route::post('reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'update'])->name('password.store');
+    Route::get('forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'store'])->middleware('throttle:10,15')->name('password.email');
+    Route::get('reset-password/{token}', [ForgotPasswordController::class, 'edit'])->name('password.reset');
+    Route::post('reset-password', [ForgotPasswordController::class, 'update'])->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Stub routes for sidebar links (filled in by later phases: users/roles/permissions/audit/profile/sessions/api-tokens)
-    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index')->middleware(['can:user.view', 'feature:users']);
-    Route::resource('users', App\Http\Controllers\UserController::class)
+    Route::get('/users', [UserController::class, 'index'])->name('users.index')->middleware(['can:user.view', 'feature:users']);
+    Route::resource('users', UserController::class)
         ->except(['show'])
         ->middleware(['can:user.view', 'feature:users']);
-    Route::post('/users/bulk', [App\Http\Controllers\UserController::class, 'bulk'])->name('users.bulk')->middleware(['can:user.delete', 'feature:users']);
-    Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware(['can:user.restore', 'feature:users']);
-    Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['can:user.force-delete', 'feature:users']);
-    Route::post('/users/{user}/lock', [App\Http\Controllers\UserController::class, 'lock'])->name('users.lock')->middleware(['can:user.lock', 'feature:users']);
-    Route::post('/users/{user}/unlock', [App\Http\Controllers\UserController::class, 'unlock'])->name('users.unlock')->middleware(['can:user.lock', 'feature:users']);
-    Route::post('/users/{user}/reset-link', [App\Http\Controllers\UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware(['can:user.edit', 'feature:users']);
+    Route::post('/users/bulk', [UserController::class, 'bulk'])->name('users.bulk')->middleware(['can:user.delete', 'feature:users']);
+    Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore')->middleware(['can:user.restore', 'feature:users']);
+    Route::post('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['can:user.force-delete', 'feature:users']);
+    Route::post('/users/{user}/lock', [UserController::class, 'lock'])->name('users.lock')->middleware(['can:user.lock', 'feature:users']);
+    Route::post('/users/{user}/unlock', [UserController::class, 'unlock'])->name('users.unlock')->middleware(['can:user.lock', 'feature:users']);
+    Route::post('/users/{user}/reset-link', [UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware(['can:user.edit', 'feature:users']);
 
     Route::resource('roles', RoleController::class)->middleware(['can:role.view', 'feature:roles']);
     Route::post('/roles/bulk', [RoleController::class, 'bulk'])->name('roles.bulk')->middleware(['can:role.delete', 'feature:roles']);
@@ -46,39 +62,40 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware(['can:permission.restore', 'feature:permissions']);
     Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware(['can:permission.force-delete', 'feature:permissions']);
 
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/password', [App\Http\Controllers\ProfileController::class, 'changePassword'])->name('profile.password');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
 
-    Route::get('/sessions', [App\Http\Controllers\SessionController::class, 'index'])->name('sessions.index')->middleware(['can:session.view', 'feature:sessions']);
-    Route::post('/sessions/logout-others', [App\Http\Controllers\SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware(['can:session.revoke', 'feature:sessions']);
+    Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index')->middleware(['can:session.view', 'feature:sessions']);
+    Route::post('/sessions/logout-others', [SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware(['can:session.revoke', 'feature:sessions']);
 
-    Route::get('/audit', [App\Http\Controllers\AuditController::class, 'index'])->name('audit.index')->middleware(['can:audit.view', 'feature:audit']);
-    Route::get('/audit/export', [App\Http\Controllers\AuditController::class, 'export'])->name('audit.export')->middleware(['can:audit.view', 'feature:audit']);
-    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index')->middleware(['can:audit.view', 'feature:audit']);
-    Route::get('/api-tokens', [App\Http\Controllers\ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware(['can:api-token.view', 'feature:api-tokens']);
-    Route::resource('api-tokens', App\Http\Controllers\ApiTokenController::class)
+    Route::get('/audit', [AuditController::class, 'index'])->name('audit.index')->middleware(['can:audit.view', 'feature:audit']);
+    Route::get('/audit/export', [AuditController::class, 'export'])->name('audit.export')->middleware(['can:audit.view', 'feature:audit']);
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index')->middleware(['can:audit.view', 'feature:audit']);
+    Route::get('/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware(['can:api-token.view', 'feature:api-tokens']);
+    Route::resource('api-tokens', ApiTokenController::class)
         ->only(['store', 'destroy'])
         ->middleware(['can:api-token.create', 'feature:api-tokens']);
 
     // Web log viewer
-    Route::get('/logs', [App\Http\Controllers\LogViewerController::class, 'index'])
+    Route::get('/logs', [LogViewerController::class, 'index'])
         ->name('logs.index')->middleware(['can:logs.view', 'feature:logs']);
 
     // Feature flags management (self-gated: feature.manage permission)
-    Route::get('/features', [App\Http\Controllers\FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
-    Route::post('/features/{slug}/toggle', [App\Http\Controllers\FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
+    Route::get('/features', [FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
+    Route::post('/features/{slug}/toggle', [FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
 
-    Route::post('/locale', [App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
+    Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 
     // Translations management (under Settings, gated by RBAC + feature flag)
     Route::prefix('settings')->middleware(['can:translation.view', 'feature:translations'])->group(function () {
-        Route::get('/translations', [App\Http\Controllers\TranslationController::class, 'index'])->name('translations.index');
-        Route::get('/translations/{languageLine}/edit', [App\Http\Controllers\TranslationController::class, 'edit'])->name('translations.edit')->middleware('can:translation.edit');
-        Route::put('/translations/{languageLine}', [App\Http\Controllers\TranslationController::class, 'update'])->name('translations.update')->middleware('can:translation.edit');
+        Route::get('/translations', [TranslationController::class, 'index'])->name('translations.index');
+        Route::get('/translations/{languageLine}/edit', [TranslationController::class, 'edit'])->name('translations.edit')->middleware('can:translation.edit');
+        Route::put('/translations/{languageLine}', [TranslationController::class, 'update'])->name('translations.update')->middleware('can:translation.edit');
     });
 
-    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'destroy'])->name('logout');
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+    Route::post('/email/verify/resend', [LoginController::class, 'resendVerification'])->name('verification.resend');
 });
 
 Route::get('/', fn () => auth()->check()

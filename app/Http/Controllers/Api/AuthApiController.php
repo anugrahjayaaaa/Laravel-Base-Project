@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\AuthController;
 use App\Http\Requests\Auth\PasswordEmailRequest;
 use App\Http\Requests\Auth\PasswordResetRequest;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -80,11 +81,14 @@ class AuthApiController extends AuthController
      */
     public function verifyEmail(Request $request): JsonResponse
     {
-        $user = \App\Models\User::findOrFail($request->query('id'));
-
-        if (! hash_equals((string) $request->query('hash'), sha1($user->getEmailForVerification()))) {
+        // ponytail: verify the signed URL (signature + expires) — not just sha1(email),
+        // otherwise anyone knowing the address could forge verification.
+        if (! URL::hasValidSignature($request)) {
             return response()->json(['message' => __('messages.invalid_verification_link')], 403);
         }
+
+        $user = User::findOrFail($request->query('id'));
+
         if ($user->hasVerifiedEmail()) {
             return response()->json(['message' => __('messages.email_already_verified')]);
         }
