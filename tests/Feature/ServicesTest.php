@@ -43,10 +43,10 @@ it('UserService creates, updates, locks and unlocks a user', function () {
     expect($u->fresh()->locked_permanently)->toBeFalse();
 });
 
-it('UserService sendResetLink returns the sent status', function () {
+it('UserService sendResetPassword returns the sent status', function () {
     Mail::fake();
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $status = (new UserService)->sendResetLink($u);
+    $status = (new UserService)->sendResetPassword($u);
     expect($status)->toBe(Password::RESET_LINK_SENT);
 });
 

@@ -72,8 +72,8 @@
                                 :delete="!$user->trashed() && $user->id !== auth()->id() ? route('users.destroy', $user) : null"
                                 :forceDelete="$user->trashed() && auth()->user()->can('user.force-delete') ? route('users.forceDelete', $user->id) : null" />
                             @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.edit'))
-                            <form method="POST" action="{{ route('users.reset-link', $user) }}" class="d-inline">@csrf
-                                <button type="submit" class="btn btn-sm btn-light border rounded-2" data-bs-toggle="tooltip" data-bs-title="Send reset link" aria-label="Send reset link" style="min-width:38px">
+                            <form method="POST" action="{{ route('users.reset-password', $user) }}" class="d-inline">@csrf
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2" data-bs-toggle="tooltip" data-bs-title="Send reset password" aria-label="Send reset password" style="min-width:38px">
                                     <i class="bi bi-envelope"></i>
                                 </button>
                             </form>

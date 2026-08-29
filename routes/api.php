@@ -61,7 +61,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('users', UserApiController::class)->middleware('can:user.view');
         Route::post('users/{user}/lock', [UserApiController::class, 'lock'])->middleware('can:user.update');
         Route::post('users/{user}/unlock', [UserApiController::class, 'unlock'])->middleware('can:user.update');
-        Route::post('users/{user}/reset-link', [UserApiController::class, 'sendResetLink'])->middleware('can:user.update');
+        Route::post('users/{user}/reset-password', [UserApiController::class, 'sendResetPassword'])->middleware('can:user.update');
 
         // Roles (role.*)
         Route::apiResource('roles', RoleApiController::class)->middleware('can:role.view');

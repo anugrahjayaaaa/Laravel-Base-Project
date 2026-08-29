@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['can:user.force-delete', 'feature:users']);
     Route::post('/users/{user}/lock', [UserController::class, 'lock'])->name('users.lock')->middleware(['can:user.lock', 'feature:users']);
     Route::post('/users/{user}/unlock', [UserController::class, 'unlock'])->name('users.unlock')->middleware(['can:user.lock', 'feature:users']);
-    Route::post('/users/{user}/reset-link', [UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware(['can:user.edit', 'feature:users']);
+    Route::post('/users/{user}/reset-password', [UserController::class, 'sendResetPassword'])->name('users.reset-password')->middleware(['can:user.edit', 'feature:users']);
 
     Route::resource('roles', RoleController::class)->middleware(['can:role.view', 'feature:roles']);
     Route::post('/roles/bulk', [RoleController::class, 'bulk'])->name('roles.bulk')->middleware(['can:role.delete', 'feature:roles']);
