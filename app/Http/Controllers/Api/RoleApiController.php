@@ -56,24 +56,24 @@ class RoleApiController extends Controller
 
     public function destroy(Role $role): JsonResponse
     {
-        abort_if($role->name === 'super-admin', 403, 'Cannot delete super-admin.');
+        abort_if($role->name === 'super-admin', 403, __('messages.cannot_delete_super_admin'));
         $role->delete();
 
-        return response()->json(['message' => 'Role deleted.']);
+        return response()->json(['message' => __('messages.role_deleted')]);
     }
 
     public function restore(int $id): JsonResponse
     {
         Role::withTrashed()->findOrFail($id)->restore();
 
-        return response()->json(['message' => 'Role restored.']);
+        return response()->json(['message' => __('messages.role_restored')]);
     }
 
     public function forceDelete(int $id): JsonResponse
     {
-        abort_if(Role::withTrashed()->findOrFail($id)->name === 'super-admin', 403, 'Cannot permanently delete super-admin.');
+        abort_if(Role::withTrashed()->findOrFail($id)->name === 'super-admin', 403, __('messages.cannot_permanently_delete_super_admin'));
         Role::withTrashed()->findOrFail($id)->forceDelete();
 
-        return response()->json(['message' => 'Role permanently deleted.']);
+        return response()->json(['message' => __('messages.role_permanently_deleted')]);
     }
 }

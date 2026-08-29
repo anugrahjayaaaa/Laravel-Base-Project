@@ -2,15 +2,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm feature change</h5>
+                <h5 class="modal-title">{{ ui('confirm_feature_change') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" id="featureToggleBody">Are you sure you want to change this feature?</div>
+            <div class="modal-body" id="featureToggleBody">{{ ui('confirm_feature_change_body') }}</div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ ui('cancel') }}</button>
                 <form id="featureToggleForm" method="POST">@csrf
                     <input type="hidden" name="enabled" id="featureToggleEnabled" value="1">
-                    <button type="submit" class="btn btn-primary" id="featureToggleSubmit">Confirm</button>
+                    <button type="submit" class="btn btn-primary" id="featureToggleSubmit">{{ ui('confirm') }}</button>
                 </form>
             </div>
         </div>
@@ -23,8 +23,8 @@ document.addEventListener('show.bs.modal', function (e) {
         document.getElementById('featureToggleForm').setAttribute('action', btn.getAttribute('data-action'));
         document.getElementById('featureToggleEnabled').value = btn.getAttribute('data-enabled');
         const next = btn.getAttribute('data-enabled') === '1' ? 'enable' : 'disable';
-        document.getElementById('featureToggleBody').textContent = 'Are you sure you want to ' + next + ' this feature?';
-        document.getElementById('featureToggleSubmit').textContent = next === 'enable' ? 'Enable' : 'Disable';
+        document.getElementById('featureToggleBody').textContent = (next === 'enable' ? '{{ ui('confirm_enable_feature') }}' : '{{ ui('confirm_disable_feature') }}');
+        document.getElementById('featureToggleSubmit').textContent = next === 'enable' ? '{{ ui('enable') }}' : '{{ ui('disable') }}';
     }
 });
 </script>

@@ -34,7 +34,7 @@ class RoleController extends Controller
         $role = Role::create(['name' => $data['name'], 'guard_name' => 'web']);
         $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
 
-        return redirect()->route('roles.index')->with('success', 'Role created.');
+        return redirect()->route('roles.index')->with('success', __('messages.role_created'));
     }
 
     public function edit(Role $role): View
@@ -51,30 +51,30 @@ class RoleController extends Controller
         $role->update(['name' => $data['name']]);
         $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
 
-        return redirect()->route('roles.index')->with('success', 'Role updated.');
+        return redirect()->route('roles.index')->with('success', __('messages.role_updated'));
     }
 
     public function destroy(Role $role): RedirectResponse
     {
         if ($role->name === 'super-admin') {
-            return redirect()->route('roles.index')->with('error', 'Cannot delete super-admin.');
+            return redirect()->route('roles.index')->with('error', __('messages.cannot_delete_super_admin'));
         }
         $role->delete();
-        return redirect()->route('roles.index')->with('success', 'Role deleted.');
+        return redirect()->route('roles.index')->with('success', __('messages.role_deleted'));
     }
 
     public function restore(int $id): RedirectResponse
     {
         Role::withTrashed()->findOrFail($id)->restore();
-        return redirect()->route('roles.index')->with('success', 'Role restored.');
+        return redirect()->route('roles.index')->with('success', __('messages.role_restored'));
     }
 
     public function forceDelete(int $id): RedirectResponse
     {
         if (Role::withTrashed()->findOrFail($id)->name === 'super-admin') {
-            return redirect()->route('roles.index')->with('error', 'Cannot permanently delete super-admin.');
+            return redirect()->route('roles.index')->with('error', __('messages.cannot_permanently_delete_super_admin'));
         }
         Role::withTrashed()->findOrFail($id)->forceDelete();
-        return redirect()->route('roles.index')->with('success', 'Role permanently deleted.');
+        return redirect()->route('roles.index')->with('success', __('messages.role_permanently_deleted'));
     }
 }

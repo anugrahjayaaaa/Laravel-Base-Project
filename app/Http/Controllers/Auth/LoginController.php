@@ -41,7 +41,7 @@ class LoginController extends Controller
         if (RateLimiter::tooManyAttempts($userKey, 5) || RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = max(RateLimiter::availableIn($userKey), RateLimiter::availableIn($throttleKey));
             throw ValidationException::withMessages([
-                'identifier' => "Too many attempts. Try again in {$seconds}s.",
+                'identifier' => __('messages.too_many_attempts', ['seconds' => $seconds]),
             ]);
         }
 
@@ -53,8 +53,8 @@ class LoginController extends Controller
         // Account-level lockout (survives IP rotation; auto-unlocks when locked_until passes)
         if ($user && $user->isLocked()) {
             $message = $user->isPermanentlyLocked()
-                ? 'Account permanently locked. Contact an administrator.'
-                : 'Account locked. Try again in ' . $user->locked_until->diffInSeconds(now()) . 's.';
+                ? __('messages.account_locked_permanent')
+                : __('messages.account_locked_retry', ['seconds' => $user->locked_until->diffInSeconds(now())]);
             throw ValidationException::withMessages([
                 'identifier' => $message,
             ]);
@@ -71,7 +71,7 @@ class LoginController extends Controller
             }
 
             throw ValidationException::withMessages([
-                'identifier' => 'These credentials do not match our records.',
+                'identifier' => __('messages.invalid_credentials'),
             ]);
         }
 

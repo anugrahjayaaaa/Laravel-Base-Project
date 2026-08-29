@@ -9,8 +9,8 @@ class LanguageLineSeeder extends Seeder
 {
     public function run(): void
     {
-        $groups = ['messages'];
-        $locales = ['en', 'id'];
+        $groups = ['messages', 'ui'];
+        $locales = config('app.available_locales');
 
         foreach ($groups as $group) {
             $keys = [];

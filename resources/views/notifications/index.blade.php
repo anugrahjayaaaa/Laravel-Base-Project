@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('content')
 @include('partials.flash-message')
-<h3>Notifications</h3>
-<p class="text-muted">Your recent account and admin activity.</p>
+<h3>{{ ui('notifications') }}</h3>
+<p class="text-muted">{{ ui('notifications_intro') }}</p>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -21,7 +21,7 @@
                                 @if ($n->read_at)
                                     <span>read {{ $n->read_at->diffForHumans() }}</span>
                                 @else
-                                    <span class="text-primary fw-medium">unread</span>
+                                    <span class="text-primary fw-medium">{{ ui('unread') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             @empty
-                <div class="list-group-item py-4 text-center text-muted">No notifications yet.</div>
+                <div class="list-group-item py-4 text-center text-muted">{{ ui('no_notifications_yet') }}</div>
             @endforelse
         </div>
     </div>

@@ -42,7 +42,7 @@
                 <li class="nav-item w-100 position-relative" style="max-width:420px">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="Search menu…" autocomplete="off" aria-label="Search menu" aria-expanded="false" aria-controls="menu-search-results">
+                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="{{ __('messages.search_menu') }}" autocomplete="off" aria-label="{{ __('messages.search_menu') }}" aria-expanded="false" aria-controls="menu-search-results">
                     </div>
                     <ul id="menu-search-results" class="dropdown-menu w-100 py-1 shadow-sm" style="display:none;max-height:320px;overflow:auto"></ul>
                 </li>
@@ -115,12 +115,12 @@
                                 <form method="POST" action="{{ route('locale.update') }}" class="flex-fill">
                                     @csrf
                                     <input type="hidden" name="locale" value="en">
-                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'en' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">EN</button>
+                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'en' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">{{ __('messages.english') }}</button>
                                 </form>
                                 <form method="POST" action="{{ route('locale.update') }}" class="flex-fill">
                                     @csrf
                                     <input type="hidden" name="locale" value="id">
-                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'id' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">ID</button>
+                                    <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'id' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">{{ __('messages.indonesian') }}</button>
                                 </form>
                             </div>
                         </li>
@@ -149,51 +149,51 @@
         <div class="sidebar-wrapper">
             <nav class="mt-3 sidebar-nav">
                 <ul class="nav sidebar-menu nav-indent flex-column" data-lte-toggle="treeview" data-accordion="false">
-                    <li class="nav-header">MAIN MENU</li>
+                    <li class="nav-header">{{ __('messages.main_menu') }}</li>
                     <li class="nav-item">
-                        <a href="{{ route('dashboard') }}" data-menu-text="Dashboard" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-speedometer2"></i> <span>Dashboard</span>
+                        <a href="{{ route('dashboard') }}" data-menu-text="{{ __('messages.dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <i class="nav-icon bi bi-speedometer2"></i> <span>{{ __('messages.dashboard') }}</span>
                         </a>
                     </li>
                     @can('user.view')
                     @if(featureVisible('users'))
-                    <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="Users" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>Users</span></a></li>
+                    <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="{{ __('messages.users') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>{{ __('messages.users') }}</span></a></li>
                     @endif
                     @endcan
                     @can('role.view')
                     @if(featureVisible('roles'))
-                    <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="Roles" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>Roles</span></a></li>
+                    <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="{{ __('messages.roles') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>{{ __('messages.roles') }}</span></a></li>
                     @endif
                     @endcan
                     @can('permission.view')
                     @if(featureVisible('permissions'))
-                    <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="Permissions" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>Permissions</span></a></li>
+                    <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="{{ __('messages.permissions') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>{{ __('messages.permissions') }}</span></a></li>
                     @endif
                     @endcan
                     @can('audit.view')
                     @if(featureVisible('audit'))
-                    <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="Audit Log" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>Audit Log</span></a></li>
+                    <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="{{ __('messages.audit_log') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>{{ __('messages.audit_log') }}</span></a></li>
                     @endif
                     @endcan
                     @can('logs.view')
                     @if(featureVisible('logs'))
-                    <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="Logs" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>Logs</span></a></li>
+                    <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="{{ __('messages.logs') }}" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>{{ __('messages.logs') }}</span></a></li>
                     @endif
                     @endcan
-                    <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="Profile" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>Profile</span></a></li>
-                    @can('session.view')
+                    <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
+                    @can('feature.manage')
                     @if(featureVisible('sessions'))
-                    <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="Sessions" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>Sessions</span></a></li>
-                    @endif
-                    @endcan
-                    @can('api-token.view')
-                    @if(featureVisible('api-tokens'))
-                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="API Tokens" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>API Tokens</span></a></li>
+                    <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="{{ __('messages.sessions') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>{{ __('messages.sessions') }}</span></a></li>
                     @endif
                     @endcan
                     @canany(['feature.manage', 'translation.view'])
-                    <li class="nav-item {{ request()->routeIs('features.*', 'translations.*') ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>Settings</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                    @if(featureVisible('api-tokens'))
+                    <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="{{ __('messages.api_tokens') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>{{ __('messages.api_tokens') }}</span></a></li>
+                    @endif
+                    @endif
+                    @canany(['feature.manage', 'translation.view'])
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
                             @can('translation.view')
@@ -208,7 +208,7 @@
                     <li class="nav-item">
                         <form method="POST" action="{{ route('logout') }}" class="m-0">
                             @csrf
-                            <button type="submit" class="nav-link border-0 bg-transparent text-start w-100"><i class="nav-icon bi bi-box-arrow-right"></i> <span>Logout</span></button>
+                            <button type="submit" class="nav-link border-0 bg-transparent text-start w-100"><i class="nav-icon bi bi-box-arrow-right"></i> <span>{{ __('messages.logout') }}</span></button>
                         </form>
                     </li>
 

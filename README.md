@@ -36,8 +36,12 @@ use as the foundation for internal web applications.
   is shown once on creation with a copy button. Mobile clients authenticate via Sanctum `/api/v1`.
 - **Thin controllers** — all input validation lives in **Form Requests**
   (`app/Http/Requests/<Domain>/`); controllers only call `validated()` and dispatch.
-- **Error logging** — 4xx responses (except 404) are auto-logged to the daily log via the
-  `LogHttpErrors` middleware.
+- **Internationalization (i18n)** — UI and REST API support **English + Indonesian** (`en`/`id`,
+  configurable via `config('app.available_locales')`). The language switch (under the user menu)
+  persists in the session; API clients pass `X-Locale` (or `Accept-Language`). Page copy lives in
+  `lang/{locale}/ui.php` (via the `ui()` helper) and domain/API messages in `messages.php`
+  (`__('messages.*')`); both are overridable at runtime from the `language_lines` DB table
+  (Settings → Translations). See `docs/i18n.md`.
 - **API** — full REST API under **`/api/v1`** (Sanctum Bearer auth, `can:*` gates) covering auth
   (login/me/logout/change-password/forgot/reset/verify), users, roles, permissions, features,
   notifications, audit, profile, sessions, and API tokens. Interactive docs at **`/docs`**
@@ -100,7 +104,7 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **95 tests / 252 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens).
+Current coverage: **115 tests / 304 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, i18n locale + e2e API localization).
 
 ## Logs, cache & state — where to look
 
@@ -132,9 +136,16 @@ app/
     Requests/           # Form Requests per domain (Auth, User, Rbac, Profile, ApiToken)
     Middleware/
       LogHttpErrors.php # logs 4xx to the daily log
+      SetLocale.php     # web locale from session (web group, after StartSession)
+      SetApiLocale.php  # API locale from X-Locale / Accept-Language (api group)
+  Helpers/
+    i18n.php            # ui() helper -> __('ui.*')
   Models/              # User, Role, Permission (SoftDeletes)
   Observers/            # log force-delete into activity_log
-docs/                  # CONTRIBUTING, auth, architecture, audit-trail, authorization, feature-flags, observability, etc.
+lang/
+  en/ messages.php ui.php   # source of truth (en)
+  id/ messages.php ui.php   # Indonesian mirror
+docs/                  # CONTRIBUTING, auth, architecture, audit-trail, authorization, feature-flags, i18n, observability, etc.
 ```
 
 ## Contributing

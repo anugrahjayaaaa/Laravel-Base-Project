@@ -24,7 +24,7 @@
                         </div>
                     @endforeach
                     <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
-                    <a href="{{ route('translations.index') }}" class="btn btn-link">Cancel</a>
+                    <a href="{{ route('translations.index') }}" class="btn btn-link">{{ ui('cancel') }}</a>
                 </form>
             </div>
         </div>

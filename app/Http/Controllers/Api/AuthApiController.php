@@ -83,15 +83,15 @@ class AuthApiController extends AuthController
         $user = \App\Models\User::findOrFail($request->query('id'));
 
         if (! hash_equals((string) $request->query('hash'), sha1($user->getEmailForVerification()))) {
-            return response()->json(['message' => 'Invalid or expired verification link.'], 403);
+            return response()->json(['message' => __('messages.invalid_verification_link')], 403);
         }
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified.']);
+            return response()->json(['message' => __('messages.email_already_verified')]);
         }
 
         $user->markEmailAsVerified();
 
-        return response()->json(['message' => 'Email verified.']);
+        return response()->json(['message' => __('messages.email_verified')]);
     }
 
     /**
@@ -106,10 +106,10 @@ class AuthApiController extends AuthController
     {
         $user = $request->user();
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified.'], 400);
+            return response()->json(['message' => __('messages.email_already_verified')], 400);
         }
         $user->sendEmailVerificationNotification();
 
-        return response()->json(['message' => 'Verification link sent.']);
+        return response()->json(['message' => __('messages.verification_link_sent')]);
     }
 }

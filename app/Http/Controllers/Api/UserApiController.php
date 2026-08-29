@@ -78,10 +78,10 @@ class UserApiController extends Controller
     /** Soft-delete a user. */
     public function destroy(User $user): JsonResponse
     {
-        abort_if($user->id === auth()->id(), 403, 'Cannot delete yourself.');
+        abort_if($user->id === auth()->id(), 403, __('messages.cannot_delete_self'));
         $user->delete();
 
-        return response()->json(['message' => 'User deleted.']);
+        return response()->json(['message' => __('messages.user_deleted')]);
     }
 
     /** Restore a soft-deleted user. */
@@ -89,25 +89,25 @@ class UserApiController extends Controller
     {
         User::withTrashed()->findOrFail($id)->restore();
 
-        return response()->json(['message' => 'User restored.']);
+        return response()->json(['message' => __('messages.user_restored')]);
     }
 
     /** Permanently delete a user. */
     public function forceDelete(int $id): JsonResponse
     {
-        abort_if($id === auth()->id(), 403, 'Cannot delete yourself permanently.');
+        abort_if($id === auth()->id(), 403, __('messages.cannot_delete_self_permanently'));
         User::withTrashed()->findOrFail($id)->forceDelete();
 
-        return response()->json(['message' => 'User permanently deleted.']);
+        return response()->json(['message' => __('messages.user_permanently_deleted')]);
     }
 
     /** Permanently lock an account. */
     public function lock(int $id): JsonResponse
     {
-        abort_if($id === auth()->id(), 403, 'Cannot lock yourself.');
+        abort_if($id === auth()->id(), 403, __('messages.cannot_lock_self'));
         User::withTrashed()->findOrFail($id)->update(['locked_until' => null, 'locked_permanently' => true]);
 
-        return response()->json(['message' => 'User locked.']);
+        return response()->json(['message' => __('messages.user_locked')]);
     }
 
     /** Unlock a locked account. */
@@ -115,7 +115,7 @@ class UserApiController extends Controller
     {
         User::withTrashed()->findOrFail($id)->update(['locked_until' => null, 'locked_permanently' => false]);
 
-        return response()->json(['message' => 'User unlocked.']);
+        return response()->json(['message' => __('messages.user_unlocked')]);
     }
 
     /** Send a password reset link to the user's email. */
@@ -125,7 +125,7 @@ class UserApiController extends Controller
         $status = Password::broker('users')->sendResetLink(['email' => $user->email]);
 
         return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => 'Reset link sent.'])
+            ? response()->json(['message' => __('messages.reset_link_sent_simple')])
             : response()->json(['message' => __($status)], 422);
     }
 }

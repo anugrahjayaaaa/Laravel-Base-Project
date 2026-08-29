@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<h3>{{ isset($user) ? 'Edit User' : 'New User' }}</h3>
+<h3>{{ isset($user) ? ui('edit') . ' ' . ui('user') : ui('new_user') }}</h3>
 
 {{-- Account status / admin actions: placed OUTSIDE the main update form to avoid nested-form submit --}}
 @if (isset($user) && !$user->trashed() && $user->id !== auth()->id() && (auth()->user()->can('user.lock') || auth()->user()->can('user.edit')))
@@ -8,36 +8,36 @@
         <div class="d-flex align-items-center gap-3 flex-wrap">
             <span>Status:
                 @if ($user->isPermanentlyLocked())
-                    <span class="badge text-bg-danger">perm locked</span>
+                    <span class="badge text-bg-danger">{{ ui('perm_locked') }}</span>
                 @elseif ($user->isLocked())
-                    <span class="badge text-bg-warning">locked</span>
+                    <span class="badge text-bg-warning">{{ ui('locked') }}</span>
                 @else
-                    <span class="badge text-bg-success">active</span>
+                    <span class="badge text-bg-success">{{ ui('active') }}</span>
                 @endif
             </span>
             @if ($user->last_login_at)
-                <span class="text-muted small">Last login: {{ $user->last_login_at->format('Y-m-d H:i') }} ({{ $user->last_login_ip }})</span>
+                <span class="text-muted small">{{ ui('last_login', ['time' => $user->last_login_at->format('Y-m-d H:i'), 'ip' => $user->last_login_ip]) }}</span>
             @endif
             @if (auth()->user()->can('user.lock'))
                 @if ($user->isLocked())
                     <span>Unlock:
                         <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
-                            <button class="btn btn-sm btn-warning">Unlock</button>
+                            <button class="btn btn-sm btn-warning">{{ ui('unlock') }}</button>
                         </form>
                     </span>
                 @else
                     <span>Lock:
                         <form method="POST" action="{{ route('users.lock', $user) }}" class="d-inline">@csrf
-                            <button class="btn btn-sm btn-danger">Lock</button>
+                            <button class="btn btn-sm btn-danger">{{ ui('lock') }}</button>
                         </form>
                     </span>
                 @endif
             @endif
         </div>
         @if (auth()->user()->can('user.edit'))
-        <span>Send reset email:
+        <span>{{ ui('send_reset_email_label') }}
             <form method="POST" action="{{ route('users.reset-link', $user) }}" class="d-inline">@csrf
-                <button class="btn btn-sm btn-secondary">Send reset email</button>
+                <button class="btn btn-sm btn-secondary">{{ ui('send_reset_email') }}</button>
             </form>
         </span>
         @endif
@@ -51,33 +51,33 @@
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Name</label>
+                    <label class="form-label">{{ ui('name') }}</label>
                     <input type="text" name="name" class="form-control" value="{{ old('name', $user->name ?? '') }}" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Username</label>
+                    <label class="form-label">{{ ui('username') }}</label>
                     <input type="text" name="username" class="form-control" value="{{ old('username', $user->username ?? '') }}" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Email</label>
+                    <label class="form-label">{{ ui('email') }}</label>
                     <input type="email" name="email" class="form-control" value="{{ old('email', $user->email ?? '') }}" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Phone (E.164)</label>
+                    <label class="form-label">{{ ui('phone') }}</label>
                     <input type="text" name="phone" class="form-control" value="{{ old('phone', $user->phone ?? '') }}">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Password {{ isset($user) ? '(leave blank to keep)' : '' }}</label>
+                    <label class="form-label">{{ ui('password') }}{{ isset($user) ? ' ' . ui('leave_blank_to_keep') : '' }}</label>
                     <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" {{ isset($user) ? '' : 'required' }}>
                     @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Confirm Password</label>
+                    <label class="form-label">{{ ui('confirm_password') }}</label>
                     <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror">
                     @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-12">
-                    <label class="form-label">Roles</label>
+                    <label class="form-label">{{ ui('roles') }}</label>
                     <div class="row">
                         @foreach ($roles as $role)
                         <div class="col-6 col-md-3">
@@ -93,8 +93,8 @@
             </div>
         </div>
         <div class="card-footer d-flex justify-content-end gap-2">
-            <a href="{{ route('users.index') }}" class="btn btn-link">Cancel</a>
-            <button class="btn btn-primary">Save</button>
+            <a href="{{ route('users.index') }}" class="btn btn-link">{{ ui('cancel') }}</a>
+            <button class="btn btn-primary">{{ ui('save') }}</button>
         </div>
     </div>
 </form>

@@ -38,6 +38,6 @@ class SessionApiController extends Controller
             Auth::logoutOtherDevices($request->password);
         }
 
-        return response()->json(['message' => 'Other sessions logged out.']);
+        return response()->json(['message' => __('messages.sessions_logged_out')]);
     }
 }

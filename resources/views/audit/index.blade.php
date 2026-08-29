@@ -1,27 +1,27 @@
 @extends('layouts.app')
 @section('content')
 @include('partials.flash-message')
-<h3>Audit Log</h3>
+<h3>{{ ui('audit_log') }}</h3>
 <form method="GET" class="row g-2 mb-3 align-items-end">
     <div class="col-md-3">
-        <label class="form-label small text-muted mb-1">Action</label>
+        <label class="form-label small text-muted mb-1">{{ ui('action') }}</label>
         <select name="action" class="form-select form-select-sm">
-            <option value="">All actions</option>
+            <option value="">{{ ui('all_actions') }}</option>
             @foreach ($actions as $a)
                 <option value="{{ $a }}" {{ request('action') == $a ? 'selected' : '' }}>{{ $a }}</option>
             @endforeach
         </select>
     </div>
     <div class="col-md-3">
-        <label class="form-label small text-muted mb-1">From</label>
+        <label class="form-label small text-muted mb-1">{{ ui('from') }}</label>
         <input type="date" name="from" class="form-control form-control-sm" value="{{ request('from') }}">
     </div>
     <div class="col-md-3">
-        <label class="form-label small text-muted mb-1">To</label>
+        <label class="form-label small text-muted mb-1">{{ ui('to') }}</label>
         <input type="date" name="to" class="form-control form-control-sm" value="{{ request('to') }}">
     </div>
     <div class="col-md-3 d-flex gap-2">
-        <button class="btn btn-primary btn-sm"><i class="bi bi-funnel me-1"></i> Filter</button>
+        <button class="btn btn-primary btn-sm"><i class="bi bi-funnel me-1"></i> {{ ui('filter') }}</button>
         <a href="{{ route('audit.export', request()->only(['action','causer','from','to'])) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
         @if(request()->anyFilled(['action','from','to']))
             <a href="{{ route('audit.index') }}" class="btn btn-link btn-sm text-muted" title="Clear filters"><i class="bi bi-x-circle"></i></a>
@@ -34,7 +34,7 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr><th>#</th><th>Time</th><th>Action</th><th>Causer</th><th>Subject</th><th>IP</th><th></th></tr>
+                <tr><th>#</th><th>{{ ui('time') }}</th><th>{{ ui('action') }}</th><th>{{ ui('causer') }}</th><th>{{ ui('subject') }}</th><th>IP</th><th></th></tr>
             </thead>
             <tbody>
                 @forelse ($activities as $log)
@@ -80,7 +80,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">No activity.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">{{ ui('no_activity') }}</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -100,10 +100,10 @@
             </div>
             <div class="modal-body small">
                 <dl class="row mb-2">
-                    <dt class="col-4 text-muted">Time</dt><dd class="col-8" id="auditDetailTime"></dd>
-                    <dt class="col-4 text-muted">Causer</dt><dd class="col-8" id="auditDetailCauser"></dd>
+                    <dt class="col-4 text-muted">{{ ui('time') }}</dt><dd class="col-8" id="auditDetailTime"></dd>
+                    <dt class="col-4 text-muted">{{ ui('causer') }}</dt><dd class="col-8" id="auditDetailCauser"></dd>
                     <dt class="col-4 text-muted">IP</dt><dd class="col-8" id="auditDetailIp"></dd>
-                    <dt class="col-4 text-muted">User agent</dt><dd class="col-8 text-break" id="auditDetailAgent"></dd>
+                    <dt class="col-4 text-muted">{{ ui('user_agent') }}</dt><dd class="col-8 text-break" id="auditDetailAgent"></dd>
                 </dl>
                 <div id="auditDetailChanges"></div>
             </div>
@@ -127,10 +127,10 @@ document.getElementById('auditDetailModal')?.addEventListener('show.bs.modal', f
     const newMap = changes.new ?? {};
     const keys = [...new Set([...Object.keys(oldMap), ...Object.keys(newMap)])];
     const box = document.getElementById('auditDetailChanges');
-    if (!keys.length) { box.innerHTML = '<p class="text-muted mb-0">No field changes recorded.</p>'; return; }
+    if (!keys.length) { box.innerHTML = '<p class="text-muted mb-0">{{ ui('no_field_changes') }}</p>'; return; }
 
     const cell = (v) => v === null ? '<em class="text-muted">null</em>' : String(v);
-    let html = '<table class="table table-sm mb-0"><thead><tr><th>Field</th><th>Old</th><th>New</th></tr></thead><tbody>';
+    let html = '<table class="table table-sm mb-0"><thead><tr><th>{{ ui('field') }}</th><th>Old</th><th>New</th></tr></thead><tbody>';
     keys.forEach(k => {
         html += `<tr><td class="text-capitalize text-muted">${k}</td><td class="text-break">${cell(oldMap[k])}</td><td class="text-break">${cell(newMap[k])}</td></tr>`;
     });
