@@ -47,6 +47,8 @@ licenses
   status (active|revoked|expired), issued_to,
   expires_at nullable,            -- NULL = never expires (lifetime/manual)
   created_at
+  -- NON-TRANSFERABLE: issued_to is bound to the instance it was activated on;
+  -- there is NO reassign/reissue-to-another-instance path.
 
 settings
   key='active_plan' -> slug          -- plan in effect for this instance
@@ -93,9 +95,11 @@ status():
 daysLeft() = expires_at?->diffInDays(now())            // null => INF (lifetime)
 ```
 Expired or revoked ⇒ active plan falls back to `free`, paid features lock.
-UI shows: "License: 12 days left" / "Expired — downgraded to Free" /
-"Lifetime". Checked at activation + on request entry (cached in `settings`),
-not a per-second cron.
+UI MUST show a dashboard badge with days left: "License: 12 days left" /
+"Expired — downgraded to Free" / "Lifetime" (REQUIRED, not optional).
+Email reminder/notifications ARE allowed (Laravel notification class; e.g.
+7 days before expiry, on failed payment, on downgrade). Checked at activation
++ on request entry (cached in `settings`), not a per-second cron.
 
 ## 4. Entitlement service (seam `for($scope)`)
 
@@ -227,6 +231,16 @@ Plan-check logic & Entitlement service UNCHANGED.
 - Limit ENFORCE hard (reject create) vs SOFT warning?
 - PG needed now, or start Model 1 without PG (manual/lifetime license only)?
 - Which plans & exact limits/features per tier (free/basic/pro/enterprise)?
+
+## 9b. Locked decisions (from user)
+- **Dashboard days-left badge: REQUIRED.** The license status + remaining days
+  must render as a badge on the dashboard (see §3b). Not optional.
+- **Email notifications: ALLOWED.** Reminders (e.g. 7 days before expiry, failed
+  payment, downgrade) may be sent via a Laravel notification class.
+- **License is NON-TRANSFERABLE.** `issued_to` is bound to the instance it was
+  activated on. No reassign / reissue-to-another-instance mechanism exists
+  (see `licenses` note in §3). A client moving to a new server must be issued a
+  fresh license by the developer.
 
 ## 10. Open concerns (best-practice, business-variable)
 
