@@ -2,28 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\Sortable;
 use App\Http\Requests\BulkActionRequest;
 use App\Http\Requests\User\UserStoreRequest;
 use App\Http\Requests\User\UserUpdateRequest;
+use App\Models\Role;
 use App\Models\User;
+use App\Services\BulkDeleteService;
+use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
-use App\Models\Role;
 
 class UserController extends Controller
 {
     use Sortable;
 
+    public function __construct(private UserService $users, private BulkDeleteService $bulk) {}
+
     public function index(Request $request): View
     {
         $users = User::withTrashed()
             ->when($request->filled('q'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->q . '%')
-                  ->orWhere('username', 'like', '%' . $request->q . '%')
-                  ->orWhere('email', 'like', '%' . $request->q . '%');
+                $q->where('name', 'like', '%'.$request->q.'%')
+                    ->orWhere('username', 'like', '%'.$request->q.'%')
+                    ->orWhere('email', 'like', '%'.$request->q.'%');
             }))
             ->with('roles')
             ->when(true, fn ($q) => $this->sortIndex($q, $request, 'name', ['name', 'username', 'email']))
@@ -36,21 +40,13 @@ class UserController extends Controller
     public function create(): View
     {
         $roles = Role::orderBy('name')->get();
+
         return view('users.create', compact('roles'));
     }
 
     public function store(UserStoreRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-
-        $user = User::create([
-            'name' => $data['name'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
-            'password' => bcrypt($data['password']),
-        ]);
-        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
+        $user = $this->users->create($request->validated());
 
         return redirect()->route('users.index')->with('success', __('messages.user_created'));
     }
@@ -59,25 +55,13 @@ class UserController extends Controller
     {
         $roles = Role::orderBy('name')->get();
         $user->load('roles');
+
         return view('users.edit', compact('user', 'roles'));
     }
 
     public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
-        // ponytail: single update() call — avoid firing the `updated` observer twice
-        // (password would otherwise trigger a second observer event after name/email).
-        $data = $request->validated();
-        $payload = [
-            'name'     => $data['name'],
-            'username' => $data['username'],
-            'email'    => $data['email'],
-            'phone'    => $data['phone'] ?? null,
-        ];
-        if (! empty($data['password'])) {
-            $payload['password'] = bcrypt($data['password']);
-        }
-        $user->update($payload);
-        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
+        $this->users->update($user, $request->validated());
 
         return redirect()->route('users.index')->with('success', __('messages.user_updated'));
     }
@@ -88,7 +72,7 @@ class UserController extends Controller
     public function unlock(int $id): RedirectResponse
     {
         $user = User::withTrashed()->findOrFail($id);
-        $user->update(['locked_until' => null, 'locked_permanently' => false]);
+        $this->users->unlock($user);
 
         activity()->causedBy(auth()->user())
             ->performedOn($user)
@@ -106,7 +90,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('error', __('messages.cannot_lock_self'));
         }
         $user = User::withTrashed()->findOrFail($id);
-        $user->update(['locked_until' => null, 'locked_permanently' => true]);
+        $this->users->lock($user);
 
         activity()->causedBy(auth()->user())
             ->performedOn($user)
@@ -122,11 +106,9 @@ class UserController extends Controller
     public function sendResetLink(int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
-        $status = \Illuminate\Support\Facades\Password::broker('users')->sendResetLink([
-            'email' => $user->email,
-        ]);
+        $status = $this->users->sendResetLink($user);
 
-        if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+        if ($status === Password::RESET_LINK_SENT) {
             activity()->causedBy(auth()->user())
                 ->performedOn($user)
                 ->log('user_reset_link_sent');
@@ -140,21 +122,17 @@ class UserController extends Controller
     public function bulk(BulkActionRequest $request): RedirectResponse
     {
         $force = $request->input('action') === 'force';
-        $done = 0;
-        foreach ($request->input('ids') as $id) {
-            if ((int) $id === auth()->id()) {
-                continue; // never bulk-delete yourself
-            }
-            $user = User::withTrashed()->find($id);
-            if (! $user || ! auth()->user()->can($force ? 'user.force-delete' : 'user.delete', $user)) {
-                continue;
-            }
-            $force ? $user->forceDelete() : $user->delete();
-            $done++;
-        }
+        $done = $this->bulk->run(
+            User::class,
+            $request->input('ids'),
+            $force,
+            'user',
+            fn (User $user) => $user->id === auth()->id(), // never bulk-delete yourself
+        );
 
         $key = $force ? 'users_permanently_deleted_count' : 'users_deleted_count';
-        return redirect()->route('users.index')->with('success', __('messages.' . $key, ['count' => $done]));
+
+        return redirect()->route('users.index')->with('success', __('messages.'.$key, ['count' => $done]));
     }
 
     public function destroy(User $user): RedirectResponse
@@ -163,12 +141,14 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('error', __('messages.cannot_delete_self'));
         }
         $user->delete();
+
         return redirect()->route('users.index')->with('success', __('messages.user_deleted'));
     }
 
     public function restore(int $id): RedirectResponse
     {
         User::withTrashed()->findOrFail($id)->restore();
+
         return redirect()->route('users.index')->with('success', __('messages.user_restored'));
     }
 
@@ -178,6 +158,7 @@ class UserController extends Controller
             return redirect()->route('users.index')->with('error', __('messages.cannot_delete_self_permanently'));
         }
         User::withTrashed()->findOrFail($id)->forceDelete();
+
         return redirect()->route('users.index')->with('success', __('messages.user_permanently_deleted'));
     }
 }

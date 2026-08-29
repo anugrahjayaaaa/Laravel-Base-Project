@@ -7,6 +7,7 @@ use App\Http\Requests\User\UserStoreRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -18,14 +19,16 @@ use Illuminate\Support\Facades\Password;
  */
 class UserApiController extends Controller
 {
+    public function __construct(private UserService $users) {}
+
     /** List users (paginated, optional ?q= search). */
     public function index(Request $request): JsonResponse
     {
         $users = User::withTrashed()
             ->when($request->filled('q'), fn ($q) => $q->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->q}%")
-                  ->orWhere('username', 'like', "%{$request->q}%")
-                  ->orWhere('email', 'like', "%{$request->q}%");
+                    ->orWhere('username', 'like', "%{$request->q}%")
+                    ->orWhere('email', 'like', "%{$request->q}%");
             }))
             ->orderBy('name')->paginate(10);
 
@@ -41,15 +44,7 @@ class UserApiController extends Controller
     /** Create a user. */
     public function store(UserStoreRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $user = User::create([
-            'name' => $data['name'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
-            'password' => bcrypt($data['password']),
-        ]);
-        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
+        $user = $this->users->create($request->validated());
 
         return response()->json(new UserResource($user->load('roles')), 201);
     }
@@ -59,18 +54,7 @@ class UserApiController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user): JsonResponse
     {
-        $data = $request->validated();
-        $payload = [
-            'name' => $data['name'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
-        ];
-        if (! empty($data['password'])) {
-            $payload['password'] = bcrypt($data['password']);
-        }
-        $user->update($payload);
-        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
+        $this->users->update($user, $request->validated());
 
         return response()->json(new UserResource($user->load('roles')));
     }
@@ -105,7 +89,7 @@ class UserApiController extends Controller
     public function lock(int $id): JsonResponse
     {
         abort_if($id === auth()->id(), 403, __('messages.cannot_lock_self'));
-        User::withTrashed()->findOrFail($id)->update(['locked_until' => null, 'locked_permanently' => true]);
+        $this->users->lock(User::withTrashed()->findOrFail($id));
 
         return response()->json(['message' => __('messages.user_locked')]);
     }
@@ -113,7 +97,7 @@ class UserApiController extends Controller
     /** Unlock a locked account. */
     public function unlock(int $id): JsonResponse
     {
-        User::withTrashed()->findOrFail($id)->update(['locked_until' => null, 'locked_permanently' => false]);
+        $this->users->unlock(User::withTrashed()->findOrFail($id));
 
         return response()->json(['message' => __('messages.user_unlocked')]);
     }
@@ -122,7 +106,7 @@ class UserApiController extends Controller
     public function sendResetLink(int $id): JsonResponse
     {
         $user = User::findOrFail($id);
-        $status = Password::broker('users')->sendResetLink(['email' => $user->email]);
+        $status = $this->users->sendResetLink($user);
 
         return $status === Password::RESET_LINK_SENT
             ? response()->json(['message' => __('messages.reset_link_sent_simple')])
