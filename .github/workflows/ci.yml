@@ -41,10 +41,9 @@ jobs:
           name: clover-coverage
           path: build/logs/clover.xml
 
-      # SonarCloud — disabled for now; enable later by setting repo secret SONAR_TOKEN
-      # (and creating the project at sonarcloud.io). Flip to `if: ${{ env.SONAR_TOKEN != '' }}`.
+      # SonarCloud — runs when SONAR_TOKEN repo secret is set (created project at sonarcloud.io first).
       - name: SonarCloud Scan
-        if: false
+        if: ${{ env.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
