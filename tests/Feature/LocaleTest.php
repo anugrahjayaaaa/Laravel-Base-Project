@@ -49,7 +49,10 @@ it('rejects unsupported locale', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($u)
         ->post(route('locale.update'), ['locale' => 'fr'])
-        ->assertStatus(422);
+        ->assertRedirect();
+
+    // locale must NOT be persisted when invalid
+    expect(session('locale'))->not->toBe('fr');
 });
 
 it('resolves API locale from X-Locale header', function () {

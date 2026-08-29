@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Locale\LocaleUpdateRequest;
 
 class LocaleController extends Controller
 {
-    public function update(Request $request)
+    public function update(LocaleUpdateRequest $request)
     {
-        $locale = $request->input('locale');
-        abort_unless(in_array($locale, ['en', 'id']), 422, 'Unsupported locale.');
-
-        session(['locale' => $locale]);
+        session(['locale' => $request->locale]);
 
         return redirect()->back();
     }
