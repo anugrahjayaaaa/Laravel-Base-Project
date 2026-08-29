@@ -30,7 +30,7 @@
                     <x-sortable-th label="{{ ui('user') }}" column="name" :sort="request('sort')" :dir="request('dir', 'asc')" />
                     <x-sortable-th label="{{ ui('username') }}" column="username" :sort="request('sort')" :dir="request('dir', 'asc')" />
                     <x-sortable-th label="{{ ui('email') }}" column="email" :sort="request('sort')" :dir="request('dir', 'asc')" />
-                    <th>{{ ui('roles_col') }}</th><th>{{ ui('status') }}</th><th class="text-end">{{ ui('action') }}</th>
+                    <th>{{ ui('roles') }}</th><th>{{ ui('status') }}</th><th class="text-end">{{ ui('action') }}</th>
                 </tr>
             </thead>
             <tbody>

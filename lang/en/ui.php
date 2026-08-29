@@ -1,23 +1,9 @@
 <?php
 
 return [
-    // Auth pages
-    'sign_in_with' => 'Sign in with email or username',
-    'forgot_password_intro' => 'Forgot your password? Enter your email and we\'ll send a reset link.',
-    'send_reset_link' => 'Send reset link',
-    'reset_your_password' => 'Reset your password',
-    'back_to_login' => 'Back to login',
-    'remember_me' => 'Remember me',
-    'email_or_username' => 'Email or Username',
-    'password' => 'Password',
-    'new_password' => 'New password',
-    'confirm_password' => 'Confirm password',
-    'reset_password' => 'Reset password',
-    'sign_in' => 'Sign in',
-    'forgot_your_password' => 'Forgot your password?',
-    'leave_blank_to_keep' => 'leave blank to keep',
-
-    // Navigation / generic
+    // ─────────────────────────────────────────────
+    // common — shared across pages (buttons, labels)
+    // ─────────────────────────────────────────────
     'page' => 'Page',
     'cancel' => 'Cancel',
     'save' => 'Save',
@@ -28,34 +14,78 @@ return [
     'delete_confirm_body' => 'Are you sure you want to delete this item? This cannot be undone.',
     'close' => 'Close',
     'search' => 'Search',
-    'search_name_username_email' => 'Search name, username, email…',
-    'search_role_name' => 'Search role name…',
-    'search_permission_name' => 'Search permission name…',
-    'search_menu' => 'Search menu…',
-    'no_menu_found' => 'No menu found',
+    'filter' => 'Filter',
+    'copy' => 'Copy',
+    'copied' => 'Copied',
+    'confirm' => 'Confirm',
+    'apply' => 'Apply',
+    'enable' => 'Enable',
+    'disable' => 'Disable',
     'showing' => 'Showing',
     'to' => 'to',
+    'from' => 'From',
     'of' => 'of',
     'results' => 'results',
     'previous' => 'Previous',
     'next' => 'Next',
-    'copy' => 'Copy',
-    'copied' => 'Copied',
-    'filter' => 'Filter',
+    'all' => 'All',
+    'yes' => 'Yes',
+    'no' => 'No',
+    'back' => 'Back',
 
-    // Dashboard
+    // ── auth ──
+    'sign_in_with' => 'Sign in with email or username',
+    'sign_in' => 'Sign in',
+    'forgot_your_password' => 'Forgot your password?',
+    'forgot_password_intro' => 'Forgot your password? Enter your email and we\'ll send a reset link.',
+    'send_reset_link' => 'Send reset link',
+    'reset_your_password' => 'Reset your password',
+    'reset_password' => 'Reset password',
+    'back_to_login' => 'Back to login',
+    'remember_me' => 'Remember me',
+    'email_or_username' => 'Email or Username',
+    'password' => 'Password',
+    'new_password' => 'New password',
+    'confirm_password' => 'Confirm password',
+    'leave_blank_to_keep' => 'leave blank to keep',
+
+    // ── dashboard ──
     'welcome' => 'Welcome, :name',
     'dashboard_subtitle' => 'Laravel Base Project scaffold — manage users, roles, and monitor activity from the sidebar.',
 
-    // Section headings / table headers / misc
+    // ── users ──
+    'users' => 'Users',
+    'user' => 'User',
     'new_user' => 'New User',
+    'search_name_username_email' => 'Search name, username, email…',
+    'no_users_found' => 'No users found.',
+    'deleted' => 'deleted',
+    'active' => 'active',
+    'locked' => 'locked',
+    'perm_locked' => 'perm locked',
+    'status_label' => 'Status:',
+    'last_login' => 'Last login: :time (:ip)',
+    'lock' => 'Lock',
+    'unlock' => 'Unlock',
+    'send_reset_email' => 'Send reset email',
+    'send_reset_email_label' => 'Send reset email:',
+
+    // ── roles ──
+    'roles' => 'Roles',
+    'role' => 'Role',
     'new_role' => 'New Role',
-    'new_permission' => 'New Permission',
-    'roles_col' => 'Roles',
-    'permissions' => 'Permissions',
-    'guard' => 'Guard',
+    'search_role_name' => 'Search role name…',
     'no_roles' => 'No roles.',
+
+    // ── permissions ──
+    'permissions' => 'Permissions',
+    'permission' => 'Permission',
+    'new_permission' => 'New Permission',
+    'search_permission_name' => 'Search permission name…',
     'no_permissions' => 'No permissions.',
+    'guard' => 'Guard',
+
+    // ── profile ──
     'profile' => 'Profile',
     'change_password' => 'Change Password',
     'name' => 'Name',
@@ -64,23 +94,33 @@ return [
     'phone' => 'Phone (E.164)',
     'current_password' => 'Current Password',
     'new_password_hint' => 'New Password (min 12, upper/lower/digit/symbol)',
-    'confirm' => 'Confirm',
     'update_profile' => 'Update Profile',
+
+    // ── api tokens ──
+    'api_tokens' => 'API Tokens',
     'token_name' => 'Token name (e.g. mobile-iphone)',
     'abilities' => 'Abilities',
     'created' => 'Created',
     'last_used' => 'Last used',
     'new_token_copy_now' => 'New token (copy now):',
-    'api_tokens' => 'API Tokens',
+    'no_tokens_yet' => 'No tokens yet.',
+    'revoke_this_token' => 'Revoke this token?',
+
+    // ── features ──
     'feature_flags' => 'Feature Flags',
     'feature_flags_intro' => 'A disabled feature is inaccessible to everyone — except users who hold the :code permission, who stay in so they can operate modules while off.',
     'feature' => 'Feature',
     'slug' => 'Slug',
     'status' => 'Status',
-    'action' => 'Action',
     'enabled' => 'Enabled',
     'disabled' => 'Disabled',
     'no_features' => 'No features.',
+    'confirm_feature_change' => 'Confirm feature change',
+    'confirm_feature_change_body' => 'Are you sure you want to change this feature?',
+    'confirm_enable_feature' => 'Are you sure you want to enable this feature?',
+    'confirm_disable_feature' => 'Are you sure you want to disable this feature?',
+
+    // ── sessions ──
     'active_sessions' => 'Active Sessions',
     'ip' => 'IP',
     'user_agent' => 'User Agent',
@@ -90,32 +130,17 @@ return [
     'no_sessions' => 'No sessions.',
     'logout_others' => 'Logout others',
     'confirm_password_logout' => 'Confirm password to log out other devices',
-    'no_tokens_yet' => 'No tokens yet.',
-    'revoke_this_token' => 'Revoke this token?',
-    'audit_entries' => 'Audit Entries',
-    'database' => 'Database',
-    'users' => 'Users',
-    'roles' => 'Roles',
-    'user' => 'User',
-    'deleted' => 'deleted',
-    'perm_locked' => 'perm locked',
-    'locked' => 'locked',
-    'active' => 'active',
-    'no_users_found' => 'No users found.',
-    'send_reset_email' => 'Send reset email',
-    'status_label' => 'Status:',
-    'last_login' => 'Last login: :time (:ip)',
-    'unlock' => 'Unlock',
-    'lock' => 'Lock',
-    'send_reset_email_label' => 'Send reset email:',
+
+    // ── notifications ──
     'notifications' => 'Notifications',
     'notifications_intro' => 'Your recent account and admin activity.',
     'unread' => 'unread',
     'no_notifications_yet' => 'No notifications yet.',
     'coming_later' => 'Coming in a later phase.',
+
+    // ── logs & audit ──
     'file' => 'File',
     'level' => 'Level',
-    'all' => 'All',
     'download' => 'Download',
     'date' => 'Date',
     'message' => 'Message',
@@ -127,31 +152,28 @@ return [
     'no_activity' => 'No activity.',
     'field' => 'Field',
     'no_field_changes' => 'No field changes recorded.',
+    'audit_entries' => 'Audit Entries',
+    'database' => 'Database',
+    'search_menu' => 'Search menu…',
+    'no_menu_found' => 'No menu found',
+    'action' => 'Action',
+
+    // ── modals (shared style) ──
     'permanently_delete' => 'Permanently delete',
     'force_delete_confirm_body' => 'This will permanently delete the item and cannot be undone. Continue?',
-    'delete_permanently' => 'Delete permanently',
-    'confirm_feature_change' => 'Confirm feature change',
-    'confirm_feature_change_body' => 'Are you sure you want to change this feature?',
-    'confirm_enable_feature' => 'Are you sure you want to enable this feature?',
-    'confirm_disable_feature' => 'Are you sure you want to disable this feature?',
-    'enable' => 'Enable',
-    'disable' => 'Disable',
 
-    // Translations management
+    // ── translations ──
     'translations' => 'Translations',
     'edit_translation' => 'Edit Translation',
     'group' => 'Group',
     'key' => 'Key',
     'no_translations' => 'No translations found.',
 
-    // Bulk actions
+    // ── bulk actions ──
     'bulk_action' => 'Bulk action',
     'soft_delete' => 'Soft delete',
-    'apply' => 'Apply',
-    'confirm_bulk_delete' => 'Delete the selected items? This cannot be undone for permanently deleted ones.',
     'select_all' => 'Select all',
     'selected' => 'selected',
     'confirm_bulk_delete_title' => 'Confirm bulk delete',
     'confirm_bulk_delete_body' => 'You are about to :action :count item(s). Continue?',
-    'delete' => 'Delete',
 ];

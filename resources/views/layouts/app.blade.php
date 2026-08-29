@@ -42,7 +42,7 @@
                 <li class="nav-item w-100 position-relative" style="max-width:420px">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="{{ __('messages.search_menu') }}" autocomplete="off" aria-label="{{ __('messages.search_menu') }}" aria-expanded="false" aria-controls="menu-search-results">
+                        <input type="search" id="menu-search" class="form-control bg-body border-0" placeholder="{{ ui('search_menu') }}" autocomplete="off" aria-label="{{ ui('search_menu') }}" aria-expanded="false" aria-controls="menu-search-results">
                     </div>
                     <ul id="menu-search-results" class="dropdown-menu w-100 py-1 shadow-sm" style="display:none;max-height:320px;overflow:auto"></ul>
                 </li>

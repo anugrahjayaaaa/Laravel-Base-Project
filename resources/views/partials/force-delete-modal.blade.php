@@ -9,7 +9,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ ui('cancel') }}</button>
                 <form id="forceDeleteModalForm" method="POST">@csrf
-                    <button type="submit" class="btn btn-danger">{{ ui('delete_permanently') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ ui('permanently_delete') }}</button>
                 </form>
             </div>
         </div>
