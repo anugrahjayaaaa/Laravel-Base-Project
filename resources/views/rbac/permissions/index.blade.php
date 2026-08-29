@@ -8,13 +8,14 @@
     @endcan
 </div>
 
-@include('partials.bulk-actions', ['bulkRoute' => route('permissions.bulk'), 'canSoft' => auth()->user()->can('permission.delete'), 'canForce' => auth()->user()->can('permission.force-delete')])
-
 <form method="GET" class="mb-3">
-    <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
-        <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-        <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_permission_name') }}" value="{{ request('q') }}" aria-label="{{ ui('search') }}">
-        <button class="btn btn-primary px-3" type="submit">Search</button>
+    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+        <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
+            <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
+            <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_permission_name') }}" value="{{ request('q') }}" aria-label="{{ ui('search') }}">
+            <button class="btn btn-primary px-3" type="submit">Search</button>
+        </div>
+        @include('partials.bulk-actions', ['bulkRoute' => route('permissions.bulk'), 'canSoft' => auth()->user()->can('permission.delete'), 'canForce' => auth()->user()->can('permission.force-delete')])
     </div>
 </form>
 
@@ -33,7 +34,7 @@
             </thead>
             <tbody>
                 @forelse ($permissions as $perm)
-                <tr class="{{ $perm->trashed() ? 'table-secondary' : '' }}">
+                <tr class="{{ $perm->trashed() ? 'row-deleted' : '' }}">
                     <td><input class="form-check-input" type="checkbox" form="bulk-form" name="ids[]" value="{{ $perm->id }}"></td>
                     <td class="text-muted">{{ $permissions->firstItem() + $loop->index }}</td>
                     <td>{{ $perm->name }}</td>
