@@ -59,8 +59,9 @@ it('blocks a translation.view holder when the flag is off (404)', function () {
 });
 
 it('lets a feature.manage holder reach translations while the flag is off', function () {
+    // ponytail: kill-switch — disabled flag blocks everyone, including managers.
     Feature::deactivate('translations');
     $u = User::where('email', 'admin@laravel-base.local')->first(); // holds feature.manage
 
-    $this->actingAs($u)->get(route('translations.index'))->assertOk();
+    $this->actingAs($u)->get(route('translations.index'))->assertNotFound();
 });

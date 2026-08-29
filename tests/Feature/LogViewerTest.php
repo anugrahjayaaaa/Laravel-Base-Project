@@ -40,7 +40,9 @@ it('blocks a logs.view holder when the flag is off (404)', function () {
 });
 
 it('lets a feature.manage holder reach logs while the flag is off', function () {
+    // ponytail: kill-switch — disabled flag blocks everyone, including managers.
     Feature::deactivate('logs');
-    $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->actingAs($u)->get('/logs')->assertOk();
+    $u = User::where('email', 'admin@laravel-base.local')->first(); // holds feature.manage
+
+    $this->actingAs($u)->get('/logs')->assertNotFound();
 });

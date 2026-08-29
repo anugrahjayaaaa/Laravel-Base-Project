@@ -53,10 +53,11 @@ it('blocks a non-manager when feature is off, even with permission', function ()
 });
 
 it('lets a feature.manage holder bypass the off gate', function () {
+    // ponytail: kill-switch — disabled flag blocks everyone, including managers.
     Feature::deactivate('users');
-    $manager = makeUserWith(['user.view'], true); // also holds feature.manage
+    $manager = makeUserWith(['user.view'], true);
 
-    $this->actingAs($manager)->get(route('users.index'))->assertOk();
+    $this->actingAs($manager)->get(route('users.index'))->assertNotFound();
 });
 
 it('allows a module route when its feature is on', function () {
@@ -76,10 +77,11 @@ it('hides a feature-off menu item from a non-manager sidebar', function () {
 });
 
 it('shows a feature-off menu item to a feature.manage holder', function () {
+    // ponytail: kill-switch — disabled flag hides the menu for everyone.
     Feature::deactivate('users');
     $manager = makeUserWith(['user.view'], true);
 
     $this->actingAs($manager)->get(route('dashboard'))
         ->assertOk()
-        ->assertSee('/users');
+        ->assertDontSee('/users');
 });

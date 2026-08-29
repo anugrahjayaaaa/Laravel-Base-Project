@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Laravel\Pennant\Feature;
 
 if (! function_exists('feature')) {
@@ -18,16 +17,12 @@ if (! function_exists('feature')) {
 if (! function_exists('featureVisible')) {
     /**
      * Whether a module's menu item should appear in the sidebar.
-     * Visible when enabled, OR when the current user can manage features
-     * (they stay reachable so feature.manage holders can use them while off).
+     * A disabled flag hides the item for everyone (true kill-switch),
+     * including feature.manage holders — they reach modules only when on.
      */
     function featureVisible(string $slug): bool
     {
-        if (feature($slug)) {
-            return true;
-        }
-
-        return (bool) optional(Auth::user())->can('feature.manage');
+        return feature($slug);
     }
 }
 

@@ -27,8 +27,9 @@ Feature::active('users');
   ```php
   Route::resource('users', ...)->middleware(['can:user.view', 'feature:users']);
   ```
-- Off flag => `404` (fail-closed), never silently allowed.
-- Sidebar hides the menu item when its feature is off.
+- A flag off 404s the route and hides its menu item for **everyone** (true
+  kill-switch, including `feature.manage` holders) so the toggle is a real switch.
+  Managers reach disabled modules only by re-enabling them from `/features`.
 
 ## Management UI
 - `/features` lives **under the Settings submenu** (gated by `feature.manage` permission; `staff` + `super-admin` get it).
