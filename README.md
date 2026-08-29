@@ -104,7 +104,7 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **115 tests / 304 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, i18n locale + e2e API localization).
+Current coverage: **115 tests / 305 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, i18n locale + e2e API localization, form-request coverage).
 
 ## Logs, cache & state — where to look
 
@@ -133,7 +133,7 @@ With `APP_DEBUG=true`, 500 errors are also shown directly in the browser.
 app/
   Http/
     Controllers/        # thin controllers
-    Requests/           # Form Requests per domain (Auth, User, Rbac, Profile, ApiToken)
+    Requests/           # Form Requests per domain (Auth, User, Rbac, Profile, ApiToken, Locale, Session, Translation)
     Middleware/
       LogHttpErrors.php # logs 4xx to the daily log
       SetLocale.php     # web locale from session (web group, after StartSession)

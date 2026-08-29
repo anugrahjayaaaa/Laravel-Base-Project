@@ -20,7 +20,7 @@ npm install && npm run dev   # or build
   - Form Request holds: `rules()`, `messages()` (optional), `authorize()`
     (gate/permission check), and `prepareForValidation()` if needed.
   - Controllers stay thin: type-hint the Form Request, use `$request->validated()`.
-- Group Form Requests by domain subfolder: `Auth/`, `User/`, `Rbac/`, `Profile/`, `Api/`.
+- Group Form Requests by domain subfolder: `Auth/`, `User/`, `Rbac/`, `Profile/`, `Api/`, `Locale/`, `Session/`, `Translation/`.
 - Core models use `SoftDeletes`; mutations logged via observer/activitylog.
 - Don't reinvent: use spatie/permission, activitylog, sanctum.
 
@@ -50,4 +50,4 @@ npm install && npm run dev   # or build
 - Separate refactor from feature.
 
 ## Open items (not v1)
-- MFA/2FA, SMS OTP, in-app notifications, CSV export, file-upload module, i18n switch.
+- MFA/2FA, SMS OTP, in-app notifications, file-upload module.
