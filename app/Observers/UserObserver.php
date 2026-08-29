@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Request;
 
 class UserObserver
@@ -44,7 +45,7 @@ class UserObserver
     /**
      * Log a permanent (hard) delete of a user to the audit trail.
      *
-     * @param  \App\Models\User  $user  The soft-deleted-then-force-deleted user
+     * @param  User  $user  The soft-deleted-then-force-deleted user
      * @return void
      *
      * @details Writes a 'user_force_deleted' activity row into DB table `activity_log`

@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use Illuminate\Support\Facades\Request;
 use App\Models\Permission;
+use Illuminate\Support\Facades\Request;
 
 class PermissionObserver
 {
@@ -45,7 +45,6 @@ class PermissionObserver
     /**
      * Log a permanent (hard) delete of a permission to the audit trail.
      *
-     * @param  \App\Models\Permission  $permission
      * @return void
      *
      * @details Writes a 'permission_force_deleted' row into DB table `activity_log`

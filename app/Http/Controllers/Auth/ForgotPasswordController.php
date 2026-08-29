@@ -16,7 +16,7 @@ class ForgotPasswordController extends Controller
     /**
      * Show the "forgot password" form.
      *
-     * @return View  auth.forgot-password
+     * @return View auth.forgot-password
      */
     public function create(): View
     {
@@ -27,9 +27,9 @@ class ForgotPasswordController extends Controller
      * Send a password reset link to the given email.
      *
      * @param  PasswordEmailRequest  $request  Validated: email (valid email)
-     * @return RedirectResponse  Back with 'status' on success, or back with 'email' error.
+     * @return RedirectResponse Back with 'status' on success, or back with 'email' error.
      *
-     * @throws ValidationException  If the email is not found / broker error
+     * @throws ValidationException If the email is not found / broker error
      *
      * @details Uses the 'users' password broker (config('auth.passwords.users')).
      * The reset token is stored in DB table `password_reset_tokens` (keyed by email).
@@ -59,9 +59,8 @@ class ForgotPasswordController extends Controller
     /**
      * Show the password reset form.
      *
-     * @param  Request  $request
-     * @param  string   $token  Reset token from the email link
-     * @return View  auth.reset-password with $token and $email (from query)
+     * @param  string  $token  Reset token from the email link
+     * @return View auth.reset-password with $token and $email (from query)
      */
     public function edit(Request $request, string $token): View
     {
@@ -72,9 +71,9 @@ class ForgotPasswordController extends Controller
      * Reset the user's password.
      *
      * @param  PasswordResetRequest  $request  Validated: token, email, password (min:8), password_confirmation
-     * @return RedirectResponse  Redirect to login with 'status' on success, or back with 'email' error.
+     * @return RedirectResponse Redirect to login with 'status' on success, or back with 'email' error.
      *
-     * @throws ValidationException  On invalid/expired token or mismatch
+     * @throws ValidationException On invalid/expired token or mismatch
      *
      * @details Verifies token against DB table `password_reset_tokens` via the 'users' broker,
      * then updates the user's password and clears the token row.

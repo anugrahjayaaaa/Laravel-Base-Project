@@ -40,6 +40,7 @@ class PermissionApiController extends Controller
 
     /**
      * Update a permission.
+     *
      * @authenticated
      */
     public function update(PermissionUpdateRequest $request, Permission $permission): JsonResponse

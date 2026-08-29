@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\PasswordChangeRequest;
 use App\Http\Requests\Profile\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -20,6 +18,7 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         $user->update($request->validated());
+
         return redirect()->route('profile.show')->with('success', __('messages.profile_updated'));
     }
 
@@ -32,6 +31,7 @@ class ProfileController extends Controller
             $user->tokens()->delete();
         }
         auth()->logoutOtherDevices($request->validated()['password']);
+
         return redirect()->route('profile.show')->with('success', __('messages.password_changed'));
     }
 }

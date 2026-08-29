@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use Illuminate\Support\Facades\Request;
 use App\Models\Role;
+use Illuminate\Support\Facades\Request;
 
 class RoleObserver
 {
@@ -45,7 +45,6 @@ class RoleObserver
     /**
      * Log a permanent (hard) delete of a role to the audit trail.
      *
-     * @param  \App\Models\Role  $role
      * @return void
      *
      * @details Writes a 'role_force_deleted' row into DB table `activity_log`

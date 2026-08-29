@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 /**
@@ -13,10 +14,10 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  * route through this class (not the spatie base) — required for the RBAC observers
  * (App\Observers\PermissionObserver) to fire.
  *
- * @property int         $id
- * @property string      $name
- * @property string      $guard_name
- * @property \Illuminate\Support\Carbon|null $deleted_at  (SoftDeletes)
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property Carbon|null $deleted_at (SoftDeletes)
  */
 class Permission extends SpatiePermission
 {

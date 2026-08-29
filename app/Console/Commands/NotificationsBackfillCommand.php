@@ -10,6 +10,7 @@ use Spatie\Activitylog\Models\Activity;
 class NotificationsBackfillCommand extends Command
 {
     protected $signature = 'notifications:backfill';
+
     protected $description = 'Copy historical auth activity_log rows into the native notifications table (idempotent).';
 
     public function handle(): int
@@ -42,6 +43,7 @@ class NotificationsBackfillCommand extends Command
             });
 
         $this->info("Backfilled {$count} notification(s).");
+
         return self::SUCCESS;
     }
 }

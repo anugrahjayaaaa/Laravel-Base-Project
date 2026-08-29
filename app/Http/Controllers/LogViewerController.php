@@ -9,7 +9,7 @@ class LogViewerController extends Controller
 {
     public function index(Request $request)
     {
-        $log = new LaravelLogViewer();
+        $log = new LaravelLogViewer;
 
         if ($request->filled('file')) {
             $log->setFile(basename($request->file));

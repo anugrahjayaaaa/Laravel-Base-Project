@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginApiRequest;
 use App\Http\Requests\Auth\PasswordChangeRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
@@ -15,19 +18,20 @@ class AuthController extends Controller
     public function login(LoginApiRequest $request): JsonResponse
     {
         $identifier = $request->identifier;
-        $throttleKey = 'api-login:' . $request->ip() . ':' . strtolower($identifier);
+        $throttleKey = 'api-login:'.$request->ip().':'.strtolower($identifier);
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
+
             return response()->json(['error' => ['code' => 'RATE_LIMITED', 'message' => __('messages.too_many_attempts', ['seconds' => $seconds])]], 429);
         }
 
         $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email'
             : (preg_match('/^\+?\d{8,15}$/', $identifier) ? 'phone' : 'username');
 
-        $user = \App\Models\User::where($field, $identifier)->first();
+        $user = User::where($field, $identifier)->first();
 
-        if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             RateLimiter::hit($throttleKey, 900);
             throw ValidationException::withMessages(['identifier' => __('messages.invalid_credentials')]);
         }
@@ -35,7 +39,7 @@ class AuthController extends Controller
         RateLimiter::clear($throttleKey);
 
         // ponytail: shared audit via Login event (same path as web)
-        event(new \Illuminate\Auth\Events\Login('sanctum', $user, false));
+        event(new Login('sanctum', $user, false));
 
         $token = $user->createToken($request->device_name, ['mobile'])->plainTextToken;
 
@@ -55,6 +59,7 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
+
         return response()->json(['message' => __('messages.logged_out')]);
     }
 
@@ -63,6 +68,7 @@ class AuthController extends Controller
         $data = $request->validated();
         $request->user()->update(['password' => bcrypt($data['password'])]);
         $request->user()->tokens()->delete(); // revoke all mobile tokens
+
         return response()->json(['message' => __('messages.password_changed')]);
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Middleware\SetApiLocale;
 use App\Http\Middleware\SetLocale;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use Spatie\TranslationLoader\LanguageLine;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => $this->seed());
@@ -23,7 +25,7 @@ it('SetLocale middleware applies session locale to the app', function () {
     Session::put('locale', 'id');
     $request = Request::create('/dashboard');
     $called = false;
-    (new SetLocale())->handle($request, function ($req) use (&$called) {
+    (new SetLocale)->handle($request, function ($req) use (&$called) {
         $called = true;
         expect(App::getLocale())->toBe('id');
         expect(__('messages.users'))->toBe('Pengguna');
@@ -62,29 +64,29 @@ it('resolves API locale from X-Locale header', function () {
         ->assertJson(fn ($json) => $json->whereType('message', 'string')->etc());
 
     // resolve via the middleware directly to confirm locale is applied (no auth needed)
-    $request = \Illuminate\Http\Request::create('/api/v1/me', 'GET');
+    $request = Request::create('/api/v1/me', 'GET');
     $request->headers->set('X-Locale', 'id');
     $called = false;
-    (new \App\Http\Middleware\SetApiLocale())->handle($request, function ($req) use (&$called) {
+    (new SetApiLocale)->handle($request, function ($req) use (&$called) {
         $called = true;
-        expect(\Illuminate\Support\Facades\App::getLocale())->toBe('id');
+        expect(App::getLocale())->toBe('id');
     });
     expect($called)->toBeTrue();
 });
 
 it('rejects unsupported API locale', function () {
-    $request = \Illuminate\Http\Request::create('/api/v1/me', 'GET');
+    $request = Request::create('/api/v1/me', 'GET');
     $request->headers->set('X-Locale', 'fr');
     $called = false;
-    (new \App\Http\Middleware\SetApiLocale())->handle($request, function ($req) use (&$called) {
+    (new SetApiLocale)->handle($request, function ($req) use (&$called) {
         $called = true;
-        expect(\Illuminate\Support\Facades\App::getLocale())->toBe('en'); // falls back
+        expect(App::getLocale())->toBe('en'); // falls back
     });
     expect($called)->toBeTrue();
 });
 
 it('returns localized API message end-to-end (login + logout)', function () {
-    $u = \App\Models\User::where('email', 'admin@laravel-base.local')->first();
+    $u = User::where('email', 'admin@laravel-base.local')->first();
 
     $login = $this->postJson('/api/v1/login', [
         'identifier' => $u->username,
@@ -95,7 +97,7 @@ it('returns localized API message end-to-end (login + logout)', function () {
     $token = $login->json('token');
     expect($token)->not->toBeNull();
 
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->withHeader('X-Locale', 'id')
         ->postJson('/api/v1/logout')
         ->assertOk()
@@ -103,10 +105,10 @@ it('returns localized API message end-to-end (login + logout)', function () {
 });
 
 it('returns English API message without X-Locale', function () {
-    $u = \App\Models\User::where('email', 'admin@laravel-base.local')->first();
+    $u = User::where('email', 'admin@laravel-base.local')->first();
     $token = $u->createToken('e2e')->plainTextToken;
 
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/v1/logout')
         ->assertOk()
         ->assertJson(['message' => 'Logged out.']);
@@ -114,14 +116,14 @@ it('returns English API message without X-Locale', function () {
 
 it('reads translations from database (language_lines)', function () {
     // seeded by DatabaseSeeder -> LanguageLineSeeder
-    $line = \Spatie\TranslationLoader\LanguageLine::where('group', 'messages')->where('key', 'users')->first();
+    $line = LanguageLine::where('group', 'messages')->where('key', 'users')->first();
     expect($line)->not->toBeNull();
     expect($line->text)->toBe(['en' => 'Users', 'id' => 'Pengguna']);
 
     // DB overrides the file: __() returns DB value
     Session::put('locale', 'id');
     $request = Request::create('/dashboard');
-    (new \App\Http\Middleware\SetLocale())->handle($request, function ($req) {
+    (new SetLocale)->handle($request, function ($req) {
         expect(__('messages.users'))->toBe('Pengguna');
     });
 });

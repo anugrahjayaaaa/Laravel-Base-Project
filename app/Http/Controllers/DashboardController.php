@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
@@ -10,10 +14,10 @@ class DashboardController extends Controller
     {
         return view('dashboard', [
             'title' => 'Dashboard',
-            'userCount' => \App\Models\User::count(),
-            'roleCount' => \App\Models\Role::count(),
-            'auditCount' => \Spatie\Activitylog\Models\Activity::count(),
-            'dbName' => \Illuminate\Support\Facades\DB::connection()->getDatabaseName(),
+            'userCount' => User::count(),
+            'roleCount' => Role::count(),
+            'auditCount' => Activity::count(),
+            'dbName' => DB::connection()->getDatabaseName(),
         ]);
     }
 }

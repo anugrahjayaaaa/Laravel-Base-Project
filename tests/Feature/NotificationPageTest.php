@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Notifications\AuditNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Activitylog\Models\Activity;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => $this->seed());
@@ -40,7 +41,7 @@ it('denies notifications page to user without audit.view', function () {
 });
 
 it('backfill command copies auth activity into notifications', function () {
-    \Spatie\Activitylog\Models\Activity::create([
+    Activity::create([
         'log_name' => 'default', 'description' => 'login_success',
         'causer_type' => User::class, 'causer_id' => User::where('email', 'admin@laravel-base.local')->first()->id,
         'created_at' => now(),

@@ -46,6 +46,6 @@ class AuditNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())->line("Auth event: {$this->action}");
+        return (new MailMessage)->line("Auth event: {$this->action}");
     }
 }

@@ -3,6 +3,11 @@
 use Knuckles\Scribe\Config\AuthIn;
 use Knuckles\Scribe\Config\Defaults;
 use Knuckles\Scribe\Extracting\Strategies;
+use Knuckles\Scribe\Extracting\Strategies\Responses\UseApiResourceTags;
+use Knuckles\Scribe\Extracting\Strategies\Responses\UseResponseAttributes;
+use Knuckles\Scribe\Extracting\Strategies\Responses\UseResponseFileTag;
+use Knuckles\Scribe\Extracting\Strategies\Responses\UseResponseTag;
+use Knuckles\Scribe\Extracting\Strategies\Responses\UseTransformerTags;
 
 use function Knuckles\Scribe\Config\configureStrategy;
 use function Knuckles\Scribe\Config\removeStrategies;
@@ -211,11 +216,11 @@ return [
             ...Defaults::BODY_PARAMETERS_STRATEGIES,
         ],
         'responses' => [
-            \Knuckles\Scribe\Extracting\Strategies\Responses\UseResponseTag::class,
-            \Knuckles\Scribe\Extracting\Strategies\Responses\UseApiResourceTags::class,
-            \Knuckles\Scribe\Extracting\Strategies\Responses\UseResponseAttributes::class,
-            \Knuckles\Scribe\Extracting\Strategies\Responses\UseResponseFileTag::class,
-            \Knuckles\Scribe\Extracting\Strategies\Responses\UseTransformerTags::class,
+            UseResponseTag::class,
+            UseApiResourceTags::class,
+            UseResponseAttributes::class,
+            UseResponseFileTag::class,
+            UseTransformerTags::class,
         ],
         'responseFields' => [
             ...Defaults::RESPONSE_FIELDS_STRATEGIES,
