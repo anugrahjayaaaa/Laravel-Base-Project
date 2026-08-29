@@ -3,6 +3,7 @@
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
 
 uses(RefreshDatabase::class);
 
@@ -10,7 +11,7 @@ it('switches sidebar labels to indonesian when locale is id', function () {
     $admin = User::where('email', 'admin@laravel-base.local')->first()
         ?? User::factory()->create(['email' => 'admin@laravel-base.local', 'username' => 'admin']);
     Role::findOrCreate('admin', 'web')->syncPermissions(
-        \Spatie\Permission\Models\Permission::pluck('id')->toArray()
+        Permission::pluck('id')->toArray()
     );
     $admin->syncRoles(['admin']);
 

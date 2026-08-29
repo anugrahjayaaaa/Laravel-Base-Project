@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Rbac\RoleStoreRequest;
 use App\Http\Requests\Rbac\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
-use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -43,6 +42,7 @@ class RoleApiController extends Controller
 
     /**
      * Update a role.
+     *
      * @authenticated
      */
     public function update(RoleUpdateRequest $request, Role $role): JsonResponse

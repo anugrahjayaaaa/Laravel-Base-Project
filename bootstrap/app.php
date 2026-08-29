@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Middleware\EnsureFeatureEnabled;
+use App\Http\Middleware\LogHttpErrors;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SetApiLocale;
+use App\Http\Middleware\SetLocale;
+use App\Providers\EventServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,19 +19,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
-        $middleware->append(\App\Http\Middleware\LogHttpErrors::class);
+        $middleware->append(SecurityHeaders::class);
+        $middleware->append(LogHttpErrors::class);
         // SetLocale MUST run after StartSession (web group), so the session is
         // readable. As global middleware it ran before session start -> always 'en'.
-        $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
+        $middleware->web(append: [SetLocale::class]);
         // API is stateless (Sanctum) — resolve locale from X-Locale / Accept-Language.
-        $middleware->api(append: [\App\Http\Middleware\SetApiLocale::class]);
+        $middleware->api(append: [SetApiLocale::class]);
         $middleware->alias([
-            'feature' => \App\Http\Middleware\EnsureFeatureEnabled::class,
+            'feature' => EnsureFeatureEnabled::class,
         ]);
     })
     ->withProviders([
-        App\Providers\EventServiceProvider::class,
+        EventServiceProvider::class,
     ])
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

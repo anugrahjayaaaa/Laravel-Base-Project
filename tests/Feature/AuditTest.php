@@ -1,8 +1,8 @@
 <?php
 
+use App\Models\Role;
 use App\Models\User;
 use Spatie\Activitylog\Models\Activity;
-use App\Models\Role;
 
 beforeEach(function () {
     $this->seed();

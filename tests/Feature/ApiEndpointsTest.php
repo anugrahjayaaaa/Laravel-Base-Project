@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => $this->seed());
@@ -36,7 +35,7 @@ it('returns 401 without token', function () {
 
 it('me endpoint works with token', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->withHeader('Authorization', 'Bearer ' . apiToken($u))
+    $this->withHeader('Authorization', 'Bearer '.apiToken($u))
         ->getJson('/api/v1/me')
         ->assertOk()
         ->assertJsonPath('user.email', $u->email);
@@ -44,7 +43,7 @@ it('me endpoint works with token', function () {
 
 it('lists users with token', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->withHeader('Authorization', 'Bearer ' . apiToken($u))
+    $this->withHeader('Authorization', 'Bearer '.apiToken($u))
         ->getJson('/api/v1/users')
         ->assertOk()
         ->assertJsonStructure(['data']);
@@ -52,7 +51,7 @@ it('lists users with token', function () {
 
 it('creates a user via API', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $r = $this->withHeader('Authorization', 'Bearer ' . apiToken($u))
+    $r = $this->withHeader('Authorization', 'Bearer '.apiToken($u))
         ->postJson('/api/v1/users', [
             'name' => 'Api User',
             'username' => 'apiuser',
@@ -67,21 +66,21 @@ it('creates a user via API', function () {
 
 it('returns notifications and marks read', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->withHeader('Authorization', 'Bearer ' . apiToken($u))
+    $this->withHeader('Authorization', 'Bearer '.apiToken($u))
         ->getJson('/api/v1/notifications')
         ->assertOk();
 });
 
 it('returns audit list', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->withHeader('Authorization', 'Bearer ' . apiToken($u))
+    $this->withHeader('Authorization', 'Bearer '.apiToken($u))
         ->getJson('/api/v1/audit')
         ->assertOk();
 });
 
 it('lists features', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->withHeader('Authorization', 'Bearer ' . apiToken($u))
+    $this->withHeader('Authorization', 'Bearer '.apiToken($u))
         ->getJson('/api/v1/features')
         ->assertOk();
 });

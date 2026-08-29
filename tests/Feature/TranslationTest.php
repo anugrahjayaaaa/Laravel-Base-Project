@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SetLocale;
 use App\Models\Feature;
 use App\Models\Role;
 use App\Models\User;
@@ -31,7 +32,7 @@ it('updates a translation value and reflects in __()', function () {
 
     session(['locale' => 'id']);
     $request = request()->create('/dashboard');
-    app(\App\Http\Middleware\SetLocale::class)->handle($request, function ($req) {
+    app(SetLocale::class)->handle($request, function ($req) {
         expect(__('messages.users'))->toBe('Pengguna Edit');
     });
 });

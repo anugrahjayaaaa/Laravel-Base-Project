@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 beforeEach(fn () => $this->seed());
 
@@ -43,7 +44,7 @@ it('changes password with correct current password', function () {
         ])
         ->assertRedirect(route('profile.show'));
 
-    expect(\Illuminate\Support\Facades\Hash::check('NewPass@12345', $u->fresh()->password))->toBeTrue();
+    expect(Hash::check('NewPass@12345', $u->fresh()->password))->toBeTrue();
 });
 
 it('rejects password change with wrong current password', function () {

@@ -2,7 +2,7 @@
 
 use App\Models\Feature;
 
-if (!function_exists('feature')) {
+if (! function_exists('feature')) {
     /**
      * Check whether a named feature is enabled.
      * Missing feature row => treated as disabled (fail-closed).
@@ -14,7 +14,7 @@ if (!function_exists('feature')) {
     }
 }
 
-if (!function_exists('featureVisible')) {
+if (! function_exists('featureVisible')) {
     /**
      * Whether a module's menu item should appear in the sidebar.
      * Visible when enabled, OR when the current user can manage features

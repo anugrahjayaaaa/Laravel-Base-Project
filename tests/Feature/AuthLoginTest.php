@@ -1,7 +1,9 @@
 <?php
+
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Activitylog\Models\Activity;
 
 beforeEach(fn () => $this->seed());
 
@@ -76,7 +78,7 @@ it('logs password_reset_request to audit on reset link send', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $this->post(route('password.email'), ['email' => $u->email])->assertSessionHas('status');
 
-    $logged = \Spatie\Activitylog\Models\Activity::where('log_name', 'default')
+    $logged = Activity::where('log_name', 'default')
         ->where('description', 'password_reset_request')
         ->where('properties->email', $u->email)
         ->exists();

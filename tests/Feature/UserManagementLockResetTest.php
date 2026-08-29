@@ -1,7 +1,9 @@
 <?php
 
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Activitylog\Models\Activity;
 
 beforeEach(fn () => $this->seed());
 
@@ -23,7 +25,7 @@ it('updates roles and password in one request', function () {
 
     $u->refresh();
     expect($u->hasRole('staff'))->toBeTrue();
-    expect(\Illuminate\Support\Facades\Hash::check('NewPass@12345', $u->password))->toBeTrue();
+    expect(Hash::check('NewPass@12345', $u->password))->toBeTrue();
 });
 
 it('unlocks a locked account', function () {
@@ -59,7 +61,7 @@ it('logs unlock and reset-link actions to audit', function () {
     $this->post(route('users.unlock', $u));
     $this->post(route('users.reset-link', $u));
 
-    $descs = \Spatie\Activitylog\Models\Activity::where('subject_id', $u->id)
+    $descs = Activity::where('subject_id', $u->id)
         ->pluck('description')->toArray();
     expect($descs)->toContain('user_unlocked');
     expect($descs)->toContain('user_reset_link_sent');
@@ -84,7 +86,7 @@ it('permanently locks an account (user.lock permission, self excluded)', functio
     expect($locked->isLocked())->toBeTrue();
     expect($locked->isPermanentlyLocked())->toBeTrue();
     expect($locked->locked_permanently)->toBeTrue(); // flag, not a sentinel date
-    expect(\Spatie\Activitylog\Models\Activity::where('subject_id', $u->id)
+    expect(Activity::where('subject_id', $u->id)
         ->where('description', 'user_locked')->exists())->toBeTrue();
 
     // Unlock clears the permanent flag.
@@ -95,7 +97,7 @@ it('permanently locks an account (user.lock permission, self excluded)', functio
 
 it('blocks login for a permanently locked account with admin message', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $u->update(['password' => \Illuminate\Support\Facades\Hash::make('RightPass@12345'), 'locked_until' => null, 'locked_permanently' => true]);
+    $u->update(['password' => Hash::make('RightPass@12345'), 'locked_until' => null, 'locked_permanently' => true]);
 
     $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'RightPass@12345'])
         ->assertSessionHasErrors('identifier');

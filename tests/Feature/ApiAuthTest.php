@@ -32,7 +32,7 @@ it('requires auth for me', function () {
 it('returns me with valid token', function () {
     $user = User::where('email', 'admin@laravel-base.local')->first();
     $token = $user->createToken('dev')->plainTextToken;
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->getJson('/api/v1/me')
         ->assertOk()
         ->assertJsonPath('user.username', 'superadmin');
@@ -41,7 +41,7 @@ it('returns me with valid token', function () {
 it('logs out and revokes token', function () {
     $user = User::where('email', 'admin@laravel-base.local')->first();
     $token = $user->createToken('dev')->plainTextToken;
-    $this->withHeader('Authorization', 'Bearer ' . $token)
+    $this->withHeader('Authorization', 'Bearer '.$token)
         ->postJson('/api/v1/logout')
         ->assertOk();
     expect($user->fresh()->tokens()->count())->toBe(0);
