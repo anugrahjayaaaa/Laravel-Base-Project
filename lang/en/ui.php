@@ -143,4 +143,12 @@ return [
     'group' => 'Group',
     'key' => 'Key',
     'no_translations' => 'No translations found.',
+
+    // Bulk actions
+    'bulk_action' => 'Bulk action',
+    'soft_delete' => 'Soft delete',
+    'apply' => 'Apply',
+    'confirm_bulk_delete' => 'Delete the selected items? This cannot be undone for permanently deleted ones.',
+    'select_all' => 'Select all',
+    'selected' => 'selected',
 ];

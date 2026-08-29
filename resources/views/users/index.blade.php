@@ -8,6 +8,8 @@
     @endcan
 </div>
 
+@include('partials.bulk-actions', ['bulkRoute' => route('users.bulk'), 'canSoft' => auth()->user()->can('user.delete'), 'canForce' => auth()->user()->can('user.force-delete')])
+
 <form method="GET" class="mb-3">
     <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
@@ -21,11 +23,19 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle m-0">
             <thead>
-                <tr><th>#</th><th>{{ ui('user') }}</th><th>{{ ui('username') }}</th><th>{{ ui('email') }}</th><th>{{ ui('roles_col') }}</th><th>{{ ui('status') }}</th><th class="text-end">{{ ui('action') }}</th></tr>
+                <tr>
+                    <th style="width:38px"><input class="form-check-input" type="checkbox" form="bulk-form" id="bulk-select-all"></th>
+                    <th>#</th>
+                    <x-sortable-th label="{{ ui('user') }}" column="name" :sort="request('sort')" :dir="request('dir', 'asc')" />
+                    <x-sortable-th label="{{ ui('username') }}" column="username" :sort="request('sort')" :dir="request('dir', 'asc')" />
+                    <x-sortable-th label="{{ ui('email') }}" column="email" :sort="request('sort')" :dir="request('dir', 'asc')" />
+                    <th>{{ ui('roles_col') }}</th><th>{{ ui('status') }}</th><th class="text-end">{{ ui('action') }}</th>
+                </tr>
             </thead>
             <tbody>
                 @forelse ($users as $user)
                 <tr class="{{ $user->trashed() ? 'table-secondary' : '' }}">
+                    <td><input class="form-check-input" type="checkbox" form="bulk-form" name="ids[]" value="{{ $user->id }}"></td>
                     <td class="text-muted">{{ $users->firstItem() + $loop->index }}</td>
                     <td>
                         <div class="d-flex align-items-center gap-2">

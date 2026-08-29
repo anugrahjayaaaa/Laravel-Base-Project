@@ -69,5 +69,13 @@ return [
     'verification_link_sent' => 'Tautan verifikasi dikirim.',
     'logged_out' => 'Berhasil keluar.',
     'reset_link_sent_simple' => 'Tautan reset kata sandi sudah kami kirim.',
-    'token_created' => 'Token berhasil dibuat. Simpan sekarang — token tidak akan ditampilkan lagi.',
+    'token_created' => 'Token dibuat. Simpan sekarang — tidak akan ditampilkan lagi.',
+
+    // Bulk delete counts
+    'users_deleted_count' => ':count user dipindah ke tempat sampah.',
+    'users_permanently_deleted_count' => ':count user dihapus permanen.',
+    'roles_deleted_count' => ':count role dipindah ke tempat sampah.',
+    'roles_permanently_deleted_count' => ':count role dihapus permanen.',
+    'permissions_deleted_count' => ':count permission dipindah ke tempat sampah.',
+    'permissions_permanently_deleted_count' => ':count permission dihapus permanen.',
 ];
