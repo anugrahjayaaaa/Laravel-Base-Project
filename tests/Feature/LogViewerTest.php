@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Feature;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Pennant\Feature;
 
 uses(RefreshDatabase::class);
 beforeEach(fn () => $this->seed());
@@ -35,12 +35,12 @@ it('blocks a logs.view holder when the flag is off (404)', function () {
 
     $this->actingAs($u)->get('/logs')->assertOk();
 
-    Feature::where('slug', 'logs')->update(['enabled' => false]);
+    Feature::deactivate('logs');
     $this->actingAs($u)->get('/logs')->assertNotFound();
 });
 
 it('lets a feature.manage holder reach logs while the flag is off', function () {
-    Feature::where('slug', 'logs')->update(['enabled' => false]);
+    Feature::deactivate('logs');
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($u)->get('/logs')->assertOk();
 });

@@ -12,6 +12,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Pennant\Feature;
 use Sentry\Sentry;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +30,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // ponytail: module flags are GLOBAL (not per-user); force a fixed scope so
+        // Feature::active/deactivate behave app-wide, like the old DB table.
+        Feature::resolveScopeUsing(fn () => 'global');
+
+        // ponytail: declare every module feature flag so Pennant resolves it;
+        // default ON. DB store persists toggles from the /features UI.
+        foreach (array_keys(config('pennant.features', [])) as $slug) {
+            Feature::define($slug, fn () => true);
+        }
+
         Paginator::useBootstrap();
         LengthAwarePaginator::useBootstrap();
 

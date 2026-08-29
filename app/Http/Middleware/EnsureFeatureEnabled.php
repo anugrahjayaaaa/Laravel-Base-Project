@@ -2,15 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Feature;
 use Closure;
 use Illuminate\Http\Request;
+use Laravel\Pennant\Feature;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Blocks access to a route unless its feature flag is enabled.
+ * Blocks access to a route unless its feature flag is enabled (Laravel Pennant).
  * Pair with `can:` so the full gate is: has permission AND feature on.
- * Missing feature row => 404 (fail-closed), never silently allowed.
+ * Unknown feature => 404 (fail-closed), never silently allowed.
  *
  * Bypass: a user holding the `feature.manage` permission is never blocked by
  * a feature flag (they manage flags, so they must reach modules even when off
@@ -25,8 +25,7 @@ class EnsureFeatureEnabled
             return $next($request);
         }
 
-        $enabled = Feature::where('slug', $slug)->where('enabled', true)->exists();
-        if (! $enabled) {
+        if (! Feature::active($slug)) {
             abort(404);
         }
 

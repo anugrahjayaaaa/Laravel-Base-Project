@@ -1,16 +1,17 @@
 <?php
 
-use App\Models\Feature;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Pennant\Feature;
 
 if (! function_exists('feature')) {
     /**
-     * Check whether a named feature is enabled.
-     * Missing feature row => treated as disabled (fail-closed).
+     * Check whether a named feature is enabled (Laravel Pennant).
+     * Missing/unknown feature => treated as disabled (fail-closed).
      */
     function feature(string $slug): bool
     {
-        // ponytail: fail-closed; an absent feature is off, never silently on
-        return (bool) Feature::where('slug', $slug)->where('enabled', true)->exists();
+        // ponytail: fail-closed; an unknown feature is off, never silently on
+        return Feature::active($slug);
     }
 }
 
@@ -26,6 +27,16 @@ if (! function_exists('featureVisible')) {
             return true;
         }
 
-        return (bool) optional(auth()->user())->can('feature.manage');
+        return (bool) optional(Auth::user())->can('feature.manage');
+    }
+}
+
+if (! function_exists('featureLabel')) {
+    /**
+     * Human label for a feature slug, from config/pennant.php metadata.
+     */
+    function featureLabel(string $slug): string
+    {
+        return config("pennant.features.{$slug}.label", $slug);
     }
 }

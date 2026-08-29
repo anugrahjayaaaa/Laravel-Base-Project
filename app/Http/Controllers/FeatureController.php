@@ -2,25 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Feature;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Laravel\Pennant\Feature;
 
 class FeatureController extends Controller
 {
     public function index(): View
     {
-        $features = Feature::orderBy('label')->get();
+        $features = collect(config('pennant.features'))
+            ->map(fn ($meta, $slug) => [
+                'slug' => $slug,
+                'label' => $meta['label'] ?? $slug,
+                'enabled' => Feature::active($slug),
+            ])
+            ->sortBy('label')
+            ->values();
 
         return view('features.index', compact('features'));
     }
 
     public function toggle(Request $request, string $slug): RedirectResponse
     {
-        $feature = Feature::findOrFail($slug);
-        $feature->update(['enabled' => (bool) $request->boolean('enabled')]);
+        abort_unless(array_key_exists($slug, config('pennant.features', [])), 404);
 
-        return redirect()->route('features.index')->with('success', $feature->enabled ? __('messages.feature_enabled', ['label' => $feature->label]) : __('messages.feature_disabled', ['label' => $feature->label]));
+        $request->boolean('enabled')
+            ? Feature::activate($slug)
+            : Feature::deactivate($slug);
+
+        $label = featureLabel($slug);
+
+        return redirect()->route('features.index')->with(
+            'success',
+            $request->boolean('enabled')
+                ? __('messages.feature_enabled', ['label' => $label])
+                : __('messages.feature_disabled', ['label' => $label])
+        );
     }
 }

@@ -9,10 +9,9 @@ class FeatureResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'slug' => $this->slug,
-            'label' => $this->label,
-            'description' => $this->description,
-            'enabled' => (bool) $this->enabled,
+            'slug' => $this->resource['slug'],
+            'label' => $this->resource['label'],
+            'enabled' => (bool) $this->resource['enabled'],
         ];
     }
 }

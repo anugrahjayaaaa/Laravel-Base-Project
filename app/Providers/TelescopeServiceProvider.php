@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\PeriscopeAuthorize;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Pennant\Feature;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
+use TortoiseIT\LaravelPeriscope\Http\Middleware\Authorize;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
@@ -30,10 +33,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         // ponytail: Periscope hardwires Telescope::check() (the viewTelescope gate)
         // in its own Authorize middleware. Swap that binding so Periscope uses our
         // independent viewPeriscope gate (separate role/permission from Telescope).
-        if (class_exists(\TortoiseIT\LaravelPeriscope\Http\Middleware\Authorize::class)) {
+        if (class_exists(Authorize::class)) {
             $this->app->bind(
-                \TortoiseIT\LaravelPeriscope\Http\Middleware\Authorize::class,
-                fn () => new \App\Http\Middleware\PeriscopeAuthorize
+                Authorize::class,
+                fn () => new PeriscopeAuthorize
             );
         }
     }
@@ -89,7 +92,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             // ponytail: require BOTH the telescope.view permission AND the
             // enabled 'telescope' feature flag in every environment, so even
             // super-admin is denied unless explicitly granted + enabled.
-            return $user->can('telescope.view') && function_exists('feature') && feature('telescope');
+            return $user->can('telescope.view') && Feature::active('telescope');
         });
 
         // ponytail: independent gate for Periscope (separate permission + feature
@@ -101,7 +104,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
                 return false;
             }
 
-            return $user->can('periscope.view') && function_exists('feature') && feature('periscope');
+            return $user->can('periscope.view') && Feature::active('periscope');
         });
     }
 }
