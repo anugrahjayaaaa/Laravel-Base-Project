@@ -22,6 +22,7 @@ compatible with Laravel 13 + PHP 8.3.
 | RBAC management UI | **Custom thin Blade CRUD** | Built on spatie/laravel-permission. `sarker/laravel-role-permission-ui` only supports Laravel ≤11 — dropped. |
 | Log viewer (web) | `rap2hpoutre/laravel-log-viewer` ^3.0 | Web UI for `storage/logs`; gate behind super-admin. `opcodesio/log-viewer` only supports ≤Laravel 12 — dropped. |
 | Error tracking | `sentry/sentry-laravel` | Sentry SDK; init in bootstrap; tag `user_id`. |
+| Dev debugging UI | `laravel/telescope` ^5.22 (require-dev) | Local-only query/N+1/slow-request profiler. Gated by `telescope.view` permission + `telescope` feature flag; storage disabled outside `local` (PII safety). `telescope:prune` runs daily. |
 | Admin template | AdminLTE 4.9.1 (dist zip) | `public/vendor/adminlte/`, not a Composer dep. |
 
 ## Testing

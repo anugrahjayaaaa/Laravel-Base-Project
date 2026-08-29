@@ -8,6 +8,7 @@ return [
     'permissions' => 'Permissions',
     'audit_log' => 'Audit Log',
     'logs' => 'Logs',
+    'telescope' => 'Telescope',
     'profile' => 'Profile',
     'sessions' => 'Sessions',
     'api_tokens' => 'API Tokens',

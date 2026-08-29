@@ -12,6 +12,12 @@ class SecurityHeaders
     {
         $response = $next($request);
 
+        // ponytail: Telescope is a Vue SPA that needs unsafe-eval/inline to mount.
+        // It ships its own headers; skip CSP on its routes so the dashboard isn't blank.
+        if ($request->is('telescope*', 'telescope/*')) {
+            return $response;
+        }
+
         // ponytail: basic security headers; HSTS only over HTTPS in prod
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');

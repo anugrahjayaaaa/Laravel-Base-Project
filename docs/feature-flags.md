@@ -32,7 +32,7 @@ feature('users');   // true/false; missing feature => false (fail-closed)
   use modules while a flag is off.
 
 ## Known flags
-- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`.
+- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`, `telescope`.
 
 ## Gate
 - Every module route is wrapped in `feature:` — RED if a module route lacks it.
