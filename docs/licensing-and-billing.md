@@ -265,3 +265,24 @@ each is left as a hook, not hardcoded.
    billing math in `BillingService` (count active users × seat price). The
    `Plan::for($scope)` seam already covers both; decide the pricing model
    when wiring billing, not in the entitlement layer.
+
+6. **Renewal failure / dunning (recurring only).**
+   A recurring charge can fail each cycle (expired card, insufficient funds).
+   The `subscriptions` status must support `past_due`, with a retry sequence
+   and a banner "payment failed — features downgrade to Free after N days".
+   Without this, a client whose payment fails keeps paid features. Midtrans
+   does not auto-dunning; the retry + grace logic lives in `BillingService`.
+
+7. **License revocation / refund.**
+   On refund or abuse, set `licenses.status = revoked` (soft, never delete the
+   row — keep history) and immediately lock features. Record a reason in an
+   audit column. Revocation is the explicit path that flips `Plan::for()` to
+   `free`; it must be instant, not wait for expiry.
+
+8. **Plan catalog versioning / snapshot.**
+   Plan `limits`/`features` will change over time (price rise, feature moves).
+   A client who already paid must keep what they bought. Snapshot the plan at
+   issue time: store `plan_version` on the license, or copy `limits`/`features`
+   into the `licenses` row. `Plan::for()` reads the snapshot, not the live
+   `plans` row — otherwise a mid-term price/limit change silently narrows a
+   paying client's entitlement.
