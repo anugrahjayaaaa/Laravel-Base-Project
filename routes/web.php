@@ -89,6 +89,10 @@ Route::middleware('auth')->group(function () {
     // Plan management (full CRUD, custom slug/price/limits/features — doc §9b)
     Route::resource('plans', PlanController::class)->middleware('can:feature.manage');
 
+    // Billing: checkout (dummy mode completes at once) + PG webhook
+    Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::post('/billing/webhook', [BillingController::class, 'webhook'])->name('billing.webhook');
+
     Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 
     // Translations management (under Settings, gated by RBAC + feature flag)

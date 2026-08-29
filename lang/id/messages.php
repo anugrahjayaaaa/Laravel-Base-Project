@@ -51,6 +51,8 @@ return [
     'plan_updated' => 'Paket diperbarui.',
     'plan_deleted' => 'Paket dihapus.',
     'plan_free_protected' => 'Paket Free tidak dapat dihapus.',
+    'payment_paid' => 'Pembayaran berhasil — lisensi diaktifkan.',
+    'payment_pending' => 'Pembayaran tertunda. Lisensi aktif setelah dibayar.',
     'cannot_permanently_delete_super_admin' => 'Tidak dapat menghapus super-admin secara permanen.',
     'permission_created' => 'Izin dibuat.',
     'permission_updated' => 'Izin diperbarui.',

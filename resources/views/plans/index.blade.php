@@ -36,6 +36,13 @@
                     </td>
                     <td class="text-end">
                         <a href="{{ route('plans.edit', $plan) }}" class="btn btn-sm btn-light border">{{ ui('edit') }}</a>
+                        @if($plan->price_monthly > 0)
+                        <form method="POST" action="{{ route('billing.checkout') }}" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="plan_slug" value="{{ $plan->slug }}">
+                            <button class="btn btn-sm btn-primary">{{ ui('subscribe') }}</button>
+                        </form>
+                        @endif
                         @unless($plan->slug === 'free')
                         <form method="POST" action="{{ route('plans.destroy', $plan) }}" class="d-inline" onsubmit="return confirm('{{ ui('confirm_delete') }}');">
                             @csrf @method('DELETE')

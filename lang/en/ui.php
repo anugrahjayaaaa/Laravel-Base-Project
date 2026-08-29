@@ -128,6 +128,7 @@ return [
     'plans' => 'Plans',
     'plans_intro' => 'Manage subscription plans. Slug, price, limits and features are fully custom.',
     'new_plan' => 'New Plan',
+    'subscribe' => 'Subscribe',
     'edit_plan' => 'Edit Plan',
     'price_monthly' => 'Price (monthly)',
     'limits' => 'Limits',

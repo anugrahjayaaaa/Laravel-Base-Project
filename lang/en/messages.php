@@ -51,6 +51,8 @@ return [
     'plan_updated' => 'Plan updated.',
     'plan_deleted' => 'Plan deleted.',
     'plan_free_protected' => 'The Free plan cannot be deleted.',
+    'payment_paid' => 'Payment successful — license activated.',
+    'payment_pending' => 'Payment pending. License will activate once paid.',
     'cannot_permanently_delete_super_admin' => 'Cannot permanently delete super-admin.',
     'permission_created' => 'Permission created.',
     'permission_updated' => 'Permission updated.',

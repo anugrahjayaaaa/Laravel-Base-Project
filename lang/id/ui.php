@@ -128,6 +128,7 @@ return [
     'plans' => 'Paket',
     'plans_intro' => 'Kelola paket berlangganan. Slug, harga, limit, dan fitur sepenuhnya custom.',
     'new_plan' => 'Paket Baru',
+    'subscribe' => 'Berlangganan',
     'edit_plan' => 'Edit Paket',
     'price_monthly' => 'Harga (bulanan)',
     'limits' => 'Limit',
