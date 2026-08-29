@@ -8,13 +8,14 @@
     @endcan
 </div>
 
-@include('partials.bulk-actions', ['bulkRoute' => route('users.bulk'), 'canSoft' => auth()->user()->can('user.delete'), 'canForce' => auth()->user()->can('user.force-delete')])
-
 <form method="GET" class="mb-3">
-    <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
-        <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
-        <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_name_username_email') }}" value="{{ request('q') }}">
-        <button class="btn btn-primary px-3" type="submit">{{ ui('search') }}</button>
+    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+        <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
+            <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
+            <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_name_username_email') }}" value="{{ request('q') }}">
+            <button class="btn btn-primary px-3" type="submit">{{ ui('search') }}</button>
+        </div>
+        @include('partials.bulk-actions', ['bulkRoute' => route('users.bulk'), 'canSoft' => auth()->user()->can('user.delete'), 'canForce' => auth()->user()->can('user.force-delete')])
     </div>
 </form>
 
@@ -34,7 +35,7 @@
             </thead>
             <tbody>
                 @forelse ($users as $user)
-                <tr class="{{ $user->trashed() ? 'table-secondary' : '' }}">
+                <tr class="{{ $user->trashed() ? 'row-deleted' : '' }}">
                     <td><input class="form-check-input" type="checkbox" form="bulk-form" name="ids[]" value="{{ $user->id }}"></td>
                     <td class="text-muted">{{ $users->firstItem() + $loop->index }}</td>
                     <td>
