@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use App\Services\BillingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class BillingController extends Controller
 {
@@ -26,7 +26,7 @@ class BillingController extends Controller
     }
 
     /** PG webhook (no auth — the gateway calls this). */
-    public function webhook(Request $request): Response
+    public function webhook(Request $request): JsonResponse
     {
         BillingService::handleWebhook($request->all());
 

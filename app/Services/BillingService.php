@@ -63,6 +63,11 @@ final class BillingService
             return null;
         }
 
+        // ponytail: plan must exist; reject (don't 500) if gateway sent unknown slug
+        if (! Plan::where('slug', $payload['plan_slug'] ?? '')->exists()) {
+            return null;
+        }
+
         $payment = Payment::where('gateway_ref', $ref)->first()
             ?? Payment::create([
                 'plan_slug' => $payload['plan_slug'] ?? 'pro',

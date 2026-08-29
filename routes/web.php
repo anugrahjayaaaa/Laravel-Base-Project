@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -89,9 +90,8 @@ Route::middleware('auth')->group(function () {
     // Plan management (full CRUD, custom slug/price/limits/features — doc §9b)
     Route::resource('plans', PlanController::class)->middleware('can:feature.manage');
 
-    // Billing: checkout (dummy mode completes at once) + PG webhook
+    // Billing: checkout (dummy mode completes at once) — user-initiated, inside auth
     Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');
-    Route::post('/billing/webhook', [BillingController::class, 'webhook'])->name('billing.webhook');
 
     Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 
@@ -105,6 +105,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::post('/email/verify/resend', [LoginController::class, 'resendVerification'])->name('verification.resend');
 });
+
+// PG webhook — outside auth (the gateway calls this, no session). CSRF excluded in bootstrap/app.php.
+Route::post('/billing/webhook', [BillingController::class, 'webhook'])->name('billing.webhook');
 
 Route::get('/', fn () => auth()->check()
     ? redirect()->route('dashboard')
