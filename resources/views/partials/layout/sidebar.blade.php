@@ -16,8 +16,9 @@
                 </li>
 
                 {{-- Access Management --}}
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="nav-icon bi bi-shield-lock"></i> <span>{{ __('messages.access_management') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                @php($amActive = request()->routeIs('users.*','roles.*','permissions.*'))
+                <li class="nav-item {{ $amActive ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $amActive ? 'active' : '' }}" aria-expanded="{{ $amActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-shield-lock"></i> <span>{{ __('messages.access_management') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
                         @can('user.view')
                         @if(featureVisible('users'))
@@ -38,8 +39,9 @@
                 </li>
 
                 {{-- Monitoring --}}
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="nav-icon bi bi-activity"></i> <span>{{ __('messages.monitoring') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                @php($monActive = request()->routeIs('audit.*','logs.*') || request()->is('telescope*','periscope*'))
+                <li class="nav-item {{ $monActive ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $monActive ? 'active' : '' }}" aria-expanded="{{ $monActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-activity"></i> <span>{{ __('messages.monitoring') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
                         @can('audit.view')
                         @if(featureVisible('audit'))
@@ -53,12 +55,12 @@
                         @endcan
                         @can('telescope.view')
                         @if(featureVisible('telescope'))
-                        <li class="nav-item"><a href="{{ url('/telescope') }}" data-menu-text="{{ __('messages.telescope') }}" class="nav-link {{ request()->is('telescope*') ? 'active' : '' }}"><i class="nav-icon bi bi-binoculars"></i> <span>{{ __('messages.telescope') }}</span></a></li>
+                        <li class="nav-item"><a href="{{ url('/telescope') }}" data-menu-text="{{ __('messages.telescope') }}" target="_blank" rel="noopener noreferrer" class="nav-link {{ request()->is('telescope*') ? 'active' : '' }}"><i class="nav-icon bi bi-binoculars"></i> <span>{{ __('messages.telescope') }}</span></a></li>
                         @endif
                         @endcan
                         @can('periscope.view')
                         @if(featureVisible('periscope'))
-                        <li class="nav-item"><a href="{{ url('/periscope') }}" data-menu-text="Periscope" class="nav-link {{ request()->is('periscope*') ? 'active' : '' }}"><i class="nav-icon bi bi-funnel"></i> <span>Periscope</span></a></li>
+                        <li class="nav-item"><a href="{{ url('/periscope') }}" data-menu-text="Periscope" target="_blank" rel="noopener noreferrer" class="nav-link {{ request()->is('periscope*') ? 'active' : '' }}"><i class="nav-icon bi bi-funnel"></i> <span>Periscope</span></a></li>
                         @endif
                         @endcan
                     </ul>
@@ -67,8 +69,9 @@
                 <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
 
                 {{-- System / Settings --}}
-                <li class="nav-item">
-                    <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                @php($setActive = request()->routeIs('sessions.*','api-tokens.*','features.*','translations.*'))
+                <li class="nav-item {{ $setActive ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ $setActive ? 'active' : '' }}" aria-expanded="{{ $setActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
                         @can('feature.manage')
                         @if(featureVisible('sessions'))
