@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function show(): View
     {
-        return view('settings.profile.show', ['user' => auth()->user()]);
+        return view('profile.show', ['user' => auth()->user()]);
     }
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
