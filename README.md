@@ -24,6 +24,8 @@ use as the foundation for internal web applications.
 - **RBAC** — dynamic roles & permissions (spatie). `super-admin`, `admin`, `staff` are
   seeded. Every action is gated via `can:*` (route middleware + Form Request `authorize()`).
 - **User management** — CRUD, soft-delete, restore, permanent delete (force-delete), admin lock/unlock.
+  Tables support **bulk actions** (select rows → soft-delete or force-delete many at once via a confirm modal)
+  and **sortable column headers** with soft-deleted rows always sorted to the bottom.
 - **Feature flags** — `features` table + `/features` UI (under **Settings** submenu, gated by `feature.manage`). A flag sits **above** RBAC: a module needs both `permission` AND `feature enabled`; when off, the route 404s and its sidebar item hides — except for `feature.manage` holders, who stay exempt (they can reach/use modules even while off).
 - **Audit trail** — every mutation (create/update/delete/restore/force-delete, admin lock/unlock, login,
   logout, reset) is automatically recorded into `activity_log` via observers. The **Audit** page
@@ -104,7 +106,7 @@ php artisan test tests/Feature/AuthLoginTest.php  # a single file
 ```
 
 Location: `tests/Feature/` (HTTP/controllers) and `tests/Unit/`.
-Current coverage: **115 tests / 305 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, i18n locale + e2e API localization, form-request coverage).
+Current coverage: **117 tests / 312 assertions** (login, RBAC, profile, audit, logging, API v1 full suite, feature flags, notifications, API tokens, bulk actions, i18n locale + e2e API localization, form-request coverage).
 
 ## Logs, cache & state — where to look
 
@@ -133,7 +135,7 @@ With `APP_DEBUG=true`, 500 errors are also shown directly in the browser.
 app/
   Http/
     Controllers/        # thin controllers
-    Requests/           # Form Requests per domain (Auth, User, Rbac, Profile, ApiToken, Locale, Session, Translation)
+    Requests/           # Form Requests per domain (Auth, User, Rbac, Profile, ApiToken, Locale, Session, Translation, BulkAction)
     Middleware/
       LogHttpErrors.php # logs 4xx to the daily log
       SetLocale.php     # web locale from session (web group, after StartSession)
