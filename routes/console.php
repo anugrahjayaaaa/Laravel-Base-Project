@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Audit log retention: purge rows older than the configured window (default 365d).
 Schedule::command('audit:purge')->daily();
+
+// Telescope entry retention: avoid unbounded growth of telescope_entries.
+Schedule::command('telescope:prune')->daily();
