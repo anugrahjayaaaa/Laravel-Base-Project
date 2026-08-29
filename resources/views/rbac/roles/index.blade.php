@@ -8,16 +8,16 @@
     @endcan
 </div>
 
-<form method="GET" class="mb-3">
-    <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-        <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
+<div class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-3">
+    <form method="GET" class="d-flex flex-grow-1" style="max-width:420px">
+        <div class="input-group input-group-sm shadow-sm w-100">
             <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
             <input type="text" name="q" class="form-control bg-body border-0" placeholder="{{ ui('search_role_name') }}" value="{{ request('q') }}" aria-label="{{ ui('search') }}">
             <button class="btn btn-primary px-3" type="submit">Search</button>
         </div>
-        @include('partials.bulk-actions', ['bulkRoute' => route('roles.bulk'), 'canSoft' => auth()->user()->can('role.delete'), 'canForce' => auth()->user()->can('role.force-delete')])
-    </div>
-</form>
+    </form>
+    @include('partials.bulk-actions', ['bulkRoute' => route('roles.bulk'), 'canSoft' => auth()->user()->can('role.delete'), 'canForce' => auth()->user()->can('role.force-delete')])
+</div>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
