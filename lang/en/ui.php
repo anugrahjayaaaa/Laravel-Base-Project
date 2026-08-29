@@ -95,6 +95,9 @@ return [
     'current_password' => 'Current Password',
     'new_password_hint' => 'New Password (min 12, upper/lower/digit/symbol)',
     'update_profile' => 'Update Profile',
+    'email_verified' => 'Email verified',
+    'email_not_verified' => 'Email not verified',
+    'resend_verification' => 'Resend verification',
 
     // ── api tokens ──
     'api_tokens' => 'API Tokens',

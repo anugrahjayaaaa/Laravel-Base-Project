@@ -95,6 +95,9 @@ return [
     'current_password' => 'Kata Sandi Saat Ini',
     'new_password_hint' => 'Kata Sandi Baru (min. 12 huruf, campur huruf besar/kecil, angka, simbol)',
     'update_profile' => 'Perbarui Profil',
+    'email_verified' => 'Email terverifikasi',
+    'email_not_verified' => 'Email belum terverifikasi',
+    'resend_verification' => 'Kirim ulang verifikasi',
 
     // ── api tokens ──
     'api_tokens' => 'Token API',
