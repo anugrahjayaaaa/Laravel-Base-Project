@@ -15,6 +15,19 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    private function resolveLoginField(string $identifier): string
+    {
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            return 'email';
+        }
+
+        if (preg_match('/^\+?\d{8,15}$/', $identifier)) {
+            return 'phone';
+        }
+
+        return 'username';
+    }
+
     public function login(LoginApiRequest $request): JsonResponse
     {
         $identifier = $request->identifier;
@@ -26,8 +39,7 @@ class AuthController extends Controller
             return response()->json(['error' => ['code' => 'RATE_LIMITED', 'message' => __('messages.too_many_attempts', ['seconds' => $seconds])]], 429);
         }
 
-        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email'
-            : (preg_match('/^\+?\d{8,15}$/', $identifier) ? 'phone' : 'username');
+        $field = $this->resolveLoginField($identifier);
 
         $user = User::where($field, $identifier)->first();
 
