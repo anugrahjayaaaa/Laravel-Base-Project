@@ -49,7 +49,7 @@ return [
     |
     | Declares every module-level feature flag with a human label. Values are
     | resolved/stored by Laravel Pennant (DB store). A flag absent here is
-    | treated as disabled (fail-closed) by the `feature()` helper.
+    | treated as disabled (fail-closed) by Pennant's `Feature::active()`.
     |
     */
 

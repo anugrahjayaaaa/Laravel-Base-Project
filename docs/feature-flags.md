@@ -17,9 +17,9 @@ Implemented with **Laravel Pennant** (`laravel/pennant`).
 
 ## Checking a flag
 ```php
-feature('users');   // true/false; missing feature => false (fail-closed)
-Feature::active('users');
+Feature::active('users');   // true/false; missing feature => false (fail-closed, built into Pennant)
 ```
+Blade: `@feature('users') ... @endfeature` (native Pennant directive).
 
 ## Enforcement
 - Route middleware `feature:{slug}` (`App\Http\Middleware\EnsureFeatureEnabled`),

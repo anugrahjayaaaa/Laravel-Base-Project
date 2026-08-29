@@ -24,9 +24,9 @@ function makeUserWith(array $perms, bool $manager = false): User
     return $user;
 }
 
-it('feature() helper returns enabled state and fails closed when missing', function () {
-    expect(feature('users'))->toBeTrue();
-    expect(feature('does-not-exist'))->toBeFalse();
+it('Feature::active() returns enabled state and fails closed when missing', function () {
+    expect(Feature::active('users'))->toBeTrue();
+    expect(Feature::active('does-not-exist'))->toBeFalse();
 });
 
 it('lists feature flags (manager only)', function () {
@@ -38,11 +38,11 @@ it('toggles a feature off and back on', function () {
     $this->actingAs(makeUserWith([], true));
     $this->post(route('features.toggle', 'users'), ['enabled' => '0'])
         ->assertRedirect(route('features.index'));
-    expect(feature('users'))->toBeFalse();
+    expect(Feature::active('users'))->toBeFalse();
 
     $this->post(route('features.toggle', 'users'), ['enabled' => '1'])
         ->assertRedirect(route('features.index'));
-    expect(feature('users'))->toBeTrue();
+    expect(Feature::active('users'))->toBeTrue();
 });
 
 it('blocks a non-manager when feature is off, even with permission', function () {

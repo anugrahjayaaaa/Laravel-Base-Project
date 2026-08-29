@@ -34,8 +34,8 @@
 - Context: need to disable whole modules without touching code or redeploy, and let
   a `feature.manage` holder keep access while a flag is off.
 - Decision: **Laravel Pennant** (`laravel/pennant`) — `config/pennant.php` declares flags,
-  `AppServiceProvider::boot()` defines them, `feature()` helper + `feature:{slug}` route
-  middleware (stacked with `can:{perm}`) gate access; sidebar visibility via `featureVisible()`.
+  `AppServiceProvider::boot()` defines them, `Feature::active()` + `feature:{slug}` route
+  middleware (stacked with `can:{perm}`) gate access; sidebar visibility via `@feature()` Blade directive.
   A flag off 404s the route and hides its menu item for everyone (kill-switch,
   including `feature.manage` holders) — they re-enable from `/features`. Storage = Pennant DB store.
 - Consequences: closest path to change the enabled state is the `/features` UI (under
