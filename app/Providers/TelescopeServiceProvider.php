@@ -29,6 +29,20 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     }
 
     /**
+     * Override parent: make the 'telescope' feature flag authoritative in ALL
+     * environments (parent short-circuits with environment('local') and bypasses
+     * the gate, so a disabled feature would still be reachable on local).
+     */
+    protected function authorization(): void
+    {
+        $this->gate();
+
+        Telescope::auth(function ($request) {
+            return Gate::check('viewTelescope', [$request->user()]);
+        });
+    }
+
+    /**
      * Prevent sensitive request details from being logged by Telescope.
      */
     protected function hideSensitiveRequestDetails(): void
@@ -53,14 +67,18 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewTelescope', function (User $user) {
-            // ponytail: local is open (storage already local-only); elsewhere
-            // require the telescope.view permission AND the 'telescope' feature flag,
-            // so even super-admin is denied unless explicitly granted + enabled.
-            if (app()->environment('local')) {
-                return true;
+        Gate::define('viewTelescope', function (?User $user) {
+            // ponytail: typed User throws on null (stateless Telescope API calls
+            // have no resolved user) -> Gate silently denies. Resolve from auth().
+            $user ??= auth()->user();
+
+            if (! $user instanceof User) {
+                return false;
             }
 
+            // ponytail: require BOTH the telescope.view permission AND the
+            // enabled 'telescope' feature flag in every environment, so even
+            // super-admin is denied unless explicitly granted + enabled.
             return $user->can('telescope.view') && function_exists('feature') && feature('telescope');
         });
     }

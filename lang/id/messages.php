@@ -8,6 +8,7 @@ return [
     'permissions' => 'Izin',
     'audit_log' => 'Log Audit',
     'logs' => 'Log',
+    'telescope' => 'Telescope',
     'profile' => 'Profil',
     'sessions' => 'Sesi',
     'api_tokens' => 'Token API',
