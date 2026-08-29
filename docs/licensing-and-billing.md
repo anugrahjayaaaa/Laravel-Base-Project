@@ -37,10 +37,13 @@ only the scope source changes.
 
 ```sql
 plans
-  id, slug (free|basic|pro|enterprise), name,
+  id, slug (unique, CUSTOM — any string, e.g. 'starter-2026'), name,
   price_monthly decimal(12,2), is_active bool,
-  limits  json,   -- {"max_members":2,"max_projects":1,"max_storage_mb":500}
-  features json    -- ["kanban","audit","telescope","api","sso"]
+  limits  json,   -- {"max_members":N,"max_projects":N,"max_storage_mb":N}  (all custom)
+  features json    -- custom list, e.g. ["kanban","audit","telescope","api","sso"]
+  -- FULL CRUD: admin can create/edit/delete plans, any slug, any price,
+  -- any limits/features. No fixed tier enum. 'free' is just a plan row with
+  -- price_monthly = 0 (seeded by default), not a special-cased constant.
 
 licenses
   id, plan_slug, license_key (unique), type (recurring|lifetime|manual),
@@ -204,6 +207,17 @@ MDR per method (excl. 11% VAT):
   first-class disbursement (paying out) if the business model ever needs
   payouts. Pick this if the team prefers a custom API over Snap.
 - **Never** capture card data yourself. Always use the Snap redirect / PG page.
+- **Sandbox / dummy endpoint for dev.** Midtrans provides a Sandbox mode
+  (separate keys, `is_production=false`) with dummy VA / QRIS / card numbers
+  that always succeed (and ones that fail) — no real money. Use this for the
+  entire development phase; never hit production keys in dev. (§10.14 env
+  isolation.) If a PG is not yet connected, `BillingService::checkout()` can be
+  short-circuited behind a `billing.fake` flag that issues the license
+  directly — keeps dev usable without any PG.
+- **Free tier.** Yes — `free` is just a plan row with `price_monthly = 0`,
+  seeded by default and always active. No PG interaction needed for free; the
+  client runs on it out of the box. Paid plans are the only ones that touch the
+  PG.
 
 ### Laravel integration
 - Midtrans has no official Laravel Cashier driver (Cashier = Stripe/Paddle).
@@ -241,6 +255,12 @@ Plan-check logic & Entitlement service UNCHANGED.
   activated on. No reassign / reissue-to-another-instance mechanism exists
   (see `licenses` note in §3). A client moving to a new server must be issued a
   fresh license by the developer.
+- **Plans are FULLY CUSTOM (CRUD).** slug, price, limits, features are all
+  admin-editable — no fixed tier enum. `free` is just a plan row with
+  price_monthly = 0, seeded by default.
+- **NO refunds.** Refund flow (§10.15) is out of scope. License revocation
+  (§10.7) may still happen on abuse, but there is no refund path or refund
+  trigger on the invoice.
 
 ## 10. Open concerns (best-practice, business-variable)
 
@@ -334,10 +354,10 @@ each is left as a hook, not hardcoded.
     Drive PG mode via env (`midtrans.is_production` + separate keys). A sandbox
     webhook must NEVER update a production plan. Never hardcode the mode.
 
-15. **Refund / chargeback handling.**
-    Refund → `invoices.status = refunded` and trigger license revoke (§10.7).
-    Card chargeback is rare in Indonesia but treat identically: revoke + flag.
-    Never leave features active after a refund/chargeback.
+15. **Refund / chargeback handling — OUT OF SCOPE (user: no refunds).**
+    Revocation on abuse still applies (§10.7), but there is no refund path,
+    no `refunded` invoice state, and no refund trigger. Chargeback is also not
+    handled (Indonesian card share is small; if ever needed, treat as revoke).
 
 16. **Rate limit / abuse on activation & checkout.**
     Throttle + CSRF the activate and checkout endpoints (Laravel `throttle`
