@@ -54,9 +54,17 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate(): void
     {
         Gate::define('viewTelescope', function (User $user) {
-            return in_array($user->email, [
-                //
-            ]);
+            // ponytail: local is open (storage already local-only); elsewhere
+            // require a real role rather than a hardcoded email allowlist.
+            if (app()->environment('local')) {
+                return true;
+            }
+
+            return method_exists($user, 'hasRole')
+                ? $user->hasRole('super-admin')
+                : in_array($user->email, [
+                    // add prod/staging emails here
+                ]);
         });
     }
 }
