@@ -14,52 +14,72 @@
                         <i class="nav-icon bi bi-speedometer2"></i> <span>{{ __('messages.dashboard') }}</span>
                     </a>
                 </li>
-                @can('user.view')
-                @if(featureVisible('users'))
-                <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="{{ __('messages.users') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>{{ __('messages.users') }}</span></a></li>
-                @endif
-                @endcan
-                @can('role.view')
-                @if(featureVisible('roles'))
-                <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="{{ __('messages.roles') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>{{ __('messages.roles') }}</span></a></li>
-                @endif
-                @endcan
-                @can('permission.view')
-                @if(featureVisible('permissions'))
-                <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="{{ __('messages.permissions') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>{{ __('messages.permissions') }}</span></a></li>
-                @endif
-                @endcan
-                @can('audit.view')
-                @if(featureVisible('audit'))
-                <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="{{ __('messages.audit_log') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>{{ __('messages.audit_log') }}</span></a></li>
-                @endif
-                @endcan
-                @can('logs.view')
-                @if(featureVisible('logs'))
-                <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="{{ __('messages.logs') }}" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>{{ __('messages.logs') }}</span></a></li>
-                @endif
-                @endcan
-                @can('telescope.view')
-                @if(featureVisible('telescope'))
-                <li class="nav-item"><a href="{{ url('/telescope') }}" data-menu-text="{{ __('messages.telescope') }}" class="nav-link {{ request()->is('telescope*') ? 'active' : '' }}"><i class="nav-icon bi bi-binoculars"></i> <span>{{ __('messages.telescope') }}</span></a></li>
-                <li class="nav-item"><a href="{{ url('/periscope') }}" data-menu-text="Periscope" class="nav-link {{ request()->is('periscope*') ? 'active' : '' }}"><i class="nav-icon bi bi-funnel"></i> <span>Periscope</span></a></li>
-                @endif
-                @endcan
+
+                {{-- Access Management --}}
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><i class="nav-icon bi bi-shield-lock"></i> <span>{{ __('messages.access_management') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                    <ul class="nav nav-treeview">
+                        @can('user.view')
+                        @if(featureVisible('users'))
+                        <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="{{ __('messages.users') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>{{ __('messages.users') }}</span></a></li>
+                        @endif
+                        @endcan
+                        @can('role.view')
+                        @if(featureVisible('roles'))
+                        <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="{{ __('messages.roles') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>{{ __('messages.roles') }}</span></a></li>
+                        @endif
+                        @endcan
+                        @can('permission.view')
+                        @if(featureVisible('permissions'))
+                        <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="{{ __('messages.permissions') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>{{ __('messages.permissions') }}</span></a></li>
+                        @endif
+                        @endcan
+                    </ul>
+                </li>
+
+                {{-- Monitoring --}}
+                <li class="nav-item">
+                    <a href="#" class="nav-link"><i class="nav-icon bi bi-activity"></i> <span>{{ __('messages.monitoring') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
+                    <ul class="nav nav-treeview">
+                        @can('audit.view')
+                        @if(featureVisible('audit'))
+                        <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="{{ __('messages.audit_log') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>{{ __('messages.audit_log') }}</span></a></li>
+                        @endif
+                        @endcan
+                        @can('logs.view')
+                        @if(featureVisible('logs'))
+                        <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="{{ __('messages.logs') }}" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>{{ __('messages.logs') }}</span></a></li>
+                        @endif
+                        @endcan
+                        @can('telescope.view')
+                        @if(featureVisible('telescope'))
+                        <li class="nav-item"><a href="{{ url('/telescope') }}" data-menu-text="{{ __('messages.telescope') }}" class="nav-link {{ request()->is('telescope*') ? 'active' : '' }}"><i class="nav-icon bi bi-binoculars"></i> <span>{{ __('messages.telescope') }}</span></a></li>
+                        @endif
+                        @endcan
+                        @can('periscope.view')
+                        @if(featureVisible('periscope'))
+                        <li class="nav-item"><a href="{{ url('/periscope') }}" data-menu-text="Periscope" class="nav-link {{ request()->is('periscope*') ? 'active' : '' }}"><i class="nav-icon bi bi-funnel"></i> <span>Periscope</span></a></li>
+                        @endif
+                        @endcan
+                    </ul>
+                </li>
+
                 <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
-                @can('feature.manage')
-                @if(featureVisible('sessions'))
-                <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="{{ __('messages.sessions') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>{{ __('messages.sessions') }}</span></a></li>
-                @endif
-                @endcan
-                @canany(['feature.manage', 'translation.view'])
-                @if(featureVisible('api-tokens'))
-                <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="{{ __('messages.api_tokens') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>{{ __('messages.api_tokens') }}</span></a></li>
-                @endif
-                @endcanany
-                @canany(['feature.manage', 'translation.view'])
+
+                {{-- System / Settings --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
+                        @can('feature.manage')
+                        @if(featureVisible('sessions'))
+                        <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="{{ __('messages.sessions') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>{{ __('messages.sessions') }}</span></a></li>
+                        @endif
+                        @endcan
+                        @canany(['feature.manage', 'translation.view'])
+                        @if(featureVisible('api-tokens'))
+                        <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="{{ __('messages.api_tokens') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>{{ __('messages.api_tokens') }}</span></a></li>
+                        @endif
+                        @endcanany
                         <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
                         @can('translation.view')
                         @if(featureVisible('translations'))
@@ -68,7 +88,6 @@
                         @endcan
                     </ul>
                 </li>
-                @endcanany
 
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" class="m-0">

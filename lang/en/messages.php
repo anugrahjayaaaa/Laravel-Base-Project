@@ -20,6 +20,8 @@ return [
     'english' => 'English',
     'indonesian' => 'Indonesian',
     'main_menu' => 'Main Menu',
+    'access_management' => 'Access Management',
+    'monitoring' => 'Monitoring',
     'template' => 'Template',
     'login' => 'Login',
     'translations' => 'Translations',

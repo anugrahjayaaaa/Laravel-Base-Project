@@ -1,6 +1,11 @@
 <?php
 
 return [
+    // ponytail: Periscope access is gated by our own 'viewPeriscope' gate
+    // (periscope.view permission + periscope feature flag) — see
+    // TelescopeServiceProvider, which swaps Periscope's Authorize middleware.
+    // Keep Periscope disabled outside local by leaving PERISCOPE_ENABLED=false
+    // or the 'periscope' feature flag off.
     'enabled' => env('PERISCOPE_ENABLED', true),
 
     'name' => env('PERISCOPE_NAME', 'Periscope'),
