@@ -151,4 +151,7 @@ return [
     'confirm_bulk_delete' => 'Delete the selected items? This cannot be undone for permanently deleted ones.',
     'select_all' => 'Select all',
     'selected' => 'selected',
+    'confirm_bulk_delete_title' => 'Confirm bulk delete',
+    'confirm_bulk_delete_body' => 'You are about to :action :count item(s). Continue?',
+    'delete' => 'Delete',
 ];
