@@ -29,6 +29,12 @@ class LanguageLineSeeder extends Seeder
                     ['text' => $text],
                 );
             }
+
+            // ponytail: drop DB rows whose key no longer exists in lang files (idempotent cleanup)
+            $validKeys = array_keys($keys);
+            LanguageLine::where('group', $group)
+                ->whereNotIn('key', $validKeys)
+                ->delete();
         }
     }
 }
