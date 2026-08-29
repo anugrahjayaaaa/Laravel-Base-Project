@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\Sortable;
+use App\Http\Requests\BulkActionRequest;
 use App\Http\Requests\Rbac\RoleStoreRequest;
 use App\Http\Requests\Rbac\RoleUpdateRequest;
 use Illuminate\Http\RedirectResponse;
@@ -13,11 +15,14 @@ use App\Models\Role;
 
 class RoleController extends Controller
 {
+    use Sortable;
+
     public function index(Request $request): View
     {
         $roles = Role::withTrashed()->with('permissions')
             ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%' . $request->q . '%'))
-            ->orderBy('name')->paginate(10)->withQueryString();
+            ->when(true, fn ($q) => $this->sortIndex($q, $request, 'name', ['name']))
+            ->paginate(10)->withQueryString();
         return view('rbac.roles.index', compact('roles'));
     }
 
@@ -52,6 +57,26 @@ class RoleController extends Controller
         $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
 
         return redirect()->route('roles.index')->with('success', __('messages.role_updated'));
+    }
+
+    public function bulk(BulkActionRequest $request): RedirectResponse
+    {
+        $force = $request->input('action') === 'force';
+        $done = 0;
+        foreach ($request->input('ids') as $id) {
+            $role = Role::withTrashed()->find($id);
+            if (! $role || $role->name === 'super-admin') {
+                continue; // protect super-admin
+            }
+            if (! auth()->user()->can($force ? 'role.force-delete' : 'role.delete', $role)) {
+                continue;
+            }
+            $force ? $role->forceDelete() : $role->delete();
+            $done++;
+        }
+
+        $key = $force ? 'roles_permanently_deleted_count' : 'roles_deleted_count';
+        return redirect()->route('roles.index')->with('success', __('messages.' . $key, ['count' => $done]));
     }
 
     public function destroy(Role $role): RedirectResponse

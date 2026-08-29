@@ -8,6 +8,8 @@
     @endcan
 </div>
 
+@include('partials.bulk-actions', ['bulkRoute' => route('permissions.bulk'), 'canSoft' => auth()->user()->can('permission.delete'), 'canForce' => auth()->user()->can('permission.force-delete')])
+
 <form method="GET" class="mb-3">
     <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
@@ -21,11 +23,18 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr><th>#</th><th>{{ ui('name') }}</th><th>{{ ui('guard') }}</th><th class="text-end">{{ ui('action') }}</th></tr>
+                <tr>
+                    <th style="width:38px"><input class="form-check-input" type="checkbox" form="bulk-form" id="bulk-select-all"></th>
+                    <th>#</th>
+                    <x-sortable-th label="{{ ui('name') }}" column="name" :sort="request('sort')" :dir="request('dir', 'asc')" />
+                    <x-sortable-th label="{{ ui('guard') }}" column="guard_name" :sort="request('sort')" :dir="request('dir', 'asc')" />
+                    <th class="text-end">{{ ui('action') }}</th>
+                </tr>
             </thead>
             <tbody>
                 @forelse ($permissions as $perm)
                 <tr class="{{ $perm->trashed() ? 'table-secondary' : '' }}">
+                    <td><input class="form-check-input" type="checkbox" form="bulk-form" name="ids[]" value="{{ $perm->id }}"></td>
                     <td class="text-muted">{{ $permissions->firstItem() + $loop->index }}</td>
                     <td>{{ $perm->name }}</td>
                     <td>

@@ -8,6 +8,8 @@
     @endcan
 </div>
 
+@include('partials.bulk-actions', ['bulkRoute' => route('roles.bulk'), 'canSoft' => auth()->user()->can('role.delete'), 'canForce' => auth()->user()->can('role.force-delete')])
+
 <form method="GET" class="mb-3">
     <div class="input-group input-group-sm shadow-sm" style="max-width:380px">
         <span class="input-group-text bg-body border-0"><i class="bi bi-search"></i></span>
@@ -21,11 +23,17 @@
         <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr><th>#</th><th>{{ ui('name') }}</th><th>{{ ui('permissions') }}</th><th class="text-end">{{ ui('action') }}</th></tr>
+                <tr>
+                    <th style="width:38px"><input class="form-check-input" type="checkbox" form="bulk-form" id="bulk-select-all"></th>
+                    <th>#</th>
+                    <x-sortable-th label="{{ ui('name') }}" column="name" :sort="request('sort')" :dir="request('dir', 'asc')" />
+                    <th>{{ ui('permissions') }}</th><th class="text-end">{{ ui('action') }}</th>
+                </tr>
             </thead>
             <tbody>
                 @forelse ($roles as $role)
                 <tr class="{{ $role->trashed() ? 'table-secondary' : '' }}">
+                    <td><input class="form-check-input" type="checkbox" form="bulk-form" name="ids[]" value="{{ $role->id }}"></td>
                     <td class="text-muted">{{ $roles->firstItem() + $loop->index }}</td>
                     <td>
                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ $role->name }}</span>

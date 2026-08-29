@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\Sortable;
+use App\Http\Requests\BulkActionRequest;
 use App\Http\Requests\User\UserStoreRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
@@ -13,6 +15,8 @@ use App\Models\Role;
 
 class UserController extends Controller
 {
+    use Sortable;
+
     public function index(Request $request): View
     {
         $users = User::withTrashed()
@@ -21,7 +25,8 @@ class UserController extends Controller
                   ->orWhere('username', 'like', '%' . $request->q . '%')
                   ->orWhere('email', 'like', '%' . $request->q . '%');
             }))
-            ->orderBy('name')
+            ->with('roles')
+            ->when(true, fn ($q) => $this->sortIndex($q, $request, 'name', ['name', 'username', 'email']))
             ->paginate(10)
             ->withQueryString();
 
@@ -130,6 +135,26 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.index')->with('error', __('messages.could_not_send_reset_link', ['status' => __($status)]));
+    }
+
+    public function bulk(BulkActionRequest $request): RedirectResponse
+    {
+        $force = $request->input('action') === 'force';
+        $done = 0;
+        foreach ($request->input('ids') as $id) {
+            if ((int) $id === auth()->id()) {
+                continue; // never bulk-delete yourself
+            }
+            $user = User::withTrashed()->find($id);
+            if (! $user || ! auth()->user()->can($force ? 'user.force-delete' : 'user.delete', $user)) {
+                continue;
+            }
+            $force ? $user->forceDelete() : $user->delete();
+            $done++;
+        }
+
+        $key = $force ? 'users_permanently_deleted_count' : 'users_deleted_count';
+        return redirect()->route('users.index')->with('success', __('messages.' . $key, ['count' => $done]));
     }
 
     public function destroy(User $user): RedirectResponse

@@ -70,4 +70,12 @@ return [
     'logged_out' => 'Logged out.',
     'reset_link_sent_simple' => 'Reset link sent.',
     'token_created' => 'Token created. Store it now — it won\'t be shown again.',
+
+    // Bulk delete counts
+    'users_deleted_count' => ':count user(s) moved to trash.',
+    'users_permanently_deleted_count' => ':count user(s) permanently deleted.',
+    'roles_deleted_count' => ':count role(s) moved to trash.',
+    'roles_permanently_deleted_count' => ':count role(s) permanently deleted.',
+    'permissions_deleted_count' => ':count permission(s) moved to trash.',
+    'permissions_permanently_deleted_count' => ':count permission(s) permanently deleted.',
 ];

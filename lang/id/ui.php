@@ -143,4 +143,12 @@ return [
     'group' => 'Grup',
     'key' => 'Kunci',
     'no_translations' => 'Tidak ada terjemahan ditemukan.',
+
+    // Bulk actions
+    'bulk_action' => 'Aksi massal',
+    'soft_delete' => 'Hapus (soft)',
+    'apply' => 'Terapkan',
+    'confirm_bulk_delete' => 'Hapus item terpilih? Untuk yang dihapus permanen tidak bisa dikembalikan.',
+    'select_all' => 'Pilih semua',
+    'selected' => 'dipilih',
 ];

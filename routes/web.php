@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', App\Http\Controllers\UserController::class)
         ->except(['show'])
         ->middleware(['can:user.view', 'feature:users']);
+    Route::post('/users/bulk', [App\Http\Controllers\UserController::class, 'bulk'])->name('users.bulk')->middleware(['can:user.delete', 'feature:users']);
     Route::post('/users/{user}/restore', [App\Http\Controllers\UserController::class, 'restore'])->name('users.restore')->middleware(['can:user.restore', 'feature:users']);
     Route::post('/users/{user}/force-delete', [App\Http\Controllers\UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['can:user.force-delete', 'feature:users']);
     Route::post('/users/{user}/lock', [App\Http\Controllers\UserController::class, 'lock'])->name('users.lock')->middleware(['can:user.lock', 'feature:users']);
@@ -36,10 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/users/{user}/reset-link', [App\Http\Controllers\UserController::class, 'sendResetLink'])->name('users.reset-link')->middleware(['can:user.edit', 'feature:users']);
 
     Route::resource('roles', RoleController::class)->middleware(['can:role.view', 'feature:roles']);
+    Route::post('/roles/bulk', [RoleController::class, 'bulk'])->name('roles.bulk')->middleware(['can:role.delete', 'feature:roles']);
     Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware(['can:role.restore', 'feature:roles']);
     Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware(['can:role.force-delete', 'feature:roles']);
 
     Route::resource('permissions', PermissionController::class)->middleware(['can:permission.view', 'feature:permissions']);
+    Route::post('/permissions/bulk', [PermissionController::class, 'bulk'])->name('permissions.bulk')->middleware(['can:permission.delete', 'feature:permissions']);
     Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware(['can:permission.restore', 'feature:permissions']);
     Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware(['can:permission.force-delete', 'feature:permissions']);
 

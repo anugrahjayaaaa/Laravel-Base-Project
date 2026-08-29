@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\Sortable;
+use App\Http\Requests\BulkActionRequest;
 use App\Http\Requests\Rbac\PermissionStoreRequest;
 use App\Http\Requests\Rbac\PermissionUpdateRequest;
 use Illuminate\Http\RedirectResponse;
@@ -12,11 +14,14 @@ use App\Models\Permission;
 
 class PermissionController extends Controller
 {
+    use Sortable;
+
     public function index(Request $request): View
     {
         $permissions = Permission::withTrashed()
             ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%' . $request->q . '%'))
-            ->orderBy('name')->paginate(10)->withQueryString();
+            ->when(true, fn ($q) => $this->sortIndex($q, $request, 'name', ['name', 'guard_name']))
+            ->paginate(10)->withQueryString();
         return view('rbac.permissions.index', compact('permissions'));
     }
 
@@ -46,6 +51,23 @@ class PermissionController extends Controller
         $permission->update(['name' => $data['name']]);
 
         return redirect()->route('permissions.index')->with('success', __('messages.permission_updated'));
+    }
+
+    public function bulk(BulkActionRequest $request): RedirectResponse
+    {
+        $force = $request->input('action') === 'force';
+        $done = 0;
+        foreach ($request->input('ids') as $id) {
+            $permission = Permission::withTrashed()->find($id);
+            if (! $permission || ! auth()->user()->can($force ? 'permission.force-delete' : 'permission.delete', $permission)) {
+                continue;
+            }
+            $force ? $permission->forceDelete() : $permission->delete();
+            $done++;
+        }
+
+        $key = $force ? 'permissions_permanently_deleted_count' : 'permissions_deleted_count';
+        return redirect()->route('permissions.index')->with('success', __('messages.' . $key, ['count' => $done]));
     }
 
     public function destroy(Permission $permission): RedirectResponse

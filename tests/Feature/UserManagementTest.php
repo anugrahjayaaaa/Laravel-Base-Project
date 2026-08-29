@@ -50,6 +50,28 @@ it('updates own profile', function () {
     expect($this->user->fresh()->name)->toBe('Updated Name');
 });
 
+it('bulk soft deletes selected users', function () {
+    $a = User::create(['name' => 'Bulk A', 'username' => 'bulka', 'email' => 'bulka@example.com', 'password' => bcrypt('Secret@123456')]);
+    $b = User::create(['name' => 'Bulk B', 'username' => 'bulkb', 'email' => 'bulkb@example.com', 'password' => bcrypt('Secret@123456')]);
+
+    $this->post(route('users.bulk'), ['ids' => [$a->id, $b->id], 'action' => 'soft'])
+        ->assertRedirect();
+
+    expect(User::find($a->id))->toBeNull();
+    expect(User::find($b->id))->toBeNull();
+    expect(User::withTrashed()->find($a->id))->not->toBeNull();
+    expect(User::withTrashed()->find($b->id))->not->toBeNull();
+});
+
+it('bulk force deletes selected users', function () {
+    $a = User::create(['name' => 'Bulk C', 'username' => 'bulkc', 'email' => 'bulkc@example.com', 'password' => bcrypt('Secret@123456')]);
+
+    $this->post(route('users.bulk'), ['ids' => [$a->id], 'action' => 'force'])
+        ->assertRedirect();
+
+    expect(User::withTrashed()->find($a->id))->toBeNull();
+});
+
 it('changes own password', function () {
     $this->post(route('profile.password'), [
         'current_password' => 'Admin@base12345',
