@@ -20,6 +20,8 @@ return [
     'english' => 'Inggris',
     'indonesian' => 'Indonesia',
     'main_menu' => 'Menu Utama',
+    'access_management' => 'Manajemen Akses',
+    'monitoring' => 'Pemantauan',
     'template' => 'Template',
     'login' => 'Masuk',
     'translations' => 'Terjemahan',

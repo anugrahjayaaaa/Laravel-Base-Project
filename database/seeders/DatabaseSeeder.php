@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         'logs.view',
         'translation.view', 'translation.edit',
         'telescope.view',
+        'periscope.view',
     ];
 
     // Module-level feature flags: slug => label. Toggling off blocks the whole module
@@ -36,6 +37,7 @@ class DatabaseSeeder extends Seeder
         'translations' => 'Translations',
         'logs' => 'Logs',
         'telescope' => 'Telescope',
+        'periscope' => 'Periscope',
     ];
 
     public function run(): void

@@ -12,9 +12,9 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        // ponytail: Telescope is a Vue SPA that needs unsafe-eval/inline to mount.
-        // It ships its own headers; skip CSP on its routes so the dashboard isn't blank.
-        if ($request->is('telescope*', 'telescope/*')) {
+        // ponytail: Telescope (Vue SPA) + Periscope need relaxed CSP to mount.
+        // Both ship their own headers and are behind telescope.view + feature flag.
+        if ($request->is('telescope*', 'telescope/*', 'periscope*', 'periscope/*')) {
             return $response;
         }
 
