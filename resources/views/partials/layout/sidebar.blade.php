@@ -42,6 +42,7 @@
                 @can('telescope.view')
                 @if(featureVisible('telescope'))
                 <li class="nav-item"><a href="{{ url('/telescope') }}" data-menu-text="{{ __('messages.telescope') }}" class="nav-link {{ request()->is('telescope*') ? 'active' : '' }}"><i class="nav-icon bi bi-binoculars"></i> <span>{{ __('messages.telescope') }}</span></a></li>
+                <li class="nav-item"><a href="{{ url('/periscope') }}" data-menu-text="Periscope" class="nav-link {{ request()->is('periscope*') ? 'active' : '' }}"><i class="nav-icon bi bi-funnel"></i> <span>Periscope</span></a></li>
                 @endif
                 @endcan
                 <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>

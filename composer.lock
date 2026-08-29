@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f139ded42da23008b463f54bbaf44836",
+    "content-hash": "c05a284fad26cca51569dbaa079312bf",
     "packages": [
         {
             "name": "brick/math",
@@ -9693,6 +9693,68 @@
                 }
             ],
             "time": "2026-07-28T13:58:09+00:00"
+        },
+        {
+            "name": "seanbarton/laravel-periscope",
+            "version": "v0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/seanbarton/laravel-periscope.git",
+                "reference": "d9e5cd4f0e49c45fb4492be60a8a3e0b5991bf80"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/seanbarton/laravel-periscope/zipball/d9e5cd4f0e49c45fb4492be60a8a3e0b5991bf80",
+                "reference": "d9e5cd4f0e49c45fb4492be60a8a3e0b5991bf80",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/routing": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "laravel/telescope": "^4.0|^5.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "TortoiseIT\\LaravelPeriscope\\LaravelPeriscopeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TortoiseIT\\LaravelPeriscope\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sean Barton",
+                    "role": "Owner"
+                }
+            ],
+            "description": "A lightweight companion UI for Laravel Telescope with URL-driven filtering and search.",
+            "keywords": [
+                "debugging",
+                "laravel",
+                "observability",
+                "periscope",
+                "telescope"
+            ],
+            "support": {
+                "issues": "https://github.com/seanbarton/laravel-periscope/issues",
+                "source": "https://github.com/seanbarton/laravel-periscope/tree/v0.3.1"
+            },
+            "time": "2026-07-17T09:50:23+00:00"
         },
         {
             "name": "sebastian/cli-parser",
