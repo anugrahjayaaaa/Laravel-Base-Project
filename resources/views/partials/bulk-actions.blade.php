@@ -24,28 +24,33 @@
 
 @push('scripts')
 <script>
+// Event delegation: immune to init-timing / element-not-found issues.
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('bulk-form');
     if (!form) return;
-    const selectAll = document.getElementById('bulk-select-all');
-    // ponytail: checkboxes live OUTSIDE the <form> (form="bulk-form" attr), so query the document, not the form.
-    const boxes = () => document.querySelectorAll('input[name="ids[]"]');
     const count = document.getElementById('bulk-count');
+    const rows = () => document.querySelectorAll('input[name="ids[]"]');
 
     const sync = () => {
-        const checked = document.querySelectorAll('input[name="ids[]"]:checked').length;
+        const boxes = rows();
+        const checked = [...boxes].filter(b => b.checked).length;
         if (count) count.textContent = checked ? `(${checked} {{ ui('selected') }})` : '';
-        const all = boxes();
-        if (selectAll) selectAll.indeterminate = checked > 0 && checked < all.length;
+        const all = document.getElementById('bulk-select-all');
+        if (all) all.indeterminate = checked > 0 && checked < boxes.length;
     };
 
-    if (selectAll) {
-        selectAll.addEventListener('change', () => {
-            boxes().forEach(b => b.checked = selectAll.checked);
+    // header checkbox -> toggle all rows
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.id === 'bulk-select-all') {
+            rows().forEach(b => { b.checked = e.target.checked; });
             sync();
-        });
-    }
-    boxes().forEach(b => b.addEventListener('change', sync));
+        }
+    });
+    // any row checkbox -> update count
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.name === 'ids[]') sync();
+    });
+
     sync();
 });
 </script>
