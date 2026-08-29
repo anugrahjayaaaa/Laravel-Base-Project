@@ -12,7 +12,7 @@ class ApiTokenController extends Controller
     {
         $tokens = auth()->user()->tokens()->latest()->get();
 
-        return view('api-tokens.index', [
+        return view('settings.api-tokens.index', [
             'tokens' => $tokens,
             'newToken' => session('new_token'),
         ]);

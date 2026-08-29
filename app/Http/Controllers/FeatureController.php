@@ -20,7 +20,7 @@ class FeatureController extends Controller
             ->sortBy('label')
             ->values();
 
-        return view('features.index', compact('features'));
+        return view('settings.features.index', compact('features'));
     }
 
     public function toggle(Request $request, string $slug): RedirectResponse

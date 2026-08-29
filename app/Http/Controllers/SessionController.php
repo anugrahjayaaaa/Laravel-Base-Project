@@ -17,7 +17,7 @@ class SessionController extends Controller
             ->orderByDesc('last_activity')
             ->get();
 
-        return view('profile.sessions', compact('sessions'));
+        return view('settings.profile.sessions', compact('sessions'));
     }
 
     public function logoutOthers(LogoutOthersRequest $request): RedirectResponse
