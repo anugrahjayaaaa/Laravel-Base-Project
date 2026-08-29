@@ -15,12 +15,3 @@
         </div>
     </div>
 </div>
-<script>
-document.addEventListener('show.bs.modal', function (e) {
-    if (e.target.id === 'deleteModal') {
-        const btn = e.relatedTarget;
-        const action = btn.getAttribute('data-action');
-        if (action) document.getElementById('deleteModalForm').setAttribute('action', action);
-    }
-});
-</script>

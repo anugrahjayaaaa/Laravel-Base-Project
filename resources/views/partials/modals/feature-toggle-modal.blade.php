@@ -16,15 +16,3 @@
         </div>
     </div>
 </div>
-<script>
-document.addEventListener('show.bs.modal', function (e) {
-    if (e.target.id === 'featureToggleModal') {
-        const btn = e.relatedTarget;
-        document.getElementById('featureToggleForm').setAttribute('action', btn.getAttribute('data-action'));
-        document.getElementById('featureToggleEnabled').value = btn.getAttribute('data-enabled');
-        const next = btn.getAttribute('data-enabled') === '1' ? 'enable' : 'disable';
-        document.getElementById('featureToggleBody').textContent = (next === 'enable' ? '{{ ui('confirm_enable_feature') }}' : '{{ ui('confirm_disable_feature') }}');
-        document.getElementById('featureToggleSubmit').textContent = next === 'enable' ? '{{ ui('enable') }}' : '{{ ui('disable') }}';
-    }
-});
-</script>

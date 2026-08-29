@@ -59,6 +59,6 @@
 </div>
 @include('partials.pagination-info', ['items' => $roles])
 {{ $roles->links() }}
-@include('partials.delete-modal')
-@include('partials.force-delete-modal')
+@include('partials.modals.delete-modal')
+@include('partials.modals.force-delete-modal')
 @endsection
