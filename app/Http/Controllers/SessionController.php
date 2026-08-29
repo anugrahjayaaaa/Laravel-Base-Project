@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Session\LogoutOthersRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -21,7 +20,7 @@ class SessionController extends Controller
         return view('profile.sessions', compact('sessions'));
     }
 
-    public function logoutOthers(Request $request): RedirectResponse
+    public function logoutOthers(LogoutOthersRequest $request): RedirectResponse
     {
         // delete other session rows for this user, then regenerate current token
         DB::table('sessions')

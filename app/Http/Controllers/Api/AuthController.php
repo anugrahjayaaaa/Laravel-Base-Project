@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginApiRequest;
+use App\Http\Requests\Auth\PasswordChangeRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -10,14 +12,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function login(Request $request): JsonResponse
+    public function login(LoginApiRequest $request): JsonResponse
     {
-        $request->validate([
-            'identifier' => 'required|string',
-            'password' => 'required|string',
-            'device_name' => 'required|string',
-        ]);
-
         $identifier = $request->identifier;
         $throttleKey = 'api-login:' . $request->ip() . ':' . strtolower($identifier);
 
@@ -62,12 +58,9 @@ class AuthController extends Controller
         return response()->json(['message' => __('messages.logged_out')]);
     }
 
-    public function changePassword(Request $request): JsonResponse
+    public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'current_password' => 'required|current_password',
-            'password' => 'required|string|min:12|confirmed',
-        ]);
+        $data = $request->validated();
         $request->user()->update(['password' => bcrypt($data['password'])]);
         $request->user()->tokens()->delete(); // revoke all mobile tokens
         return response()->json(['message' => __('messages.password_changed')]);

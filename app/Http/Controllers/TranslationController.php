@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Translation\TranslationUpdateRequest;
 use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationController extends Controller
@@ -27,11 +27,9 @@ class TranslationController extends Controller
         ]);
     }
 
-    public function update(Request $request, LanguageLine $languageLine)
+    public function update(TranslationUpdateRequest $request, LanguageLine $languageLine)
     {
-        $data = $request->validate(
-            collect($this->locales)->mapWithKeys(fn ($l) => [$l => 'required|string'])->toArray()
-        );
+        $data = $request->validated();
 
         foreach ($this->locales as $locale) {
             $languageLine->setTranslation($locale, $data[$locale]);
