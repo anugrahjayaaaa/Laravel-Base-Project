@@ -286,3 +286,56 @@ each is left as a hook, not hardcoded.
    into the `licenses` row. `Plan::for()` reads the snapshot, not the live
    `plans` row — otherwise a mid-term price/limit change silently narrows a
    paying client's entitlement.
+
+9. **Concurrent activation / race (Model 1).**
+   Two admins activating, or a client restoring an old DB after upgrade, can
+   yield two active plans or a "ghost" plan. Enforce at most ONE active license
+   per scope (unique `status=active` per instance/tenant) and make the
+   activate + `settings.active_plan` write atomic (DB transaction).
+
+10. **Audit & compliance trail.**
+    Who issued/revoked/activated a license, when, from which IP — needed for
+    disputes ("I paid but I'm locked") and tax proof. Reuse the existing
+    `activity_log`; do not build a separate table.
+
+11. **Webhook replay / clock skew.**
+    A PG may send a webhook twice or late (server clock drift). Idempotency via
+    `webhook_events.event_id` (§3) is required. Also: never overwrite
+    `expires_at` from a webhook without checking `event_period_end >
+    stored_period_end` — a replay must not clobber a newer renewal.
+
+12. **Localization & tax (PPN 11%).**
+    `plans.price_monthly` is pre-tax; Indonesian invoices must show PPN 11%
+    separately. Store `invoices.amount` + `vat` (amount already excludes PG
+    MDR, which is taxed separately by the PG). Never mix taxable vs non-taxable
+    amounts in one column.
+
+13. **Customer-facing billing portal.**
+    Users must view invoices, history, download PDF, update payment method,
+    cancel. Prefer the PG's customer dashboard where sufficient; otherwise a
+    minimal blade reading `invoices`. Without self-service, support tickets
+    spike.
+
+14. **Environment isolation (sandbox vs production).**
+    Drive PG mode via env (`midtrans.is_production` + separate keys). A sandbox
+    webhook must NEVER update a production plan. Never hardcode the mode.
+
+15. **Refund / chargeback handling.**
+    Refund → `invoices.status = refunded` and trigger license revoke (§10.7).
+    Card chargeback is rare in Indonesia but treat identically: revoke + flag.
+    Never leave features active after a refund/chargeback.
+
+16. **Rate limit / abuse on activation & checkout.**
+    Throttle + CSRF the activate and checkout endpoints (Laravel `throttle`
+    middleware). Activation is brute-forceable (clients guess keys) — limit
+    attempts and lock after N failures.
+
+### Common third-party PG failure modes (handle by design)
+- **Signature verify fails** → wrong key or env mismatch. Verify against the
+  configured production/sandbox key; reject on mismatch.
+- **Webhook replay** → §10.11 idempotency.
+- **Out-of-order / late webhook** → §10.11 period-end guard.
+- **Settlement delay** → do not grant features on `pending`; wait for the PG
+  `settlement` status before activating the plan.
+- **Currency mismatch** → Midtrans is IDR-only; reject any non-IDR payload.
+- **Sandbox hitting production** → §10.14 env isolation.
