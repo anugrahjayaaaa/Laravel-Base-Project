@@ -21,19 +21,19 @@
                     <a href="#" class="nav-link {{ $amActive ? 'active' : '' }}" aria-expanded="{{ $amActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-shield-lock"></i> <span>{{ __('messages.access_management') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
                         @can('user.view')
-                        @if(featureVisible('users'))
+                        @feature('users')
                         <li class="nav-item"><a href="{{ route('users.index') }}" data-menu-text="{{ __('messages.users') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="nav-icon bi bi-people"></i> <span>{{ __('messages.users') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                         @can('role.view')
-                        @if(featureVisible('roles'))
+                        @feature('roles')
                         <li class="nav-item"><a href="{{ route('roles.index') }}" data-menu-text="{{ __('messages.roles') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}"><i class="nav-icon bi bi-shield"></i> <span>{{ __('messages.roles') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                         @can('permission.view')
-                        @if(featureVisible('permissions'))
+                        @feature('permissions')
                         <li class="nav-item"><a href="{{ route('permissions.index') }}" data-menu-text="{{ __('messages.permissions') }}" class="nav-link {{ request()->routeIs('permissions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-key"></i> <span>{{ __('messages.permissions') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                     </ul>
                 </li>
@@ -44,24 +44,24 @@
                     <a href="#" class="nav-link {{ $monActive ? 'active' : '' }}" aria-expanded="{{ $monActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-activity"></i> <span>{{ __('messages.monitoring') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
                         @can('audit.view')
-                        @if(featureVisible('audit'))
+                        @feature('audit')
                         <li class="nav-item"><a href="{{ route('audit.index') }}" data-menu-text="{{ __('messages.audit_log') }}" class="nav-link {{ request()->routeIs('audit.*') ? 'active' : '' }}"><i class="nav-icon bi bi-journal-text"></i> <span>{{ __('messages.audit_log') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                         @can('logs.view')
-                        @if(featureVisible('logs'))
+                        @feature('logs')
                         <li class="nav-item"><a href="{{ route('logs.index') }}" data-menu-text="{{ __('messages.logs') }}" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}"><i class="nav-icon bi bi-file-earmark-text"></i> <span>{{ __('messages.logs') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                         @can('telescope.view')
-                        @if(featureVisible('telescope'))
+                        @feature('telescope')
                         <li class="nav-item"><a href="{{ url('/telescope') }}" data-menu-text="{{ __('messages.telescope') }}" target="_blank" rel="noopener noreferrer" class="nav-link {{ request()->is('telescope*') ? 'active' : '' }}"><i class="nav-icon bi bi-binoculars"></i> <span>{{ __('messages.telescope') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                         @can('periscope.view')
-                        @if(featureVisible('periscope'))
+                        @feature('periscope')
                         <li class="nav-item"><a href="{{ url('/periscope') }}" data-menu-text="Periscope" target="_blank" rel="noopener noreferrer" class="nav-link {{ request()->is('periscope*') ? 'active' : '' }}"><i class="nav-icon bi bi-funnel"></i> <span>Periscope</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                     </ul>
                 </li>
@@ -74,20 +74,20 @@
                     <a href="#" class="nav-link {{ $setActive ? 'active' : '' }}" aria-expanded="{{ $setActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
                         @can('feature.manage')
-                        @if(featureVisible('sessions'))
+                        @feature('sessions')
                         <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="{{ __('messages.sessions') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>{{ __('messages.sessions') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                         @canany(['feature.manage', 'translation.view'])
-                        @if(featureVisible('api-tokens'))
+                        @feature('api-tokens')
                         <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="{{ __('messages.api_tokens') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>{{ __('messages.api_tokens') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcanany
                         <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
                         @can('translation.view')
-                        @if(featureVisible('translations'))
+                        @feature('translations')
                         <li class="nav-item"><a href="{{ route('translations.index') }}" data-menu-text="{{ __('messages.translations') }}" class="nav-link {{ request()->routeIs('translations.*') ? 'active' : '' }}"><i class="nav-icon bi bi-translate"></i> <span>{{ __('messages.translations') }}</span></a></li>
-                        @endif
+                        @endfeature
                         @endcan
                     </ul>
                 </li>

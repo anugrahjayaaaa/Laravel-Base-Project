@@ -6,15 +6,20 @@ denied to everyone except holders of the `feature.manage` permission — by
 product rule: *flag off => inaccessible to normal users, but managers stay in*
 so they can operate/audit modules while disabled.
 
+Implemented with **Laravel Pennant** (`laravel/pennant`).
+
 ## Storage
-- DB table `features`: `slug` (PK), `label`, `enabled` (bool), timestamps.
-- Seeded in `DatabaseSeeder` (`FEATURES` map) — all on by default.
+- DB table `features` (Pennant's own migration) stores resolved flag values.
+- Flag declarations + labels live in `config/pennant.php` (`features` map).
+- Declared in `AppServiceProvider::boot()` via `Feature::define($slug, fn () => true)`.
+- Default state is ON; toggling writes the resolved value to the DB store.
 - No config/deploy needed to toggle; done from the UI.
 
 ## Checking a flag
 ```php
-feature('users');   // true/false; missing feature => false (fail-closed)
+Feature::active('users');   // true/false; missing feature => false (fail-closed, built into Pennant)
 ```
+Blade: `@feature('users') ... @endfeature` (native Pennant directive).
 
 ## Enforcement
 - Route middleware `feature:{slug}` (`App\Http\Middleware\EnsureFeatureEnabled`),
@@ -22,8 +27,9 @@ feature('users');   // true/false; missing feature => false (fail-closed)
   ```php
   Route::resource('users', ...)->middleware(['can:user.view', 'feature:users']);
   ```
-- Off flag => `404` (fail-closed), never silently allowed.
-- Sidebar hides the menu item when its feature is off.
+- A flag off 404s the route and hides its menu item for **everyone** (true
+  kill-switch, including `feature.manage` holders) so the toggle is a real switch.
+  Managers reach disabled modules only by re-enabling them from `/features`.
 
 ## Management UI
 - `/features` lives **under the Settings submenu** (gated by `feature.manage` permission; `staff` + `super-admin` get it).
@@ -32,7 +38,8 @@ feature('users');   // true/false; missing feature => false (fail-closed)
   use modules while a flag is off.
 
 ## Known flags
-- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`, `telescope`.
+- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`, `telescope`, `periscope`
+  (declared in `config/pennant.php`).
 
 ## Gate
 - Every module route is wrapped in `feature:` — RED if a module route lacks it.

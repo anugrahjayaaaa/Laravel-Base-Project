@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Middleware\SetLocale;
-use App\Models\Feature;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Pennant\Feature;
 use Spatie\TranslationLoader\LanguageLine;
 
 uses(RefreshDatabase::class);
@@ -54,13 +54,14 @@ it('blocks a translation.view holder when the flag is off (404)', function () {
     $this->actingAs($u)->get(route('translations.index'))->assertOk();
 
     // flag off -> 404 (fail-closed), not a permission error
-    Feature::where('slug', 'translations')->update(['enabled' => false]);
+    Feature::deactivate('translations');
     $this->actingAs($u)->get(route('translations.index'))->assertNotFound();
 });
 
 it('lets a feature.manage holder reach translations while the flag is off', function () {
-    Feature::where('slug', 'translations')->update(['enabled' => false]);
+    // ponytail: kill-switch — disabled flag blocks everyone, including managers.
+    Feature::deactivate('translations');
     $u = User::where('email', 'admin@laravel-base.local')->first(); // holds feature.manage
 
-    $this->actingAs($u)->get(route('translations.index'))->assertOk();
+    $this->actingAs($u)->get(route('translations.index'))->assertNotFound();
 });

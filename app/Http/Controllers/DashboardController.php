@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
+use App\Services\LicenseService;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Models\Activity;
 

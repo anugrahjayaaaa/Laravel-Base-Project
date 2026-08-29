@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Feature;
 use App\Models\Role;
 use App\Models\User;
+use Laravel\Pennant\Feature;
 
 beforeEach(function () {
     $this->seed();
@@ -16,7 +16,7 @@ function makeUserWith(array $perms, bool $manager = false): User
         $role->givePermissionTo('feature.manage');
     }
     $user = User::create([
-        'name' => 'Tmp', 'username' => 'tmp_'.uniqid(), 'phone' => '+62800000000',
+        'name' => 'Tmp', 'username' => 'tmp_'.uniqid(), 'phone' => '+628****0000',
         'email' => uniqid().'@example.com', 'password' => bcrypt('x'), 'email_verified_at' => now(),
     ]);
     $user->assignRole($role);
@@ -24,9 +24,9 @@ function makeUserWith(array $perms, bool $manager = false): User
     return $user;
 }
 
-it('feature() helper returns enabled state and fails closed when missing', function () {
-    expect(feature('users'))->toBeTrue();
-    expect(feature('does-not-exist'))->toBeFalse();
+it('Feature::active() returns enabled state and fails closed when missing', function () {
+    expect(Feature::active('users'))->toBeTrue();
+    expect(Feature::active('does-not-exist'))->toBeFalse();
 });
 
 it('lists feature flags (manager only)', function () {
@@ -38,36 +38,37 @@ it('toggles a feature off and back on', function () {
     $this->actingAs(makeUserWith([], true));
     $this->post(route('features.toggle', 'users'), ['enabled' => '0'])
         ->assertRedirect(route('features.index'));
-    expect(feature('users'))->toBeFalse();
+    expect(Feature::active('users'))->toBeFalse();
 
     $this->post(route('features.toggle', 'users'), ['enabled' => '1'])
         ->assertRedirect(route('features.index'));
-    expect(feature('users'))->toBeTrue();
+    expect(Feature::active('users'))->toBeTrue();
 });
 
 it('blocks a non-manager when feature is off, even with permission', function () {
-    Feature::where('slug', 'users')->update(['enabled' => false]);
+    Feature::deactivate('users');
     $user = makeUserWith(['user.view']); // has permission, no feature.manage
 
     $this->actingAs($user)->get(route('users.index'))->assertNotFound();
 });
 
 it('lets a feature.manage holder bypass the off gate', function () {
-    Feature::where('slug', 'users')->update(['enabled' => false]);
-    $manager = makeUserWith(['user.view'], true); // also holds feature.manage
+    // ponytail: kill-switch — disabled flag blocks everyone, including managers.
+    Feature::deactivate('users');
+    $manager = makeUserWith(['user.view'], true);
 
-    $this->actingAs($manager)->get(route('users.index'))->assertOk();
+    $this->actingAs($manager)->get(route('users.index'))->assertNotFound();
 });
 
 it('allows a module route when its feature is on', function () {
-    Feature::where('slug', 'users')->update(['enabled' => true]);
+    Feature::activate('users');
     $user = makeUserWith(['user.view']);
 
     $this->actingAs($user)->get(route('users.index'))->assertOk();
 });
 
 it('hides a feature-off menu item from a non-manager sidebar', function () {
-    Feature::where('slug', 'users')->update(['enabled' => false]);
+    Feature::deactivate('users');
     $user = makeUserWith(['user.view']);
 
     $this->actingAs($user)->get(route('dashboard'))
@@ -76,10 +77,11 @@ it('hides a feature-off menu item from a non-manager sidebar', function () {
 });
 
 it('shows a feature-off menu item to a feature.manage holder', function () {
-    Feature::where('slug', 'users')->update(['enabled' => false]);
+    // ponytail: kill-switch — disabled flag hides the menu for everyone.
+    Feature::deactivate('users');
     $manager = makeUserWith(['user.view'], true);
 
     $this->actingAs($manager)->get(route('dashboard'))
         ->assertOk()
-        ->assertSee('/users');
+        ->assertDontSee('/users');
 });

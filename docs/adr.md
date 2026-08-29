@@ -33,8 +33,10 @@
 ## ADR-0009: Feature flags above RBAC
 - Context: need to disable whole modules without touching code or redeploy, and let
   a `feature.manage` holder keep access while a flag is off.
-- Decision: `features` DB table + `feature()` helper + `feature:{slug}` route middleware
-  stacked with `can:{perm}`; sidebar visibility via `featureVisible()`. A flag off 404s
-  the route and hides its menu item for normal users; `feature.manage` holders bypass.
+- Decision: **Laravel Pennant** (`laravel/pennant`) — `config/pennant.php` declares flags,
+  `AppServiceProvider::boot()` defines them, `Feature::active()` + `feature:{slug}` route
+  middleware (stacked with `can:{perm}`) gate access; sidebar visibility via `@feature()` Blade directive.
+  A flag off 404s the route and hides its menu item for everyone (kill-switch,
+  including `feature.manage` holders) — they re-enable from `/features`. Storage = Pennant DB store.
 - Consequences: closest path to change the enabled state is the `/features` UI (under
   Settings); fails closed when a feature row is missing.

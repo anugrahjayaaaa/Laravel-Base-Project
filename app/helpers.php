@@ -1,31 +1,14 @@
 <?php
 
-use App\Models\Feature;
+use Laravel\Pennant\Feature;
 
-if (! function_exists('feature')) {
+if (! function_exists('featureLabel')) {
     /**
-     * Check whether a named feature is enabled.
-     * Missing feature row => treated as disabled (fail-closed).
+     * Human label for a feature slug, from config/pennant.php metadata.
+     * (Pennant has no label concept — flags are slug + value only.)
      */
-    function feature(string $slug): bool
+    function featureLabel(string $slug): string
     {
-        // ponytail: fail-closed; an absent feature is off, never silently on
-        return (bool) Feature::where('slug', $slug)->where('enabled', true)->exists();
-    }
-}
-
-if (! function_exists('featureVisible')) {
-    /**
-     * Whether a module's menu item should appear in the sidebar.
-     * Visible when enabled, OR when the current user can manage features
-     * (they stay reachable so feature.manage holders can use them while off).
-     */
-    function featureVisible(string $slug): bool
-    {
-        if (feature($slug)) {
-            return true;
-        }
-
-        return (bool) optional(auth()->user())->can('feature.manage');
+        return config("pennant.features.{$slug}.label", $slug);
     }
 }

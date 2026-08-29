@@ -14,10 +14,10 @@
             <tbody>
                 @forelse ($features as $feature)
                 <tr>
-                    <td>{{ $feature->label }}</td>
-                    <td><span class="text-muted small">{{ $feature->slug }}</span></td>
+                    <td>{{ $feature['label'] }}</td>
+                    <td><span class="text-muted small">{{ $feature['slug'] }}</span></td>
                     <td>
-                        @if($feature->enabled)
+                        @if($feature['enabled'])
                             <span class="badge text-bg-success">{{ ui('enabled') }}</span>
                         @else
                             <span class="badge text-bg-secondary">{{ ui('disabled') }}</span>
@@ -26,11 +26,11 @@
                     <td class="text-end">
                         <div class="form-check form-switch d-inline-flex align-items-center justify-content-end mb-0">
                             <input class="form-check-input" type="checkbox" role="switch"
-                                   id="feat-{{ $feature->slug }}" {{ $feature->enabled ? 'checked' : '' }}
-                                   aria-label="Toggle {{ $feature->label }}"
+                                   id="feat-{{ $feature['slug'] }}" {{ $feature['enabled'] ? 'checked' : '' }}
+                                   aria-label="Toggle {{ $feature['label'] }}"
                                    data-bs-toggle="modal" data-bs-target="#featureToggleModal"
-                                   data-action="{{ route('features.toggle', $feature->slug) }}"
-                                   data-enabled="{{ $feature->enabled ? '0' : '1' }}">
+                                   data-action="{{ route('features.toggle', $feature['slug']) }}"
+                                   data-enabled="{{ $feature['enabled'] ? '0' : '1' }}">
                         </div>
                     </td>
                 </tr>

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Feature;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -25,21 +24,6 @@ class DatabaseSeeder extends Seeder
         'periscope.view',
     ];
 
-    // Module-level feature flags: slug => label. Toggling off blocks the whole module
-    // even for users who hold the relevant permission (flag off => inaccessible).
-    private const FEATURES = [
-        'users' => 'Users',
-        'roles' => 'Roles',
-        'permissions' => 'Permissions',
-        'audit' => 'Audit Log',
-        'sessions' => 'Sessions',
-        'api-tokens' => 'API Tokens',
-        'translations' => 'Translations',
-        'logs' => 'Logs',
-        'telescope' => 'Telescope',
-        'periscope' => 'Periscope',
-    ];
-
     public function run(): void
     {
         // Permissions
@@ -47,10 +31,8 @@ class DatabaseSeeder extends Seeder
             Permission::findOrCreate($perm, 'web');
         }
 
-        // Feature flags (all on by default)
-        foreach (self::FEATURES as $slug => $label) {
-            Feature::updateOrCreate(['slug' => $slug], ['label' => $label, 'enabled' => true]);
-        }
+        // Feature flags are declared in AppServiceProvider + config/pennant.php
+        // (Laravel Pennant, DB store). They default ON; no seeding needed.
 
         // Roles
         $superAdmin = Role::findOrCreate('super-admin', 'web');
