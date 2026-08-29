@@ -36,7 +36,7 @@
         </div>
         @if (auth()->user()->can('user.edit'))
         <span>{{ ui('send_reset_email_label') }}
-            <form method="POST" action="{{ route('users.reset-link', $user) }}" class="d-inline">@csrf
+            <form method="POST" action="{{ route('users.reset-password', $user) }}" class="d-inline">@csrf
                 <button class="btn btn-sm btn-secondary">{{ ui('send_reset_email') }}</button>
             </form>
         </span>

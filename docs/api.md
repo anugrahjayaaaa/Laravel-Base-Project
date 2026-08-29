@@ -31,7 +31,7 @@ Interactive docs (Scribe): `/docs` · OpenAPI `/docs.openapi` · Postman `/docs.
 | GET | `/audit/actions` | `audit.view` | distinct action types |
 | GET/POST | `/users` | `user.view` | list/create |
 | GET/PUT/DELETE | `/users/{id}` | `user.view`/`user.update` | show/update/soft-delete |
-| POST | `/users/{id}/lock` `/unlock` `/reset-link` | `user.update` | admin actions |
+| POST | `/users/{id}/lock` `/unlock` `/reset-password` | `user.update` | admin actions |
 | POST | `/users/{id}/restore` `/force-delete` | `user.update` | restore/permanently delete |
 | GET/POST | `/roles` | `role.view` | list/create |
 | GET/PUT/DELETE | `/roles/{id}` | `role.view` | show/update/delete |

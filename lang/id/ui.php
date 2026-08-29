@@ -68,8 +68,8 @@ return [
     'last_login' => 'Login terakhir: :time (:ip)',
     'lock' => 'Kunci',
     'unlock' => 'Buka kunci',
-    'send_reset_email' => 'Kirim email reset',
-    'send_reset_email_label' => 'Kirim email reset:',
+    'send_reset_email' => 'Kirim reset kata sandi',
+    'send_reset_email_label' => 'Kirim reset kata sandi:',
 
     // ── roles ──
     'roles' => 'Peran',

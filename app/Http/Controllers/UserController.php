@@ -103,10 +103,10 @@ class UserController extends Controller
      * Send a password reset link to the user's email (admin-triggered).
      * Requires MAIL_* to be configured for actual delivery.
      */
-    public function sendResetLink(int $id): RedirectResponse
+    public function sendResetPassword(int $id): RedirectResponse
     {
         $user = User::findOrFail($id);
-        $status = $this->users->sendResetLink($user);
+        $status = $this->users->sendResetPassword($user);
 
         if ($status === Password::RESET_LINK_SENT) {
             activity()->causedBy(auth()->user())

@@ -68,8 +68,8 @@ return [
     'last_login' => 'Last login: :time (:ip)',
     'lock' => 'Lock',
     'unlock' => 'Unlock',
-    'send_reset_email' => 'Send reset email',
-    'send_reset_email_label' => 'Send reset email:',
+    'send_reset_email' => 'Send reset password',
+    'send_reset_email_label' => 'Send reset password:',
 
     // ── roles ──
     'roles' => 'Roles',

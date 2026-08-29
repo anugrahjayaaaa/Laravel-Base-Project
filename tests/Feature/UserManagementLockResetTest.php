@@ -48,7 +48,7 @@ it('sends a reset link (broker returns sent)', function () {
     $u = User::factory()->create(['username' => 'reset'.time()]);
 
     // MAIL_MAILER=log in test env -> broker still returns RESET_LINK_SENT
-    $this->post(route('users.reset-link', $u))
+    $this->post(route('users.reset-password', $u))
         ->assertRedirect(route('users.index'))
         ->assertSessionHas('success');
 });
@@ -59,7 +59,7 @@ it('logs unlock and reset-link actions to audit', function () {
     $u = User::factory()->create(['username' => 'aud'.time(), 'locked_until' => now()->addMinutes(5)]);
 
     $this->post(route('users.unlock', $u));
-    $this->post(route('users.reset-link', $u));
+    $this->post(route('users.reset-password', $u));
 
     $descs = Activity::where('subject_id', $u->id)
         ->pluck('description')->toArray();

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>LaravelBaseProject API Documentation</title>
+    <title>Laravel-Base-Project API Documentation</title>
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
@@ -242,8 +242,8 @@
                                                                                 <li class="tocify-item level-2" data-unique="users-POSTapi-v1-users--user--unlock">
                                 <a href="#users-POSTapi-v1-users--user--unlock">Unlock a locked account.</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="users-POSTapi-v1-users--user--reset-link">
-                                <a href="#users-POSTapi-v1-users--user--reset-link">Send a password reset link to the user's email.</a>
+                                                                                <li class="tocify-item level-2" data-unique="users-POSTapi-v1-users--user--reset-password">
+                                <a href="#users-POSTapi-v1-users--user--reset-password">Send a password reset link to the user's email.</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -256,7 +256,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: August 28, 2026</li>
+        <li>Last updated: August 29, 2026</li>
     </ul>
 </div>
 
@@ -550,7 +550,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="b"
                data-component="body">
     <br>
-<p>Must not be greater than 100 characters. Example: <code>b</code></p>
+<p>validation.max. Example: <code>b</code></p>
         </div>
         </form>
 
@@ -1981,12 +1981,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://localhost:8000/api/v1/password/change" \
     --header "Authorization: Bearer {YOUR_AUTH_TOKEN}" \
     --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --data "{
-    \"current_password\": \"architecto\",
-    \"password\": \"]|{+-0pBNvYg\"
-}"
-</code></pre></div>
+    --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2000,15 +1995,10 @@ const headers = {
     "Accept": "application/json",
 };
 
-let body = {
-    "current_password": "architecto",
-    "password": "]|{+-0pBNvYg"
-};
 
 fetch(url, {
     method: "POST",
     headers,
-    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -2098,32 +2088,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Example: <code>application/json</code></p>
             </div>
-                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>current_password</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="current_password"                data-endpoint="POSTapi-v1-password-change"
-               value="architecto"
-               data-component="body">
-    <br>
-<p>Example: <code>architecto</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="password"                data-endpoint="POSTapi-v1-password-change"
-               value="]|{+-0pBNvYg"
-               data-component="body">
-    <br>
-<p>Must be at least 12 characters. Example: <code>]|{+-0pBNvYg</code></p>
-        </div>
-        </form>
+                        </form>
 
                     <h2 id="auth-POSTapi-v1-email-verify-resend">Resend the email verification link.</h2>
 
@@ -3193,7 +3158,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="b"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>b</code></p>
+<p>validation.max. Example: <code>b</code></p>
         </div>
         </form>
 
@@ -3764,7 +3729,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="]|{+-0pBNvYg"
                data-component="body">
     <br>
-<p>Must be at least 12 characters. Example: <code>]|{+-0pBNvYg</code></p>
+<p>validation.min. Example: <code>]|{+-0pBNvYg</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
@@ -4053,7 +4018,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="b"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>b</code></p>
+<p>validation.max. Example: <code>b</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>permissions</code></b>&nbsp;&nbsp;
@@ -4886,7 +4851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="b"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>b</code></p>
+<p>validation.max. Example: <code>b</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>username</code></b>&nbsp;&nbsp;
@@ -4898,7 +4863,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="n"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>n</code></p>
+<p>validation.max. Example: <code>n</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -4910,7 +4875,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="ashly64@example.com"
                data-component="body">
     <br>
-<p>Must be a valid email address. Must not be greater than 255 characters. Example: <code>ashly64@example.com</code></p>
+<p>validation.email validation.max. Example: <code>ashly64@example.com</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
@@ -4922,7 +4887,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="v"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>v</code></p>
+<p>validation.max. Example: <code>v</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
@@ -4934,7 +4899,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="BNvYgxwmi/#iw/kX"
                data-component="body">
     <br>
-<p>Must be at least 12 characters. Example: <code>BNvYgxwmi/#iw/kX</code></p>
+<p>validation.min. Example: <code>BNvYgxwmi/#iw/kX</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>roles</code></b>&nbsp;&nbsp;
@@ -5508,7 +5473,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="users-POSTapi-v1-users--user--reset-link">Send a password reset link to the user&#039;s email.</h2>
+                    <h2 id="users-POSTapi-v1-users--user--reset-password">Send a password reset link to the user&#039;s email.</h2>
 
 <p>
 <small class="badge badge-darkred">requires authentication</small>
@@ -5516,13 +5481,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 
 
-<span id="example-requests-POSTapi-v1-users--user--reset-link">
+<span id="example-requests-POSTapi-v1-users--user--reset-password">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/v1/users/1/reset-link" \
+    "http://localhost:8000/api/v1/users/1/reset-password" \
     --header "Authorization: Bearer {YOUR_AUTH_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -5530,7 +5495,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/v1/users/1/reset-link"
+    "http://localhost:8000/api/v1/users/1/reset-password"
 );
 
 const headers = {
@@ -5547,45 +5512,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-POSTapi-v1-users--user--reset-link">
+<span id="example-responses-POSTapi-v1-users--user--reset-password">
 </span>
-<span id="execution-results-POSTapi-v1-users--user--reset-link" hidden>
+<span id="execution-results-POSTapi-v1-users--user--reset-password" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-users--user--reset-link"></span>:
+                id="execution-response-status-POSTapi-v1-users--user--reset-password"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-users--user--reset-link"
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-users--user--reset-password"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTapi-v1-users--user--reset-link" hidden>
+<span id="execution-error-POSTapi-v1-users--user--reset-password" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-users--user--reset-link">
+    <pre><code id="execution-error-message-POSTapi-v1-users--user--reset-password">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTapi-v1-users--user--reset-link" data-method="POST"
-      data-path="api/v1/users/{user}/reset-link"
+<form id="form-POSTapi-v1-users--user--reset-password" data-method="POST"
+      data-path="api/v1/users/{user}/reset-password"
       data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-users--user--reset-link', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-users--user--reset-password', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-users--user--reset-link"
-                    onclick="tryItOut('POSTapi-v1-users--user--reset-link');">Try it out ⚡
+                    id="btn-tryout-POSTapi-v1-users--user--reset-password"
+                    onclick="tryItOut('POSTapi-v1-users--user--reset-password');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-users--user--reset-link"
-                    onclick="cancelTryOut('POSTapi-v1-users--user--reset-link');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-v1-users--user--reset-password"
+                    onclick="cancelTryOut('POSTapi-v1-users--user--reset-password');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-users--user--reset-link"
+                    id="btn-executetryout-POSTapi-v1-users--user--reset-password"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -5593,7 +5558,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-black">POST</small>
-            <b><code>api/v1/users/{user}/reset-link</code></b>
+            <b><code>api/v1/users/{user}/reset-password</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -5602,7 +5567,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-v1-users--user--reset-link"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-v1-users--user--reset-password"
                value="Bearer {YOUR_AUTH_TOKEN}"
                data-component="header">
     <br>
@@ -5614,7 +5579,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-v1-users--user--reset-link"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-users--user--reset-password"
                value="application/json"
                data-component="header">
     <br>
@@ -5626,7 +5591,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-v1-users--user--reset-link"
+                              name="Accept"                data-endpoint="POSTapi-v1-users--user--reset-password"
                value="application/json"
                data-component="header">
     <br>
@@ -5639,7 +5604,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="user"                data-endpoint="POSTapi-v1-users--user--reset-link"
+               step="any"               name="user"                data-endpoint="POSTapi-v1-users--user--reset-password"
                value="1"
                data-component="url">
     <br>

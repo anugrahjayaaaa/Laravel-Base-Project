@@ -103,10 +103,10 @@ class UserApiController extends Controller
     }
 
     /** Send a password reset link to the user's email. */
-    public function sendResetLink(int $id): JsonResponse
+    public function sendResetPassword(int $id): JsonResponse
     {
         $user = User::findOrFail($id);
-        $status = $this->users->sendResetLink($user);
+        $status = $this->users->sendResetPassword($user);
 
         return $status === Password::RESET_LINK_SENT
             ? response()->json(['message' => __('messages.reset_link_sent_simple')])

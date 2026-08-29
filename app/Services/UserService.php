@@ -56,7 +56,7 @@ final class UserService
     /**
      * @return string One of the Password::* status constants.
      */
-    public function sendResetLink(User $user): string
+    public function sendResetPassword(User $user): string
     {
         return Password::broker('users')->sendResetLink(['email' => $user->email]);
     }
