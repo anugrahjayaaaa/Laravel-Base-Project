@@ -30,6 +30,7 @@ with docs, **docs win** (change via an ADR).
 | i18n.md | Multi-locale web UI + REST API (en/id), file→DB override |
 | packages.md | Verified packages (don't reinvent) |
 | adr.md | Architecture Decision Records |
+| custom/README.md | **Custom features** for derived projects (separate from base docs) |
 
 ## LOCKED DECISIONS (user confirmed, 27 Aug 2026)
 1. All proposed extra features are in v1 (reset pwd, lockout, verify, self-service, session mgmt, seed, dashboard, /up).
