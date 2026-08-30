@@ -9,7 +9,9 @@
             @csrf
             @if($plan) @method('PUT') @endif
 
-            <div class="row g-3">
+            {{-- Common info --}}
+            <h6>{{ ui('common_info') }}</h6>
+            <div class="row g-3 mb-2">
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('name') }}</label>
                     <input type="text" name="name" id="plan-name" class="form-control"
@@ -22,7 +24,6 @@
                            placeholder="{{ ui('slug_auto') }}" {{ $plan && $plan->slug === 'free' ? 'readonly' : '' }}>
                     <div class="form-text">{{ ui('slug_help') }}</div>
                 </div>
-
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('price_monthly') }}</label>
                     <input type="number" step="0.01" min="0" name="price_monthly" class="form-control"
@@ -35,9 +36,18 @@
                         <option value="lifetime" @selected(old('billing_period', $plan->billing_period ?? 'monthly') === 'lifetime')>{{ ui('period_lifetime') }}</option>
                     </select>
                 </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" name="is_active" id="is_active"
+                               {{ old('is_active', $plan->is_active ?? true) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="is_active">{{ ui('active') }}</label>
+                    </div>
+                </div>
+            </div>
 
-                {{-- Capacity limits --}}
-                <div class="col-md-12"><hr><h6>{{ ui('capacity_limits') }}</h6></div>
+            {{-- Capacity limits --}}
+            <hr><h6>{{ ui('capacity_limits') }}</h6>
+            <div class="row g-3 mb-2">
                 <div class="col-md-3">
                     <label class="form-label">{{ ui('limit_max_members') }}</label>
                     <input type="number" min="0" name="max_members" class="form-control"
@@ -58,13 +68,19 @@
                     <input type="number" min="0" name="max_permissions" class="form-control"
                            value="{{ old('max_permissions', $plan?->limit('max_permissions') ?? 0) }}">
                 </div>
+            </div>
 
-                {{-- Feature flags --}}
-                <div class="col-md-12"><hr><h6>{{ ui('features') }}</h6>
-                    <div class="form-text">{{ ui('features_help') }}</div>
+            {{-- Features --}}
+            <hr><h6>{{ ui('features') }}</h6>
+            <div class="row g-3 mb-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ ui('limit_max_features') }}</label>
+                    <input type="number" min="0" name="max_features" id="max_features" class="form-control"
+                           value="{{ old('max_features', $plan?->limit('max_features') ?? 0) }}">
+                    <div class="form-text">{{ ui('max_features_help') }}</div>
                 </div>
                 <div class="col-12">
-                    <div class="row row-cols-2 row-cols-md-3 g-2">
+                    <div class="row row-cols-2 row-cols-md-3 g-2" id="feature-list">
                         @foreach(config('pennant.features') as $slug => $cfg)
                             @php($checked = in_array($slug, old('features', $plan->features ?? [])))
                             <div class="col">
@@ -78,38 +94,23 @@
                         @endforeach
                     </div>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <label class="form-label">{{ ui('limit_max_features') }}</label>
-                    <input type="number" min="0" name="max_features" class="form-control"
-                           value="{{ old('max_features', $plan?->limit('max_features') ?? 0) }}">
-                </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" name="can_create_roles" id="can_create_roles"
-                               {{ old('can_create_roles', $plan?->limit('can_create_roles')) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="can_create_roles">{{ ui('can_create_roles') }}</label>
+            {{-- Permissions (filtered by enabled features) --}}
+            <hr><h6>{{ ui('allowed_permissions') }}</h6>
+            <div class="form-text mb-2">{{ ui('allowed_permissions_help') }}</div>
+            <div class="row row-cols-2 row-cols-md-3 g-2" id="perm-list">
+                @foreach($permissions as $perm)
+                    @php($feat = App\Models\Permission::featureOf($perm))
+                    @php($checked = in_array($perm, old('allowed_permissions', $plan->limits['allowed_permissions'] ?? [])))
+                    <div class="col perm-item" data-feature="{{ $feat }}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
+                                   value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
+                            <label class="form-check-label" for="perm-{{ Str::slug($perm) }}">{{ $perm }}</label>
+                        </div>
                     </div>
-                </div>
-
-                {{-- Permissions: only those whose feature is enabled in this plan --}}
-                <div class="col-12"><hr><h6>{{ ui('allowed_permissions') }}</h6>
-                    <div class="form-text">{{ ui('allowed_permissions_help') }}</div>
-                </div>
-                <div class="col-12">
-                    <div class="row row-cols-2 row-cols-md-3 g-2">
-                        @foreach($permissions as $perm)
-                            @php($checked = in_array($perm, old('allowed_permissions', $plan->limits['allowed_permissions'] ?? [])))
-                            <div class="col perm-item" data-feature="{{ App\Models\Permission::featureOf($perm) }}">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
-                                           value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
-                                    <label class="form-check-label" for="perm-{{ Str::slug($perm) }}">{{ $perm }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
+                @endforeach
             </div>
 
             <div class="mt-3">
@@ -136,15 +137,34 @@
         }
     })();
 
-    // Show only permission checkboxes whose feature is enabled in this plan.
+    // Feature checkboxes: respect max_features (disable extras); permission rows
+    // show only for enabled features.
     (() => {
+        const maxInput = document.getElementById('max_features');
         const toggles = Array.from(document.querySelectorAll('.feat-toggle'));
         const items = Array.from(document.querySelectorAll('.perm-item'));
+
         const apply = () => {
-            const on = new Set(toggles.filter(t => t.checked).map(t => t.dataset.feature));
-            items.forEach(it => { it.style.display = on.has(it.dataset.feature) ? '' : 'none'; });
+            const on = toggles.filter(t => t.checked).map(t => t.dataset.feature);
+            const max = parseInt(maxInput?.value || '0', 10);
+            // disable feature checkboxes beyond the cap
+            if (max > 0) {
+                toggles.forEach(t => {
+                    if (!t.checked && on.length >= max) t.disabled = true;
+                    else t.disabled = false;
+                });
+            } else {
+                toggles.forEach(t => t.disabled = false);
+            }
+            const set = new Set(on);
+            items.forEach(it => {
+                const show = set.has(it.dataset.feature);
+                it.style.display = show ? '' : 'none';
+                it.querySelectorAll('input').forEach(i => { if (!show) i.checked = false; });
+            });
         };
         toggles.forEach(t => t.addEventListener('change', apply));
+        maxInput?.addEventListener('input', apply);
         apply();
     })();
 </script>

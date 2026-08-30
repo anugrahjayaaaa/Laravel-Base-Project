@@ -23,9 +23,30 @@ class Permission extends SpatiePermission
 {
     use SoftDeletes;
 
-    /** Feature slug a permission belongs to = the part before the first dot. */
-    public static function featureOf(string $name): string
+    /**
+     * Feature slug a permission belongs to. The DB permission prefix is singular
+     * (user.*) while feature flags are plural (users) — map explicitly so the
+     * plan UI can filter permissions by the enabled features without hardcoding
+     * the relationship in Blade.
+     */
+    public static function featureOf(string $name): ?string
     {
-        return explode('.', $name, 2)[0];
+        $prefix = explode('.', $name, 2)[0];
+
+        $map = [
+            'user' => 'users',
+            'role' => 'roles',
+            'permission' => 'permissions',
+            'audit' => 'audit',
+            'session' => 'sessions',
+            'api-token' => 'api-tokens',
+            'translation' => 'translations',
+            'logs' => 'logs',
+            'telescope' => 'telescope',
+            'periscope' => 'periscope',
+            'feature' => 'features',
+        ];
+
+        return $map[$prefix] ?? $prefix;
     }
 }

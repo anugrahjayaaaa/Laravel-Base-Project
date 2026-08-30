@@ -140,6 +140,8 @@ return [
     'billing_period' => 'Periode tagihan',
     'period_monthly' => 'Bulanan',
     'period_lifetime' => 'Lifetime',
+    'common_info' => 'Umum',
+    'max_features_help' => 'Maks. fitur yang diizinkan. Melewati batas, sisa checkbox fitur dinonaktifkan.',
     'limit_max_members' => 'Maks. member',
     'limit_max_roles' => 'Maks. role',
     'limit_max_permissions' => 'Maks. izin',

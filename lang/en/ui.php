@@ -140,6 +140,8 @@ return [
     'billing_period' => 'Billing period',
     'period_monthly' => 'Monthly',
     'period_lifetime' => 'Lifetime',
+    'common_info' => 'General',
+    'max_features_help' => 'Max features allowed. Beyond the cap, remaining feature checkboxes are disabled.',
     'limit_max_members' => 'Max members',
     'limit_max_roles' => 'Max roles',
     'limit_max_permissions' => 'Max permissions',

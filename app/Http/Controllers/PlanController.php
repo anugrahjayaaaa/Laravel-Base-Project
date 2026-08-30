@@ -60,7 +60,11 @@ class PlanController extends Controller
         return redirect()->route('plans.index')->with('success', __('messages.plan_deleted'));
     }
 
-    /** Parse the form (typed fields + checkbox features/permissions) into a Plan array. */
+    /**
+     * Parse + authorize the form into a Plan array.
+     * Server-side guardrails (cegah bypass client): feature count ≤ max_features,
+     * allowed_permissions must belong to an enabled feature.
+     */
     private function validated(Request $request): array
     {
         $d = $request->validate([
@@ -81,8 +85,27 @@ class PlanController extends Controller
             'features.*' => 'string',
         ]);
 
+        $features = $request->input('features', []);
+        $maxFeatures = (int) $request->input('max_features', 0);
+
+        // guard: feature count must respect max_features (0 = unlimited)
+        if ($maxFeatures > 0 && count($features) > $maxFeatures) {
+            abort(422, 'Feature count exceeds plan limit (max '.$maxFeatures.').');
+        }
+
+        // guard: allowed_permissions must belong to an enabled feature only
+        $allowedPerms = $request->input('allowed_permissions', []);
+        $validPerms = Permission::whereIn('name', $allowedPerms)
+            ->get()
+            ->filter(fn ($p) => in_array(Permission::featureOf($p->name), $features, true))
+            ->pluck('name')
+            ->all();
+        if (count($validPerms) !== count($allowedPerms)) {
+            abort(422, 'Some allowed permissions do not belong to an enabled feature.');
+        }
+
         // ponytail: slug auto from name; JS pre-fills, this is the server fallback
-        $slug = $d['slug'] ?: Str::slug($d['name']);
+        $slug = $d['slug'] ?? '' ?: Str::slug($d['name']);
 
         $limits = [];
         foreach (array_keys(Plan::LIMIT_KEYS) as $key) {
@@ -91,7 +114,7 @@ class PlanController extends Controller
             }
         }
         $limits['can_create_roles'] = $request->boolean('can_create_roles');
-        $limits['allowed_permissions'] = $request->input('allowed_permissions', []);
+        $limits['allowed_permissions'] = $validPerms;
 
         return [
             'name' => $d['name'],
@@ -100,7 +123,7 @@ class PlanController extends Controller
             'billing_period' => $d['billing_period'],
             'is_active' => $request->boolean('is_active'),
             'limits' => $limits,
-            'features' => $request->input('features', []),
+            'features' => $features,
         ];
     }
 }
