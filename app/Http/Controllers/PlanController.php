@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
 use App\Models\Plan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,10 @@ class PlanController extends Controller
 
     public function create(): View
     {
-        return view('plans.form', ['plan' => null]);
+        return view('plans.form', [
+            'plan' => null,
+            'permissions' => Permission::orderBy('name')->pluck('name'),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -32,7 +36,10 @@ class PlanController extends Controller
 
     public function edit(Plan $plan): View
     {
-        return view('plans.form', compact('plan'));
+        return view('plans.form', [
+            'plan' => $plan,
+            'permissions' => Permission::orderBy('name')->pluck('name'),
+        ]);
     }
 
     public function update(Request $request, Plan $plan): RedirectResponse
@@ -53,7 +60,7 @@ class PlanController extends Controller
         return redirect()->route('plans.index')->with('success', __('messages.plan_deleted'));
     }
 
-    /** Parse the form (typed fields + checkbox features) into a Plan array. */
+    /** Parse the form (typed fields + checkbox features/permissions) into a Plan array. */
     private function validated(Request $request): array
     {
         $d = $request->validate([
@@ -63,7 +70,13 @@ class PlanController extends Controller
             'billing_period' => 'required|in:monthly,lifetime',
             'is_active' => 'boolean',
             'max_members' => 'nullable|integer|min:0',
-            'max_projects' => 'nullable|integer|min:0',
+            'max_roles' => 'nullable|integer|min:0',
+            'max_permissions' => 'nullable|integer|min:0',
+            'max_storage_mb' => 'nullable|integer|min:0',
+            'can_create_roles' => 'boolean',
+            'can_create_permissions' => 'boolean',
+            'allowed_permissions' => 'array',
+            'allowed_permissions.*' => 'string',
             'features' => 'array',
             'features.*' => 'string',
         ]);
@@ -77,6 +90,9 @@ class PlanController extends Controller
                 $limits[$key] = (int) $request->input($key);
             }
         }
+        $limits['can_create_roles'] = $request->boolean('can_create_roles');
+        $limits['can_create_permissions'] = $request->boolean('can_create_permissions');
+        $limits['allowed_permissions'] = $request->input('allowed_permissions', []);
 
         return [
             'name' => $d['name'],

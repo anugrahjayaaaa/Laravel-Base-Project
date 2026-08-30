@@ -36,15 +36,62 @@
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                {{-- Capacity limits --}}
+                <div class="col-md-4">
                     <label class="form-label">{{ ui('limit_max_members') }}</label>
                     <input type="number" min="0" name="max_members" class="form-control"
                            value="{{ old('max_members', $plan?->limit('max_members') ?? 0) }}">
                 </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ ui('limit_max_storage_mb') }}</label>
+                    <input type="number" min="0" name="max_storage_mb" class="form-control"
+                           value="{{ old('max_storage_mb', $plan?->limit('max_storage_mb') ?? 0) }}">
+                </div>
+
+                {{-- RBAC creation limits --}}
+                <div class="col-md-12"><hr><h6>{{ ui('rbac_limits') }}</h6></div>
+
                 <div class="col-md-6">
-                    <label class="form-label">{{ ui('limit_max_projects') }}</label>
-                    <input type="number" min="0" name="max_projects" class="form-control"
-                           value="{{ old('max_projects', $plan?->limit('max_projects') ?? 0) }}">
+                    <label class="form-label">{{ ui('limit_max_roles') }}</label>
+                    <input type="number" min="0" name="max_roles" class="form-control"
+                           value="{{ old('max_roles', $plan?->limit('max_roles') ?? 0) }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ ui('limit_max_permissions') }}</label>
+                    <input type="number" min="0" name="max_permissions" class="form-control"
+                           value="{{ old('max_permissions', $plan?->limit('max_permissions') ?? 0) }}">
+                </div>
+
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" name="can_create_roles" id="can_create_roles"
+                               {{ old('can_create_roles', $plan?->limit('can_create_roles')) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="can_create_roles">{{ ui('can_create_roles') }}</label>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" name="can_create_permissions" id="can_create_permissions"
+                               {{ old('can_create_permissions', $plan?->limit('can_create_permissions')) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="can_create_permissions">{{ ui('can_create_permissions') }}</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">{{ ui('allowed_permissions') }}</label>
+                    <div class="row row-cols-2 row-cols-md-3 g-2">
+                        @foreach($permissions as $perm)
+                            @php($checked = in_array($perm, old('allowed_permissions', $plan?->limits['allowed_permissions'] ?? [])))
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
+                                           value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
+                                    <label class="form-check-label" for="perm-{{ Str::slug($perm) }}">{{ $perm }}</label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="form-text">{{ ui('allowed_permissions_help') }}</div>
                 </div>
 
                 <div class="col-md-6 d-flex align-items-end">
