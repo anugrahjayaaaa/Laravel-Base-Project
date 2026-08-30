@@ -64,6 +64,8 @@ return [
         'logs' => ['label' => 'Logs'],
         'telescope' => ['label' => 'Telescope'],
         'periscope' => ['label' => 'Periscope'],
+        'plans' => ['label' => 'Plans'],
+        'billing' => ['label' => 'Billing'],
     ],
 
 ];

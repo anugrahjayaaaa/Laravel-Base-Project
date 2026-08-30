@@ -88,10 +88,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/features/{slug}/toggle', [FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
 
     // Plan management (full CRUD, custom slug/price/limits/features — doc §9b)
-    Route::resource('plans', PlanController::class)->middleware('can:feature.manage');
+    Route::resource('plans', PlanController::class)->middleware(['can:feature.manage', 'feature:plans']);
 
     // Billing: checkout (dummy mode completes at once) — user-initiated, inside auth
-    Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::post('/billing/checkout', [BillingController::class, 'checkout'])
+        ->name('billing.checkout')->middleware('feature:billing');
 
     Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 

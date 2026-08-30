@@ -85,7 +85,9 @@
                         @endcanany
                         <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
                         @can('feature.manage')
+                        @feature('plans')
                         <li class="nav-item"><a href="{{ route('plans.index') }}" data-menu-text="{{ ui('plans') }}" class="nav-link {{ request()->routeIs('plans.*') ? 'active' : '' }}"><i class="nav-icon bi bi-tags"></i> <span>{{ ui('plans') }}</span></a></li>
+                        @endfeature
                         @endcan
                         @can('translation.view')
                         @feature('translations')

@@ -38,7 +38,7 @@ Blade: `@feature('users') ... @endfeature` (native Pennant directive).
   use modules while a flag is off.
 
 ## Known flags
-- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`, `telescope`, `periscope`
+- `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`, `telescope`, `periscope`, `plans`, `billing`
   (declared in `config/pennant.php`).
 
 ## Gate
