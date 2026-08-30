@@ -40,3 +40,17 @@
   including `feature.manage` holders) — they re-enable from `/features`. Storage = Pennant DB store.
 - Consequences: closest path to change the enabled state is the `/features` UI (under
   Settings); fails closed when a feature row is missing.
+
+## ADR-0010: Authorization gate lives on the route, not the controller
+- Context: PlanController put `$this->middleware('can:feature.manage')` in its
+  `__construct()`. It crashed with `Call to undefined method ...PlanController::middleware()`
+  because the base `Controller` (empty abstract) did not extend `Illuminate\Routing\Controller`,
+  so the framework `middleware()` helper was absent. Every sibling controller escaped the bug
+  only because they gate at the route level (`routes/web.php`) instead.
+- Decision: **all permission + feature-flag gates are declared on the route** via
+  `->middleware(['can:{perm}', 'feature:{slug}'])`. Controllers must NOT call
+  `$this->middleware()` in a constructor. The base `Controller` extends
+  `Illuminate\Routing\Controller` so the helper exists if ever needed, but routes are the
+  single place authorization is wired.
+- Consequences: one visible place for authz; no dependency on controller base wiring;
+  new modules follow `docs/coding-standard.md` §Authorization.

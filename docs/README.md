@@ -16,6 +16,8 @@ with docs, **docs win** (change via an ADR).
 | README.md | This index, goal, usage |
 | CONTRIBUTING.md | Dev setup, conventions, Definition of Done, open items |
 | architecture.md | Stack, layered architecture, v1 modules, decisions |
+| PRD.md | Product Requirements: scope, users, authz model, success metrics |
+| coding-standard.md | **Mandatory** coding rules — route-level authz, base Controller, Form Requests |
 | auth.md | Authentication (username/phone, strong pwd, lockout, verify) |
 | authorization.md | Dynamic RBAC + management UI |
 | feature-flags.md | Feature flags (layer above RBAC) |
