@@ -7,20 +7,32 @@
     {{-- Current plan / license --}}
     <div class="col-md-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header">{{ ui('current_plan') ?? 'Current Plan' }}</div>
+            <div class="card-header d-flex justify-content-between">
+                <span>{{ __('messages.current_plan') }}</span>
+                @if($license)
+                    <span class="badge text-bg-success">{{ ui('active') }}</span>
+                @else
+                    <span class="badge text-bg-secondary">{{ ui('inactive') }}</span>
+                @endif
+            </div>
             <div class="card-body">
                 @if($license)
                     <h5 class="card-title">{{ $plan?->name ?? $license->plan_slug }}</h5>
-                    <p class="text-muted">{{ ui('billing_period') }}: {{ ui('period_'.$license->type) ?? $license->type }}</p>
+                    @php($periodKey = match($license->type) {
+                        'recurring' => 'period_monthly',
+                        'lifetime', 'manual' => 'period_lifetime',
+                        default => 'period_monthly',
+                    })
+                    <p class="text-muted">{{ __('messages.billing_period') }}: {{ __('messages.'.$periodKey) }}</p>
                     <p>{{ __('messages.license') }}: <code>{{ $license->license_key }}</code></p>
                     <p>{{ __('messages.expires') }}: {{ $license->expires_at ? $license->expires_at->format('Y-m-d') : __('messages.lifetime') }}</p>
-                    <form method="POST" action="{{ route('billing.cancel') }}">
+                    <form method="POST" action="{{ route('billing.cancel') }}" class="mt-3">
                         @csrf
-                        <button class="btn btn-outline-danger" onclick="return confirm('{{ __('messages.confirm_cancel') }}')">{{ ui('cancel_subscription') ?? 'Cancel' }}</button>
+                        <button class="btn btn-outline-danger" onclick="return confirm('{{ __('messages.confirm_cancel') }}')">{{ __('messages.cancel_subscription') }}</button>
                     </form>
                 @else
                     <p class="text-muted">{{ __('messages.no_active_subscription') }}</p>
-                    <a href="{{ route('plans.index') }}" class="btn btn-primary">{{ ui('subscribe') }}</a>
+                    <a href="{{ route('plans.index') }}" class="btn btn-primary">{{ __('messages.subscribe') }}</a>
                 @endif
             </div>
         </div>
