@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-abstract class Controller
+// ponytail: extend framework base so controllers get middleware()/validate()/authorize()
+abstract class Controller extends \Illuminate\Routing\Controller
 {
     //
 }
