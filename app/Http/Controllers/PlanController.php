@@ -9,12 +9,6 @@ use Illuminate\View\View;
 
 class PlanController extends Controller
 {
-    // ponytail: plans are fully custom (CRUD, doc §9b); gated by feature.manage
-    public function __construct()
-    {
-        $this->middleware('can:feature.manage');
-    }
-
     public function index(): View
     {
         $plans = Plan::orderBy('price_monthly')->get();
