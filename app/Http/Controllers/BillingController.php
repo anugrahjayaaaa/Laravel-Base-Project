@@ -7,6 +7,7 @@ use App\Models\License;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Services\BillingService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -69,7 +70,7 @@ class BillingController extends Controller
      * webhook signature, then delegates to BillingService::handleWebhook().
      * Idempotency is handled inside handleWebhook via gateway_ref uniqueness.
      */
-    public function webhook(Request $request)
+    public function webhook(Request $request): JsonResponse
     {
         $secret = config('billing.webhook_secret', 'dummy-webhook-secret');
 
