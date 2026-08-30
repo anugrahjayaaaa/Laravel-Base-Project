@@ -42,6 +42,7 @@ final class LicenseService
         // ponytail: snapshot plan limits/features at issue time (catalog versioning, §10.8)
         License::create([
             'plan_slug' => $planSlug,
+            'user_id' => $attrs['user_id'] ?? null,
             'license_key' => $key,
             'type' => $type,
             'status' => 'active',

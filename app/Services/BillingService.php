@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\License;
 use App\Models\Payment;
 use App\Models\Plan;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 /**
@@ -57,10 +59,28 @@ final class BillingService
         $key = LicenseService::issue($payment->plan_slug, [
             'type' => 'recurring',
             'expires_at' => $expiresAt,
+            'user_id' => $payment->user_id,
         ]);
         LicenseService::activate($key);
 
         return $payment;
+    }
+
+    /** Cancel a user's subscription: revoke their license + freeze (no refund, doc §10.2). */
+    public static function cancelUser(User $user): void
+    {
+        $license = $user->licenses()->active()->latest()->first();
+        if ($license) {
+            LicenseService::revoke($license->license_key, 'user_canceled');
+        }
+        // ponytail: freeze, never delete — payment history kept for accounting
+        $user->payments()->where('status', 'paid')->latest()->first()?->update(['canceled_at' => now()]);
+    }
+
+    /** The user's currently active license (or null). */
+    public static function userActiveLicense(User $user): ?License
+    {
+        return $user->licenses()->active()->latest()->first();
     }
 
     /** Webhook entry (real PG). Fake mode just activates from payload. */

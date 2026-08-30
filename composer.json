@@ -18,6 +18,7 @@
         "spatie/laravel-translation-loader": "^2.8"
     },
     "require-dev": {
+        "barryvdh/laravel-dompdf": "^3.1",
         "fakerphp/faker": "^1.23",
         "knuckleswtf/scribe": "^5.11",
         "laravel/pail": "^1.2.5",

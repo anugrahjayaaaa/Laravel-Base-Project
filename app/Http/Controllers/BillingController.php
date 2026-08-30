@@ -2,34 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Billing\BillingCancelRequest;
+use App\Models\License;
+use App\Models\Payment;
 use App\Models\Plan;
 use App\Services\BillingService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class BillingController extends Controller
 {
-    /** User picks a paid plan -> start checkout (dummy mode completes at once). */
-    public function checkout(Request $request): RedirectResponse
+    /** User billing portal: current plan, active license, payment history. */
+    public function index(): View
     {
-        $plan = Plan::where('slug', $request->input('plan_slug'))
-            ->where('price_monthly', '>', 0)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $user = auth()->user();
+        $license = BillingService::userActiveLicense($user);
+        $plan = $license ? Plan::where('slug', $license->plan_slug)->first() : null;
+        $payments = $user->payments()->latest()->paginate(10);
 
-        $payment = BillingService::checkout($plan, auth()->id());
-
-        $key = $payment->status === 'paid' ? 'messages.payment_paid' : 'messages.payment_pending';
-
-        return redirect()->route('plans.index')->with($payment->status === 'paid' ? 'success' : 'error', __($key));
+        return view('billing.index', compact('user', 'license', 'plan', 'payments'));
     }
 
-    /** PG webhook (no auth — the gateway calls this). */
-    public function webhook(Request $request): JsonResponse
+    /** Cancel the current user's subscription (revoke + freeze). */
+    public function cancel(BillingCancelRequest $request): RedirectResponse
     {
-        BillingService::handleWebhook($request->all());
+        BillingService::cancelUser($request->user());
 
-        return response()->json(['ok' => true]);
+        return redirect()->route('billing.index')
+            ->with('success', __('messages.subscription_canceled'));
+    }
+
+    /** Download a dummy invoice PDF for a payment. */
+    public function invoice(Payment $payment): Response
+    {
+        abort_unless($payment->user_id === auth()->id(), 403);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('billing.invoice', compact('payment'));
+
+        return $pdf->download($payment->invoice_no.'.pdf');
     }
 }

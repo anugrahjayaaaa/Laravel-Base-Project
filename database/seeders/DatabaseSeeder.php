@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         'api-token.view', 'api-token.create', 'api-token.delete',
         'feature.manage',
         'logs.view',
+        'billing.view', 'billing.cancel',
         'translation.view', 'translation.edit',
         'telescope.view',
         'periscope.view',

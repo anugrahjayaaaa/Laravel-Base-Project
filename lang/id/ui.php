@@ -137,6 +137,8 @@ return [
     'inactive' => 'Nonaktif',
     'slug_help' => 'Identifier unik, mis. starter-2026. Huruf, angka, dash/underscore. Otomatis dari nama — edit bila perlu.',
     'slug_auto' => 'otomatis dari nama',
+    'billing' => 'Tagihan',
+    'billing_admin' => 'Billing & Analitik',
     'billing_period' => 'Periode tagihan',
     'period_monthly' => 'Bulanan',
     'period_lifetime' => 'Lifetime',

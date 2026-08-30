@@ -137,6 +137,8 @@ return [
     'inactive' => 'Inactive',
     'slug_help' => 'Unique identifier, e.g. starter-2026. Letters, numbers, dash/underscore. Auto-filled from name — edit if needed.',
     'slug_auto' => 'auto from name',
+    'billing' => 'Billing',
+    'billing_admin' => 'Billing & Analytics',
     'billing_period' => 'Billing period',
     'period_monthly' => 'Monthly',
     'period_lifetime' => 'Lifetime',

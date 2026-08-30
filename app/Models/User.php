@@ -20,6 +20,24 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
+    protected $with = []; // ponytail: avoid N+1 on lists; load relations explicitly
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function licenses()
+    {
+        return $this->hasMany(License::class);
+    }
+
+    /** True when this user holds an active, non-expired license (subscriber). */
+    public function hasActiveLicense(): bool
+    {
+        return $this->licenses()->active()->exists();
+    }
+
     protected function casts(): array
     {
         return [

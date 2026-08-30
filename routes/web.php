@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\BillingAdminController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -90,9 +91,21 @@ Route::middleware('auth')->group(function () {
     // Plan management (full CRUD, custom slug/price/limits/features — doc §9b)
     Route::resource('plans', PlanController::class)->middleware(['can:feature.manage', 'feature:plans']);
 
-    // Billing: checkout (dummy mode completes at once) — user-initiated, inside auth
-    Route::post('/billing/checkout', [BillingController::class, 'checkout'])
-        ->name('billing.checkout')->middleware('feature:billing');
+    // Billing: user portal + checkout (dummy mode completes at once)
+    Route::prefix('billing')->middleware('feature:billing')->group(function () {
+        Route::get('/', [BillingController::class, 'index'])->name('billing.index');
+        Route::post('/checkout', [BillingController::class, 'checkout'])
+            ->name('billing.checkout');
+        Route::post('/cancel', [BillingController::class, 'cancel'])
+            ->name('billing.cancel')->middleware('can:billing.cancel');
+        Route::get('/invoice/{payment}', [BillingController::class, 'invoice'])
+            ->name('billing.invoice');
+    });
+
+    // Billing admin: KPIs + analytics (separate popular page, gated by billing.view)
+    Route::prefix('admin/billing')->middleware(['can:billing.view', 'feature:billing'])->group(function () {
+        Route::get('/', [BillingAdminController::class, 'index'])->name('admin.billing.index');
+    });
 
     Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 
