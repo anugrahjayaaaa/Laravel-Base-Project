@@ -91,10 +91,32 @@ final class PlanService
             return 0;
         }
 
-        $limits = $this->license?->snapshot['limits']
+        return (int) ($this->limits()[$key] ?? $default);
+    }
+
+    /** Snapshot limits from the license (or plan row), respecting tamper guard. */
+    private function limits(): array
+    {
+        if ($this->plan->slug !== 'free' && ! $this->license) {
+            return [];
+        }
+        return $this->license?->snapshot['limits']
             ?? $this->plan->limits
             ?? [];
+    }
 
-        return (int) ($limits[$key] ?? $default);
+    /** Whether subscribers can create roles (derived: true iff 'roles' feature is on). */
+    public function canCreateRoles(): bool
+    {
+        return (bool) ($this->limits()['can_create_roles'] ?? false);
+    }
+
+    /** Permission names a subscriber may assign when creating/editing roles.
+     *  Empty array = no permission assigned (deny) unless explicitly listed.
+     */
+    public function allowedPermissions(): array
+    {
+        $allowed = $this->limits()['allowed_permissions'] ?? [];
+        return is_array($allowed) ? $allowed : [];
     }
 }

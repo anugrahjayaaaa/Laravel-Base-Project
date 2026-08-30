@@ -9,6 +9,7 @@ use App\Http\Requests\Rbac\RoleUpdateRequest;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Services\BulkDeleteService;
+use App\Services\PlanService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -38,10 +39,18 @@ class RoleController extends Controller
 
     public function store(RoleStoreRequest $request): RedirectResponse
     {
+        // §11.4: super-admins (feature.manage) bypass plan role-creation limits
+        $plan = $request->user()->can('feature.manage') ? null : PlanService::for();
+        if ($plan && ! $plan->canCreateRoles()) {
+            abort(403, 'Plan does not allow role creation.');
+        }
+
         $data = $request->validated();
 
         $role = Role::create(['name' => $data['name'], 'guard_name' => 'web']);
-        $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
+        // §11.4: filter permission IDs to those allowed by the plan snapshot
+        $perms = $this->filterPermissions($data['permissions'] ?? [], $plan);
+        $role->syncPermissions($perms);
 
         return redirect()->route('roles.index')->with('success', __('messages.role_created'));
     }
@@ -56,12 +65,37 @@ class RoleController extends Controller
 
     public function update(RoleUpdateRequest $request, Role $role): RedirectResponse
     {
+        // §11.4: super-admins (feature.manage) bypass plan role-creation limits
+        $plan = $request->user()->can('feature.manage') ? null : PlanService::for();
+        if ($plan && ! $plan->canCreateRoles()) {
+            abort(403, 'Plan does not allow role creation.');
+        }
+
         $data = $request->validated();
 
         $role->update(['name' => $data['name']]);
-        $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
+        $perms = $this->filterPermissions($data['permissions'] ?? [], $plan);
+        $role->syncPermissions($perms);
 
         return redirect()->route('roles.index')->with('success', __('messages.role_updated'));
+    }
+
+    /**
+     * Filter permission IDs through the plan's allowed_permissions snapshot.
+     * When $plan is null (super-admin bypass), all permission IDs pass through.
+     * When allowed_permissions is empty, all are denied (deny by default).
+     */
+    private function filterPermissions(array $permIds, ?PlanService $plan): array
+    {
+        if (! $plan) {
+            return array_map('intval', $permIds);
+        }
+        $allowedNames = $plan->allowedPermissions();
+        if ($allowedNames === []) {
+            return [];
+        }
+        $allowedIds = Permission::whereIn('name', $allowedNames)->pluck('id')->all();
+        return array_intersect($permIds, $allowedIds);
     }
 
     public function bulk(BulkActionRequest $request): RedirectResponse
