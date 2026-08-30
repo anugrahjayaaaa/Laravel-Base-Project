@@ -25,14 +25,15 @@
                     <td>{{ $plan->name }}</td>
                     <td><span class="text-muted small">{{ $plan->slug }}</span></td>
                     <td>Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</td>
-                    <td><span class="small text-muted">{{ collect($plan->limits ?? [])->map(fn($v,$k)=>"$k:$v")->join(', ') ?: '-' }}</span></td>
-                    <td><span class="small text-muted">{{ collect($plan->features ?? [])->join(', ') ?: '-' }}</span></td>
+                    <td><span class="small text-muted">{{ collect($plan->limits ?? [])->map(fn($v,$k)=>ui('limit_'.str_replace('_','',$k)).': '.$v)->join(', ') ?: '-' }}</span></td>
+                    <td><span class="small text-muted">{{ collect($plan->features ?? [])->map(fn($f)=>config("pennant.features.$f.label", $f))->join(', ') ?: '-' }}</span></td>
                     <td>
                         @if($plan->is_active)
                             <span class="badge text-bg-success">{{ ui('active') }}</span>
                         @else
                             <span class="badge text-bg-secondary">{{ ui('inactive') }}</span>
                         @endif
+                        <span class="badge text-bg-light">{{ ui('period_'.$plan->billing_period) }}</span>
                     </td>
                     <td class="text-end">
                         <a href="{{ route('plans.edit', $plan) }}" class="btn btn-sm btn-light border">{{ ui('edit') }}</a>

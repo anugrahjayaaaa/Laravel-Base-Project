@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Plan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PlanController extends Controller
@@ -52,34 +53,40 @@ class PlanController extends Controller
         return redirect()->route('plans.index')->with('success', __('messages.plan_deleted'));
     }
 
-    /** Parse the limits/features textareas into arrays. */
+    /** Parse the form (typed fields + checkbox features) into a Plan array. */
     private function validated(Request $request): array
     {
         $d = $request->validate([
-            'slug' => 'required|string|alpha_dash|unique:plans,slug,'.(optional($request->route('plan'))?->id ?? 'NULL').',id',
             'name' => 'required|string|max:120',
+            'slug' => 'nullable|string|alpha_dash|unique:plans,slug,'.(optional($request->route('plan'))?->id ?? 'NULL').',id',
             'price_monthly' => 'required|numeric|min:0',
+            'billing_period' => 'required|in:monthly,lifetime',
             'is_active' => 'boolean',
-            'limits' => 'nullable|string',
-            'features' => 'nullable|string',
+            'max_members' => 'nullable|integer|min:0',
+            'max_projects' => 'nullable|integer|min:0',
+            'max_storage_mb' => 'nullable|integer|min:0',
+            'features' => 'array',
+            'features.*' => 'string',
         ]);
 
-        $lines = fn ($s) => collect(explode("\n", $s))
-            ->map(fn ($x) => trim($x))->filter()->values()->all();
+        // ponytail: slug auto from name; JS pre-fills, this is the server fallback
+        $slug = $d['slug'] ?: Str::slug($d['name']);
 
         $limits = [];
-        foreach ($lines($request->input('limits', '')) as $row) {
-            [$k, $v] = array_pad(explode(':', $row, 2), 2, 0);
-            $limits[trim($k)] = (int) trim($v);
+        foreach (array_keys(Plan::LIMIT_KEYS) as $key) {
+            if ($request->filled($key)) {
+                $limits[$key] = (int) $request->input($key);
+            }
         }
 
         return [
-            'slug' => $d['slug'],
             'name' => $d['name'],
+            'slug' => $slug,
             'price_monthly' => $d['price_monthly'],
+            'billing_period' => $d['billing_period'],
             'is_active' => $request->boolean('is_active'),
             'limits' => $limits,
-            'features' => $lines($request->input('features', '')),
+            'features' => $request->input('features', []),
         ];
     }
 }

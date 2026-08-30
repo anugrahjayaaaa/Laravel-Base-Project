@@ -45,10 +45,18 @@ final class BillingService
 
         $payment->update(['status' => 'paid', 'gateway_ref' => $gatewayRef]);
 
-        // ponytail: dummy has no billing period -> lifetime license (expires_at null)
+        $plan = Plan::where('slug', $payment->plan_slug)->firstOrFail();
+
+        // ponytail: dummy has no billing period -> honor plan.billing_period
+        //  lifetime  => expires_at null (never expires)
+        //  monthly   => expires_at +1 month from now
+        $expiresAt = $plan->billing_period === 'lifetime'
+            ? null
+            : now()->addMonth();
+
         $key = LicenseService::issue($payment->plan_slug, [
             'type' => 'recurring',
-            'expires_at' => null,
+            'expires_at' => $expiresAt,
         ]);
         LicenseService::activate($key);
 
