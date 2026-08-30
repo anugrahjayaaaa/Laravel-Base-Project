@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('limits') }}</label>
-                    <textarea name="limits" class="form-control" rows="4">{{ old('limits', $plan ? collect($plan->limits ?? [])->map(fn($v,$k)="$k: $v")->join("\n") : '') }}</textarea>
+                    <textarea name="limits" class="form-control" rows="4">{{ old('limits', $plan ? collect($plan->limits ?? [])->map(fn($v,$k) => "$k: $v")->join("\n") : '') }}</textarea>
                     <div class="form-text">{{ ui('limits_help') }}</div>
                 </div>
                 <div class="col-md-6">
