@@ -37,31 +37,53 @@
                 </div>
 
                 {{-- Capacity limits --}}
-                <div class="col-md-4">
+                <div class="col-md-12"><hr><h6>{{ ui('capacity_limits') }}</h6></div>
+                <div class="col-md-3">
                     <label class="form-label">{{ ui('limit_max_members') }}</label>
                     <input type="number" min="0" name="max_members" class="form-control"
                            value="{{ old('max_members', $plan?->limit('max_members') ?? 0) }}">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label">{{ ui('limit_max_storage_mb') }}</label>
                     <input type="number" min="0" name="max_storage_mb" class="form-control"
                            value="{{ old('max_storage_mb', $plan?->limit('max_storage_mb') ?? 0) }}">
                 </div>
-
-                {{-- RBAC creation limits --}}
-                <div class="col-md-12"><hr><h6>{{ ui('rbac_limits') }}</h6></div>
-
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label class="form-label">{{ ui('limit_max_roles') }}</label>
                     <input type="number" min="0" name="max_roles" class="form-control"
                            value="{{ old('max_roles', $plan?->limit('max_roles') ?? 0) }}">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label class="form-label">{{ ui('limit_max_permissions') }}</label>
                     <input type="number" min="0" name="max_permissions" class="form-control"
                            value="{{ old('max_permissions', $plan?->limit('max_permissions') ?? 0) }}">
                 </div>
 
+                {{-- Feature flags --}}
+                <div class="col-md-12"><hr><h6>{{ ui('features') }}</h6>
+                    <div class="form-text">{{ ui('features_help') }}</div>
+                </div>
+                <div class="col-12">
+                    <div class="row row-cols-2 row-cols-md-3 g-2">
+                        @foreach(config('pennant.features') as $slug => $cfg)
+                            @php($checked = in_array($slug, old('features', $plan->features ?? [])))
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input feat-toggle" type="checkbox" name="features[]"
+                                           value="{{ $slug }}" id="feat-{{ $slug }}" @checked($checked)
+                                           data-feature="{{ $slug }}">
+                                    <label class="form-check-label" for="feat-{{ $slug }}">{{ $cfg['label'] ?? $slug }}</label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">{{ ui('limit_max_features') }}</label>
+                    <input type="number" min="0" name="max_features" class="form-control"
+                           value="{{ old('max_features', $plan?->limit('max_features') ?? 0) }}">
+                </div>
                 <div class="col-md-6 d-flex align-items-end">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" name="can_create_roles" id="can_create_roles"
@@ -69,20 +91,16 @@
                         <label class="form-check-label" for="can_create_roles">{{ ui('can_create_roles') }}</label>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" name="can_create_permissions" id="can_create_permissions"
-                               {{ old('can_create_permissions', $plan?->limit('can_create_permissions')) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="can_create_permissions">{{ ui('can_create_permissions') }}</label>
-                    </div>
-                </div>
 
+                {{-- Permissions: only those whose feature is enabled in this plan --}}
+                <div class="col-12"><hr><h6>{{ ui('allowed_permissions') }}</h6>
+                    <div class="form-text">{{ ui('allowed_permissions_help') }}</div>
+                </div>
                 <div class="col-12">
-                    <label class="form-label">{{ ui('allowed_permissions') }}</label>
                     <div class="row row-cols-2 row-cols-md-3 g-2">
                         @foreach($permissions as $perm)
-                            @php($checked = in_array($perm, old('allowed_permissions', $plan?->limits['allowed_permissions'] ?? [])))
-                            <div class="col">
+                            @php($checked = in_array($perm, old('allowed_permissions', $plan->limits['allowed_permissions'] ?? [])))
+                            <div class="col perm-item" data-feature="{{ App\Models\Permission::featureOf($perm) }}">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
                                            value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
@@ -91,32 +109,6 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="form-text">{{ ui('allowed_permissions_help') }}</div>
-                </div>
-
-                <div class="col-md-6 d-flex align-items-end">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" name="is_active" id="is_active"
-                               {{ old('is_active', $plan->is_active ?? true) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="is_active">{{ ui('active') }}</label>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label">{{ ui('features') }}</label>
-                    <div class="row row-cols-2 row-cols-md-3 g-2">
-                        @foreach(config('pennant.features') as $slug => $cfg)
-                            @php($checked = in_array($slug, old('features', $plan->features ?? [])))
-                            <div class="col">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="features[]"
-                                           value="{{ $slug }}" id="feat-{{ $slug }}" @checked($checked)>
-                                    <label class="form-check-label" for="feat-{{ $slug }}">{{ $cfg['label'] ?? $slug }}</label>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="form-text">{{ ui('features_help') }}</div>
                 </div>
             </div>
 
@@ -134,13 +126,26 @@
     (() => {
         const name = document.getElementById('plan-name');
         const slug = document.getElementById('plan-slug');
-        if (!name || !slug || slug.readOnly) return;
-        let touched = slug.value.trim() !== '';
-        slug.addEventListener('input', () => { touched = true; });
-        name.addEventListener('input', () => {
-            if (!touched) slug.value = name.value.toLowerCase().trim()
-                .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-        });
+        if (name && slug && !slug.readOnly) {
+            let touched = slug.value.trim() !== '';
+            slug.addEventListener('input', () => { touched = true; });
+            name.addEventListener('input', () => {
+                if (!touched) slug.value = name.value.toLowerCase().trim()
+                    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            });
+        }
+    })();
+
+    // Show only permission checkboxes whose feature is enabled in this plan.
+    (() => {
+        const toggles = Array.from(document.querySelectorAll('.feat-toggle'));
+        const items = Array.from(document.querySelectorAll('.perm-item'));
+        const apply = () => {
+            const on = new Set(toggles.filter(t => t.checked).map(t => t.dataset.feature));
+            items.forEach(it => { it.style.display = on.has(it.dataset.feature) ? '' : 'none'; });
+        };
+        toggles.forEach(t => t.addEventListener('change', apply));
+        apply();
     })();
 </script>
 @endpush

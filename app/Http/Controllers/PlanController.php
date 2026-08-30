@@ -72,9 +72,9 @@ class PlanController extends Controller
             'max_members' => 'nullable|integer|min:0',
             'max_roles' => 'nullable|integer|min:0',
             'max_permissions' => 'nullable|integer|min:0',
+            'max_features' => 'nullable|integer|min:0',
             'max_storage_mb' => 'nullable|integer|min:0',
             'can_create_roles' => 'boolean',
-            'can_create_permissions' => 'boolean',
             'allowed_permissions' => 'array',
             'allowed_permissions.*' => 'string',
             'features' => 'array',
@@ -91,7 +91,6 @@ class PlanController extends Controller
             }
         }
         $limits['can_create_roles'] = $request->boolean('can_create_roles');
-        $limits['can_create_permissions'] = $request->boolean('can_create_permissions');
         $limits['allowed_permissions'] = $request->input('allowed_permissions', []);
 
         return [

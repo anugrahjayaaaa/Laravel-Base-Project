@@ -22,4 +22,10 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
 class Permission extends SpatiePermission
 {
     use SoftDeletes;
+
+    /** Feature slug a permission belongs to = the part before the first dot. */
+    public static function featureOf(string $name): string
+    {
+        return explode('.', $name, 2)[0];
+    }
 }
