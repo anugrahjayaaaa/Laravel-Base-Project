@@ -373,3 +373,67 @@ each is left as a hook, not hardcoded.
   `settlement` status before activating the plan.
 - **Currency mismatch** → Midtrans is IDR-only; reject any non-IDR payload.
 - **Sandbox hitting production** → §10.14 env isolation.
+
+## 12. Billing portal + admin analytics (built)
+
+Full portal, not PG-only (user decision: host the app, control everything,
+track revenue + active users).
+
+### 12.1 User portal — `/billing` (gated `feature:billing` + login)
+- `billing.index`: current plan + active license (key/type/expiry), payment history (paginated), download invoice PDF.
+- `billing.checkout`: existing dummy checkout (subscriber picks a paid plan).
+- `billing.cancel`: `BillingCancelRequest` (`authorize: billing.cancel`) →
+  `BillingService::cancelUser()` = **revoke license + freeze payment** (NO delete, NO refund — §10.2). Frozen data stays for accounting.
+- `billing.invoice/{payment}`: PDF via `barryvdh/laravel-dompdf` (blade-based, flexible). Owner-only (`payment.user_id === auth()->id()`).
+
+### 12.2 Admin analytics — `/admin/billing` (gated `can:billing.view` + `feature:billing`)
+KPIs: revenue (sum paid), active subscribers (users with an active license),
+paid-this-month, plan breakdown (active licenses per plan). Plus tables:
+recent payments (with user) + active licenses (with user/expiry).
+
+### 12.3 Data model
+- `Payment`: +`invoice_no` (lazy `INV-{id}`), +`canceled_at`, `user_id` FK.
+- `License`: +`user_id` FK (per-subscriber ownership; scope `active()` = active + not expired).
+- `User`: `payments()`, `licenses()`, `hasActiveLicense()`.
+- Permissions: `billing.view` (admin), `billing.cancel` (user). Seeded.
+
+### 12.4 Notes
+- Model 1 (per-instance) still applies for the *global* `active_plan` setting;
+  per-user subscription tracking rides on `License.user_id` + `Payment.user_id`.
+- Invoice is dummy (no real PG); swap `BillingService::checkout` for Midtrans
+  when `billing.fake=false` — PDF + portal unchanged.
+
+## 11. Plan limit model (implementation reference)
+
+The `plans` row carries a `limits` JSON + `features` array. This is the single
+source the admin UI, `PlanService`, and the license snapshot all read.
+
+### 11.1 `limits` keys (see `App\Models\Plan::LIMIT_KEYS`)
+- `max_members`, `max_storage_mb`, `max_roles`, `max_permissions`, `max_features` — numeric caps.
+- `allowed_permissions` — array of `permissions.name` a subscriber may assign when
+  creating roles. Empty = allow any permission of enabled features.
+- `can_create_roles` — **derived**, NOT an input. True iff the `roles` feature is
+  enabled on the plan (`in_array('roles', $features)` in `PlanRequest::toPlanData()`).
+  No separate toggle: granting the `roles` feature implicitly grants role creation.
+
+### 11.2 `features` + permission mapping
+- `features` is a subset of `config('pennant.features')` slugs.
+- Permission → feature mapping is **dynamic**, derived from the pennant config
+  (`App\Models\Permission::featureOf()`). The permission prefix (singular, e.g.
+  `user.view` → `user`) is pluralized (`Str::plural`) and matched against a feature
+  slug (`users`). Adding a feature to `config/pennant.php` auto-maps its
+  `*.{action}` permissions — no hardcoded list to maintain.
+
+### 11.3 Server guards (anti-bypass)
+`App\Http\Requests\Plan\PlanRequest` validates, after field rules:
+- `count(features) <= max_features` (else `plans.feature_limit_exceeded`).
+- every `allowed_permissions.*` must belong to an enabled feature, i.e.
+  `featureOf(perm)` ∈ `features` (else `plans.permission_feature_mismatch`).
+Client-side disables extra feature checkboxes and hides permission groups for
+disabled features, but the request rules are the real gate.
+
+### 11.4 Authorization
+Plan routes are gated route-level (`routes/web.php` → `can:feature.manage`);
+the Form Request `authorize()` re-checks the same permission. `can_create_roles`
+and `allowed_permissions` are enforced on the **subscriber** side
+(`RoleController`/`PermissionController`) — not yet built (open item).

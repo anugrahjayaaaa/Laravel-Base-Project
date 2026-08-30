@@ -129,4 +129,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | License secret
+    |--------------------------------------------------------------------------
+    |
+    | Used to sign/verify license keys (see App\Services\LicenseService).
+    | Keep this secret — anyone with it can forge license keys. Generate a
+    | unique value per deployment.
+    |
+    */
+    'license_secret' => env('APP_LICENSE_SECRET', 'change-me-in-production'),
+
 ];

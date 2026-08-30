@@ -69,7 +69,7 @@
                 <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
 
                 {{-- System / Settings --}}
-                @php($setActive = request()->routeIs('sessions.*','api-tokens.*','features.*','translations.*'))
+                @php($setActive = request()->routeIs('sessions.*','api-tokens.*','features.*','translations.*','plans.*'))
                 <li class="nav-item {{ $setActive ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $setActive ? 'active' : '' }}" aria-expanded="{{ $setActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
@@ -84,6 +84,16 @@
                         @endfeature
                         @endcanany
                         <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ __('messages.features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ __('messages.features') }}</span></a></li>
+                        @can('feature.manage')
+                        @feature('plans')
+                        <li class="nav-item"><a href="{{ route('plans.index') }}" data-menu-text="{{ ui('plans') }}" class="nav-link {{ request()->routeIs('plans.*') ? 'active' : '' }}"><i class="nav-icon bi bi-tags"></i> <span>{{ ui('plans') }}</span></a></li>
+                        @endfeature
+                        @can('billing.view')
+                        @feature('billing')
+                        <li class="nav-item"><a href="{{ route('admin.billing.index') }}" data-menu-text="{{ ui('billing_admin') }}" class="nav-link {{ request()->routeIs('admin.billing.*') ? 'active' : '' }}"><i class="nav-icon bi bi-graph-up"></i> <span>{{ ui('billing_admin') }}</span></a></li>
+                        @endfeature
+                        @endcan
+                        @endcan
                         @can('translation.view')
                         @feature('translations')
                         <li class="nav-item"><a href="{{ route('translations.index') }}" data-menu-text="{{ __('messages.translations') }}" class="nav-link {{ request()->routeIs('translations.*') ? 'active' : '' }}"><i class="nav-icon bi bi-translate"></i> <span>{{ __('messages.translations') }}</span></a></li>
@@ -91,6 +101,10 @@
                         @endcan
                     </ul>
                 </li>
+
+                @feature('billing')
+                <li class="nav-item"><a href="{{ route('billing.index') }}" data-menu-text="{{ ui('billing') }}" class="nav-link {{ request()->routeIs('billing.*') ? 'active' : '' }}"><i class="nav-icon bi bi-credit-card"></i> <span>{{ ui('billing') }}</span></a></li>
+                @endfeature
 
                 <li class="nav-item">
                     <form method="POST" action="{{ route('logout') }}" class="m-0">

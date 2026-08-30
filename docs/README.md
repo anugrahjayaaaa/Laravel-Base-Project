@@ -16,6 +16,8 @@ with docs, **docs win** (change via an ADR).
 | README.md | This index, goal, usage |
 | CONTRIBUTING.md | Dev setup, conventions, Definition of Done, open items |
 | architecture.md | Stack, layered architecture, v1 modules, decisions |
+| PRD.md | Product Requirements: scope, users, authz model, success metrics |
+| coding-standard.md | **Mandatory** coding rules — route-level authz, base Controller, Form Requests |
 | auth.md | Authentication (username/phone, strong pwd, lockout, verify) |
 | authorization.md | Dynamic RBAC + management UI |
 | feature-flags.md | Feature flags (layer above RBAC) |
@@ -28,6 +30,7 @@ with docs, **docs win** (change via an ADR).
 | observability.md | Logger + Sentry + health check |
 | api-mobile.md | Sanctum API /api/v1 for mobile |
 | i18n.md | Multi-locale web UI + REST API (en/id), file→DB override |
+| licensing-and-billing.md | Licensing + billing (Model 1/2, dummy PG). **§11 plan limit model** — `limits` keys, dynamic feature→permission map, server guards |
 | packages.md | Verified packages (don't reinvent) |
 | adr.md | Architecture Decision Records |
 | custom/README.md | **Custom features** for derived projects (separate from base docs) |

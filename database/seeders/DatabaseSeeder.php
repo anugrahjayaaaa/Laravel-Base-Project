@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
+use App\Models\Plan;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +21,7 @@ class DatabaseSeeder extends Seeder
         'api-token.view', 'api-token.create', 'api-token.delete',
         'feature.manage',
         'logs.view',
+        'billing.view', 'billing.cancel',
         'translation.view', 'translation.edit',
         'telescope.view',
         'periscope.view',
@@ -33,6 +36,22 @@ class DatabaseSeeder extends Seeder
 
         // Feature flags are declared in AppServiceProvider + config/pennant.php
         // (Laravel Pennant, DB store). They default ON; no seeding needed.
+
+        // Default plans: 'free' is always present (price 0, no PG needed).
+        // slug/price/limits/features are fully custom via CRUD (doc §9b).
+        Plan::updateOrCreate(
+            ['slug' => 'free'],
+            [
+                'name' => 'Free',
+                'price_monthly' => 0,
+                'is_active' => true,
+                'limits' => ['max_members' => 2, 'max_projects' => 1, 'max_storage_mb' => 500],
+                'features' => ['audit', 'telescope'],
+            ]
+        );
+
+        // Default active plan = free (Model 1 instance setting).
+        Setting::updateOrCreate(['key' => 'active_plan'], ['value' => 'free']);
 
         // Roles
         $superAdmin = Role::findOrCreate('super-admin', 'web');
