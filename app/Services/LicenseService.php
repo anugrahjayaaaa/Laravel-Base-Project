@@ -97,11 +97,7 @@ final class LicenseService
     /** Status of the currently activated license (or 'none'). */
     public static function status(): string
     {
-        $key = Setting::get('license_key');
-        if (! $key) {
-            return 'none';
-        }
-        $license = License::where('license_key', $key)->first();
+        $license = self::activeLicense();
         if (! $license) {
             return 'none';
         }
@@ -111,23 +107,31 @@ final class LicenseService
         if ($license->expires_at && $license->expires_at->isPast()) {
             return 'expired';
         }
-
         return 'active';
     }
 
     /** Days left on the activated license (null = lifetime/INF). */
     public static function daysLeft(): ?int
     {
+        $license = self::activeLicense();
+        if (! $license || ! $license->expires_at) {
+            return null;
+        }
+        return (int) now()->diffInDays($license->expires_at, false);
+    }
+
+    /**
+     * Shared lookup of the currently activated license row (if any).
+     * Reads the key from settings once; used by status(), daysLeft(),
+     * and DashboardController to avoid duplicate settings+license queries.
+     */
+    private static function activeLicense(): ?License
+    {
         $key = Setting::get('license_key');
         if (! $key) {
             return null;
         }
-        $license = License::where('license_key', $key)->first();
-        if (! $license || ! $license->expires_at) {
-            return null;
-        }
-
-        return (int) now()->diffInDays($license->expires_at, false);
+        return License::where('license_key', $key)->first();
     }
 
     /** Revoke a license (abuse / manual). Instant lock (doc §10.7). */

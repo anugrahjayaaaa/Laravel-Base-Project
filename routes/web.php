@@ -95,7 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('billing')->middleware('feature:billing')->group(function () {
         Route::get('/', [BillingController::class, 'index'])->name('billing.index');
         Route::post('/checkout', [BillingController::class, 'checkout'])
-            ->name('billing.checkout');
+            ->name('billing.checkout')->middleware('throttle:10,1');
         Route::post('/cancel', [BillingController::class, 'cancel'])
             ->name('billing.cancel')->middleware('can:billing.cancel');
         Route::get('/invoice/{payment}', [BillingController::class, 'invoice'])

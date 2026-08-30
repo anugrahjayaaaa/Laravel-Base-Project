@@ -35,11 +35,11 @@ final class BillingService
             return $payment;
         }
 
-        return self::complete($payment, 'dummy-'.Str::random(12));
+        return self::complete($payment, 'dummy-'.Str::random(12), $plan);
     }
 
     /** Mark paid + grant license. Idempotent via status. */
-    public static function complete(Payment $payment, string $gatewayRef): Payment
+    public static function complete(Payment $payment, string $gatewayRef, ?Plan $plan = null): Payment
     {
         if ($payment->status === 'paid') {
             return $payment; // already completed — idempotent
@@ -47,7 +47,7 @@ final class BillingService
 
         $payment->update(['status' => 'paid', 'gateway_ref' => $gatewayRef]);
 
-        $plan = Plan::where('slug', $payment->plan_slug)->firstOrFail();
+        $plan = $plan ?? Plan::where('slug', $payment->plan_slug)->firstOrFail();
 
         // ponytail: dummy has no billing period -> honor plan.billing_period
         //  lifetime  => expires_at null (never expires)
@@ -63,7 +63,7 @@ final class BillingService
         ]);
         LicenseService::activate($key);
 
-        return $payment;
+        return $payment->fresh();
     }
 
     /** Cancel a user's subscription: revoke their license + freeze (no refund, doc §10.2). */
@@ -107,7 +107,8 @@ final class BillingService
             ]);
 
         if (($payload['status'] ?? 'paid') === 'paid') {
-            return self::complete($payment, $ref);
+            $plan = Plan::where('slug', $payload['plan_slug'])->first();
+            return self::complete($payment, $ref, $plan);
         }
 
         return $payment;
