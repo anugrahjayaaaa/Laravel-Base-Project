@@ -51,3 +51,5 @@ npm install && npm run dev   # or build
 
 ## Open items (not v1)
 - MFA/2FA, SMS OTP, in-app notifications, file-upload module.
+- Subscriber-side RBAC enforcement: `can_create_roles` + `allowed_permissions` gate at `RoleController`/`PermissionController` (doc licensing §11.4). Currently open — plan limits are NOT enforced when subscribers create roles/permissions. Add when subscriber RBAC is needed.
+- Midtrans integration: swap `billing.fake=true` dummy checkout for real PG (Midtrans Snap + webhook). See `licensing-and-billing.md` §6.

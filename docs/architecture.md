@@ -43,12 +43,15 @@ see `docs/coding-standard.md` §Authorization and `docs/adr.md` ADR-0010.**
 
 ## v1 modules
 1. Auth (login username|phone, logout, register, reset pwd, failed-login lockout, email verify, profile self-service, session mgmt)
-2. RBAC (roles, permissions, assignment UI — dynamic)
+2. RBAC (roles, permissions, assignment UI — dynamic, gated by `feature:roles`/`feature:permissions` flags)
 3. Audit Trail (read-only, filter by user/action/date)
 4. User Management (CRUD, soft delete)
-5. Dashboard home
+5. Dashboard home (+ license status badge)
 6. API (Sanctum /api/v1)
-7. Template reference (sidebar section from zip demo)
+7. Feature flags (Laravel Pennant, `/features` UI)
+8. Plans (custom CRUD: slug, price, limits JSON, features array; `free` seeded)
+9. Licensing + Billing (Model 1 per-instance license; dummy checkout + real PG webhook; billing portal + admin analytics — see `licensing-and-billing.md`)
+10. Template reference (sidebar section from zip demo)
 
 ## Required v1 features
 - Forgot/reset password (hashed token, 60m expiry, single-use)
