@@ -66,13 +66,12 @@
                     </ul>
                 </li>
 
-                <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
-
                 {{-- System / Settings --}}
-                @php($setActive = request()->routeIs('sessions.*','api-tokens.*','features.*','translations.*','plans.*'))
+                @php($setActive = request()->routeIs('sessions.*','api-tokens.*','features.*','translations.*','plans.*','profile.*'))
                 <li class="nav-item {{ $setActive ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $setActive ? 'active' : '' }}" aria-expanded="{{ $setActive ? 'true' : 'false' }}"><i class="nav-icon bi bi-gear"></i> <span>{{ __('messages.settings') }}</span><i class="nav-arrow bi bi-chevron-right"></i></a>
                     <ul class="nav nav-treeview">
+                        <li class="nav-item"><a href="{{ route('profile.show') }}" data-menu-text="{{ __('messages.profile') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}"><i class="nav-icon bi bi-person"></i> <span>{{ __('messages.profile') }}</span></a></li>
                         @can('feature.manage')
                         @feature('sessions')
                         <li class="nav-item"><a href="{{ route('sessions.index') }}" data-menu-text="{{ __('messages.sessions') }}" class="nav-link {{ request()->routeIs('sessions.*') ? 'active' : '' }}"><i class="nav-icon bi bi-pc-display"></i> <span>{{ __('messages.sessions') }}</span></a></li>
