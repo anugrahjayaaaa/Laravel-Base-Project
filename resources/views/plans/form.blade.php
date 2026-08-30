@@ -9,9 +9,9 @@
             @csrf
             @if($plan) @method('PUT') @endif
 
-            {{-- Common info --}}
-            <h6>{{ ui('common_info') }}</h6>
-            <div class="row g-3 mb-2">
+            {{-- General --}}
+            <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ ui('common_info') }}</h6>
+            <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('name') }}</label>
                     <input type="text" name="name" id="plan-name" class="form-control"
@@ -45,75 +45,94 @@
                 </div>
             </div>
 
-            {{-- Capacity limits --}}
-            <hr><h6>{{ ui('capacity_limits') }}</h6>
-            <div class="row g-3 mb-2">
-                <div class="col-md-3">
+            {{-- Capacity --}}
+            <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ ui('capacity_limits') }}</h6>
+            <div class="row g-3 mb-1">
+                <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_members') }}</label>
                     <input type="number" min="0" name="max_members" class="form-control"
                            value="{{ old('max_members', $plan?->limit('max_members') ?? 0) }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_storage_mb') }}</label>
                     <input type="number" min="0" name="max_storage_mb" class="form-control"
                            value="{{ old('max_storage_mb', $plan?->limit('max_storage_mb') ?? 0) }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_roles') }}</label>
                     <input type="number" min="0" name="max_roles" class="form-control"
                            value="{{ old('max_roles', $plan?->limit('max_roles') ?? 0) }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_permissions') }}</label>
                     <input type="number" min="0" name="max_permissions" class="form-control"
                            value="{{ old('max_permissions', $plan?->limit('max_permissions') ?? 0) }}">
                 </div>
-            </div>
-
-            {{-- Features --}}
-            <hr><h6>{{ ui('features') }}</h6>
-            <div class="row g-3 mb-2">
-                <div class="col-md-3">
+                <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_features') }}</label>
                     <input type="number" min="0" name="max_features" id="max_features" class="form-control"
                            value="{{ old('max_features', $plan?->limit('max_features') ?? 0) }}">
-                    <div class="form-text">{{ ui('max_features_help') }}</div>
                 </div>
-                <div class="col-12">
-                    <div class="row row-cols-2 row-cols-md-3 g-2" id="feature-list">
-                        @foreach(config('pennant.features') as $slug => $cfg)
-                            @php($checked = in_array($slug, old('features', $plan->features ?? [])))
-                            <div class="col">
-                                <div class="form-check">
-                                    <input class="form-check-input feat-toggle" type="checkbox" name="features[]"
-                                           value="{{ $slug }}" id="feat-{{ $slug }}" @checked($checked)
-                                           data-feature="{{ $slug }}">
-                                    <label class="form-check-label" for="feat-{{ $slug }}">{{ $cfg['label'] ?? $slug }}</label>
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="col-md-4 col-lg-2 d-flex align-items-end">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" name="can_create_roles" id="can_create_roles"
+                               {{ old('can_create_roles', $plan?->limit('can_create_roles')) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="can_create_roles">{{ ui('can_create_roles') }}</label>
                     </div>
                 </div>
             </div>
 
-            {{-- Permissions (filtered by enabled features) --}}
-            <hr><h6>{{ ui('allowed_permissions') }}</h6>
-            <div class="form-text mb-2">{{ ui('allowed_permissions_help') }}</div>
-            <div class="row row-cols-2 row-cols-md-3 g-2" id="perm-list">
-                @foreach($permissions as $perm)
-                    @php($feat = App\Models\Permission::featureOf($perm))
-                    @php($checked = in_array($perm, old('allowed_permissions', $plan->limits['allowed_permissions'] ?? [])))
-                    <div class="col perm-item" data-feature="{{ $feat }}">
+            {{-- Features --}}
+            <h6 class="text-uppercase text-muted small fw-bold mt-4 mb-2 d-flex justify-content-between">
+                <span>{{ ui('features') }}</span>
+                <span class="badge bg-secondary" id="feature-counter">0</span>
+            </h6>
+            <div class="row row-cols-2 row-cols-md-3 g-2 mb-4" id="feature-list">
+                @foreach(config('pennant.features') as $slug => $cfg)
+                    @php($checked = in_array($slug, old('features', $plan->features ?? [])))
+                    <div class="col">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
-                                   value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
-                            <label class="form-check-label" for="perm-{{ Str::slug($perm) }}">{{ $perm }}</label>
+                            <input class="form-check-input feat-toggle" type="checkbox" name="features[]"
+                                   value="{{ $slug }}" id="feat-{{ $slug }}" @checked($checked)
+                                   data-feature="{{ $slug }}">
+                            <label class="form-check-label" for="feat-{{ $slug }}">{{ $cfg['label'] ?? $slug }}</label>
                         </div>
                     </div>
                 @endforeach
             </div>
 
-            <div class="mt-3">
+            {{-- Permissions (grouped by feature, filtered by enabled features) --}}
+            <h6 class="text-uppercase text-muted small fw-bold mb-2">{{ ui('allowed_permissions') }}</h6>
+            <div class="form-text mb-3">{{ ui('allowed_permissions_help') }}</div>
+            <div class="accordion" id="perm-accordion">
+                @php($grouped = $permissions->groupBy(fn ($p) => App\Models\Permission::featureOf($p)))
+                @foreach(config('pennant.features') as $slug => $cfg)
+                    <div class="accordion-item perm-group" data-feature="{{ $slug }}">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#perm-{{ $slug }}" aria-expanded="false">
+                                {{ $cfg['label'] ?? $slug }}
+                            </button>
+                        </h2>
+                        <div id="perm-{{ $slug }}" class="accordion-collapse collapse" data-bs-parent="#perm-accordion">
+                            <div class="accordion-body row row-cols-2 row-cols-md-3 g-2">
+                                @foreach($grouped->get($slug, []) as $perm)
+                                    @php($checked = in_array($perm, old('allowed_permissions', $plan->limits['allowed_permissions'] ?? [])))
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
+                                                   value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
+                                            <label class="form-check-label" for="perm-{{ Str::slug($perm) }}">{{ $perm }}</label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="mt-4">
                 <button class="btn btn-primary">{{ ui('save') }}</button>
                 <a href="{{ route('plans.index') }}" class="btn btn-light border">{{ ui('cancel') }}</a>
             </div>
@@ -137,17 +156,17 @@
         }
     })();
 
-    // Feature checkboxes: respect max_features (disable extras); permission rows
-    // show only for enabled features.
+    // Feature checkboxes: respect max_features (disable extras), update counter,
+    // and toggle permission accordion groups by enabled feature.
     (() => {
         const maxInput = document.getElementById('max_features');
         const toggles = Array.from(document.querySelectorAll('.feat-toggle'));
-        const items = Array.from(document.querySelectorAll('.perm-item'));
+        const counter = document.getElementById('feature-counter');
+        const groups = Array.from(document.querySelectorAll('.perm-group'));
 
         const apply = () => {
             const on = toggles.filter(t => t.checked).map(t => t.dataset.feature);
             const max = parseInt(maxInput?.value || '0', 10);
-            // disable feature checkboxes beyond the cap
             if (max > 0) {
                 toggles.forEach(t => {
                     if (!t.checked && on.length >= max) t.disabled = true;
@@ -156,11 +175,11 @@
             } else {
                 toggles.forEach(t => t.disabled = false);
             }
+            if (counter) counter.textContent = on.length + (max > 0 ? ' / ' + max : '');
             const set = new Set(on);
-            items.forEach(it => {
-                const show = set.has(it.dataset.feature);
-                it.style.display = show ? '' : 'none';
-                it.querySelectorAll('input').forEach(i => { if (!show) i.checked = false; });
+            groups.forEach(g => {
+                const show = set.has(g.dataset.feature);
+                g.style.display = show ? '' : 'none';
             });
         };
         toggles.forEach(t => t.addEventListener('change', apply));
