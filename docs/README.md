@@ -30,6 +30,7 @@ with docs, **docs win** (change via an ADR).
 | observability.md | Logger + Sentry + health check |
 | api-mobile.md | Sanctum API /api/v1 for mobile |
 | i18n.md | Multi-locale web UI + REST API (en/id), file→DB override |
+| licensing-and-billing.md | Licensing + billing (Model 1/2, dummy PG). **§11 plan limit model** — `limits` keys, dynamic feature→permission map, server guards |
 | packages.md | Verified packages (don't reinvent) |
 | adr.md | Architecture Decision Records |
 | custom/README.md | **Custom features** for derived projects (separate from base docs) |
