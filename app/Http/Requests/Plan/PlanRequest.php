@@ -34,7 +34,6 @@ class PlanRequest extends FormRequest
             'max_permissions' => 'nullable|integer|min:0',
             'max_features' => 'nullable|integer|min:0',
             'max_storage_mb' => 'nullable|integer|min:0',
-            'can_create_roles' => 'boolean',
             'allowed_permissions' => 'array',
             'allowed_permissions.*' => 'string|exists:permissions,name',
             'features' => 'array',
@@ -51,7 +50,8 @@ class PlanRequest extends FormRequest
                 $limits[$key] = (int) $this->input($key);
             }
         }
-        $limits['can_create_roles'] = $this->boolean('can_create_roles');
+        // Subscriber can create roles iff the `roles` feature is enabled — no separate toggle.
+        $limits['can_create_roles'] = in_array('roles', $this->input('features', []), true);
         $limits['allowed_permissions'] = $this->input('allowed_permissions', []);
 
         return [

@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Plan extends Model
 {
     // ponytail: single source for plan limit fields (view + controller read this).
-    // Keys kept stable — PlanService reads them. can_create_roles + allowed_permissions
-    // are non-numeric entries in the same `limits` JSON.
+    // Keys kept stable — PlanService reads them. `can_create_roles` is derived
+    // from the `roles` feature flag (no separate toggle); `allowed_permissions`
+    // is a non-numeric entry in the same `limits` JSON.
     public const LIMIT_KEYS = [
         'max_members' => 'limit_max_members',
         'max_roles' => 'limit_max_roles',

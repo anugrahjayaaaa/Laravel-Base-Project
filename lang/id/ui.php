@@ -149,7 +149,7 @@ return [
     'limit_max_storage_mb' => 'Maks. storage (MB)',
     'capacity_limits' => 'Batas kapasitas',
     'rbac_limits' => 'Batas RBAC',
-    'can_create_roles' => 'Subscriber bisa membuat role',
+    'roles_auto_create' => 'Subscriber bisa membuat role saat fitur Roles aktif.',
     'allowed_permissions' => 'Izin yang diizinkan',
     'allowed_permissions_help' => 'Izin yang boleh dipakai subscriber saat membuat role. Hanya tampil untuk fitur yang diaktifkan di atas. Biarkan kosong untuk mengizinkan semua.',
     'limits_help' => 'Batas numerik yang diterapkan pada paket.',

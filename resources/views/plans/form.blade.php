@@ -74,11 +74,7 @@
                            value="{{ old('max_features', $plan?->limit('max_features') ?? 0) }}">
                 </div>
                 <div class="col-md-4 col-lg-2 d-flex align-items-end">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" name="can_create_roles" id="can_create_roles"
-                               {{ old('can_create_roles', $plan?->limit('can_create_roles')) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="can_create_roles">{{ ui('can_create_roles') }}</label>
-                    </div>
+                    <small class="text-muted">{{ ui('roles_auto_create') }}</small>
                 </div>
             </div>
 

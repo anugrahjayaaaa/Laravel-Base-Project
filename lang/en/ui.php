@@ -149,7 +149,7 @@ return [
     'limit_max_storage_mb' => 'Max storage (MB)',
     'capacity_limits' => 'Capacity limits',
     'rbac_limits' => 'RBAC limits',
-    'can_create_roles' => 'Subscribers can create roles',
+    'roles_auto_create' => 'Subscribers can create roles when the Roles feature is enabled.',
     'allowed_permissions' => 'Allowed permissions',
     'allowed_permissions_help' => 'Permissions a subscriber may assign when creating roles. Only shown for features enabled above. Leave all unchecked to allow any.',
     'limits_help' => 'Numeric caps applied to the plan.',
