@@ -142,7 +142,6 @@ return [
     'period_lifetime' => 'Lifetime',
     'limit_max_members' => 'Maks. member',
     'limit_max_projects' => 'Maks. proyek',
-    'limit_max_storage_mb' => 'Maks. storage (MB)',
     'limits_help' => 'Batas numerik yang diterapkan pada paket.',
     'features_help' => 'Modul yang aktif untuk paket ini.',
     'no_plans' => 'Belum ada paket.',

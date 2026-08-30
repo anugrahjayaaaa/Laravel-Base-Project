@@ -11,7 +11,6 @@ class Plan extends Model
     public const LIMIT_KEYS = [
         'max_members' => 'limit_max_members',
         'max_projects' => 'limit_max_projects',
-        'max_storage_mb' => 'limit_max_storage_mb',
     ];
 
     protected $fillable = [

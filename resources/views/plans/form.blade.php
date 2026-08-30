@@ -36,20 +36,15 @@
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">{{ ui('limit_max_members') }}</label>
                     <input type="number" min="0" name="max_members" class="form-control"
                            value="{{ old('max_members', $plan?->limit('max_members') ?? 0) }}">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">{{ ui('limit_max_projects') }}</label>
                     <input type="number" min="0" name="max_projects" class="form-control"
                            value="{{ old('max_projects', $plan?->limit('max_projects') ?? 0) }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">{{ ui('limit_max_storage_mb') }}</label>
-                    <input type="number" min="0" name="max_storage_mb" class="form-control"
-                           value="{{ old('max_storage_mb', $plan?->limit('max_storage_mb') ?? 0) }}">
                 </div>
 
                 <div class="col-md-6 d-flex align-items-end">

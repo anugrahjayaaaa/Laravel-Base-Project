@@ -142,7 +142,6 @@ return [
     'period_lifetime' => 'Lifetime',
     'limit_max_members' => 'Max members',
     'limit_max_projects' => 'Max projects',
-    'limit_max_storage_mb' => 'Max storage (MB)',
     'limits_help' => 'Numeric caps applied to the plan.',
     'features_help' => 'Modules enabled for this plan.',
     'no_plans' => 'No plans yet.',

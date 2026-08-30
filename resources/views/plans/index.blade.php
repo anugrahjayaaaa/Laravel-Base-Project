@@ -25,7 +25,7 @@
                     <td>{{ $plan->name }}</td>
                     <td><span class="text-muted small">{{ $plan->slug }}</span></td>
                     <td>Rp {{ number_format($plan->price_monthly, 0, ',', '.') }}</td>
-                    <td><span class="small text-muted">{{ collect($plan->limits ?? [])->map(fn($v,$k)=>ui('limit_'.str_replace('_','',$k)).': '.$v)->join(', ') ?: '-' }}</span></td>
+                    <td><span class="small text-muted">{{ collect(App\Models\Plan::LIMIT_KEYS)->map(fn($label,$k)=>ui($label).': '.($plan->limit($k) ?? 0))->join(', ') ?: '-' }}</span></td>
                     <td><span class="small text-muted">{{ collect($plan->features ?? [])->map(fn($f)=>config("pennant.features.$f.label", $f))->join(', ') ?: '-' }}</span></td>
                     <td>
                         @if($plan->is_active)

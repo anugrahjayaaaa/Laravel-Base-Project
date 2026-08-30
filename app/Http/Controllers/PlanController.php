@@ -64,7 +64,6 @@ class PlanController extends Controller
             'is_active' => 'boolean',
             'max_members' => 'nullable|integer|min:0',
             'max_projects' => 'nullable|integer|min:0',
-            'max_storage_mb' => 'nullable|integer|min:0',
             'features' => 'array',
             'features.*' => 'string',
         ]);
