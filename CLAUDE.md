@@ -1,47 +1,33 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Laravel Base Project — AI Agent Guide
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+Reusable Laravel 13 admin base: auth, RBAC, audit, feature flags, licensing/billing.
+This file is the **entry point for AI agents**. Human devs start at `docs/README.md`.
 
-## Prerequisites
+## Before any task
+1. Read `docs/README.md` (single source of truth) + the relevant `docs/*.md`.
+2. If code conflicts with docs → **docs win**; change via ADR (`docs/adr.md`).
+3. Follow the dev-lifecycle skill if available; otherwise: branch → code → test → PR.
 
-Verify that PHP and Composer are available:
+## Stack (current)
+- PHP 8.3+, Laravel 13, MySQL 8.
+- AdminLTE 4 + Bootstrap 5.3 + Bootstrap Icons, themed via `public/vendor/app-theme.css`
+  (tokens `--lbp-*`), dark default. **No npm/Vite build step** — all CSS/JS ships from
+  `public/vendor/*` (committed). Do NOT add a build pipeline or `package.json`.
+- Pest for tests; spatie (permission, activitylog), sanctum, pennant.
 
-```sh
-php -v
-composer -V
-```
+## Hard rules (AI must obey)
+- **Never merge to `main`.** Work on `feature/<name>` branch, push, open PR.
+- Run tests before declaring done: `php artisan test` (or a filtered slice).
+- Authorization: gate on the **route** (`can:` + `feature:` middleware), never in a
+  controller `__construct()`. See `docs/coding-standard.md` + `docs/PRD.md` §5.
+- Validation: dedicated Form Request, never inline `$request->validate()` in controllers.
+- i18n: `lang/{en,id}/{messages,ui}.php` are source of truth; spatie `language_lines`
+  override at runtime. `ui()` = ui.php (page text), `__('messages.*')` = messages.php
+  (domain/API). Never hardcode English in Blade.
+- Secrets: never commit; license/webhook secrets come from env and fail closed if missing.
+- Docs match code. Update `docs/` + ADR when behaviour changes.
 
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
-
-macOS:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
-```
-
-Windows PowerShell:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
-
-Linux:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
-
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
-
-## Agent Setup
-
-Install Laravel Boost from the application root before making application changes:
-
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
-
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
+## Scope boundaries
+- v1 is single-tenant (schema ready for `tenant_id`). Out of scope: MFA/2FA, SMS OTP,
+  multi-tenant, file-upload module.
+- The Issue-Tracker / Helm repos are SEPARATE — do not confuse this base project with them.
