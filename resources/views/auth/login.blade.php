@@ -24,11 +24,11 @@
                 </div>
                 <div class="input-group mb-3">
                     <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ ui('password') }}" required>
-                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    <button type="button" class="input-group-text" id="toggle-password" aria-label="Show password" style="cursor:pointer">
+                    <button type="button" class="input-group-text" id="toggle-password" aria-label="{{ ui('show_password') }}" style="cursor:pointer">
                         <i class="bi bi-eye" id="password-icon"></i>
                     </button>
                 </div>
+                @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 <div class="row">
                     <div class="col-8">
                         <div class="form-check">
