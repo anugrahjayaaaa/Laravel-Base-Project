@@ -125,7 +125,7 @@
                                     @php($checked = in_array($perm, old('allowed_permissions', $plan->limits['allowed_permissions'] ?? [])))
                                     <div class="col">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="allowed_permissions[]"
+                                            <input class="form-check-input perm-toggle" type="checkbox" name="allowed_permissions[]"
                                                    value="{{ $perm }}" id="perm-{{ Str::slug($perm) }}" @checked($checked)>
                                             <label class="form-check-label" for="perm-{{ Str::slug($perm) }}">{{ $perm }}</label>
                                         </div>
@@ -161,62 +161,61 @@
         }
     })();
 
-    // Feature + permission checkboxes: respect max_features and max_permissions caps.
-    (() => {
-        const maxFeatInput = document.getElementById('max_features');
-        const maxPermInput = document.getElementById('max_permissions');
-        const toggles = Array.from(document.querySelectorAll('.feat-toggle'));
-        const counter = document.getElementById('feature-counter');
-        const groups = Array.from(document.querySelectorAll('.perm-group'));
-        const permToggles = Array.from(document.querySelectorAll('input[name="allowed_permissions[]"]'));
+// Feature + permission checkboxes: respect max_features and max_permissions caps.
+(() => {
+    const maxFeatInput = document.getElementById('max_features');
+    const maxPermInput = document.getElementById('max_permissions');
+    const toggles = Array.from(document.querySelectorAll('.feat-toggle'));
+    const counter = document.getElementById('feature-counter');
+    const groups = Array.from(document.querySelectorAll('.perm-group'));
+    const permToggles = Array.from(document.querySelectorAll('.perm-toggle')); // class-based, reliable
 
-        const apply = () => {
-            const on = toggles.filter(t => t.checked).map(t => t.dataset.feature);
-            const maxFeat = parseInt(maxFeatInput?.value || '0', 10);
-            const maxPerm = parseInt(maxPermInput?.value || '0', 10);
+    const apply = () => {
+        const on = toggles.filter(t => t.checked).map(t => t.dataset.feature);
+        const maxFeat = parseInt(maxFeatInput?.value || '0', 10);
+        const maxPerm = parseInt(maxPermInput?.value || '0', 10);
 
-            // Feature toggles: max 0 → disable all
-            if (maxFeat > 0) {
-                toggles.forEach(t => {
-                    if (!t.checked && on.length >= maxFeat) t.disabled = true;
-                    else t.disabled = false;
+        // Feature toggles: max 0 → disable all
+        if (maxFeat > 0) {
+            toggles.forEach(t => {
+                if (!t.checked && on.length >= maxFeat) t.disabled = true;
+                else t.disabled = false;
+            });
+        } else {
+            toggles.forEach(t => t.disabled = true);
+        }
+
+        if (counter) counter.textContent = on.length + (maxFeat > 0 ? ' / ' + maxFeat : '');
+
+        // Permission toggles: only apply caps when max_permissions input exists (global mode)
+        if (maxPermInput && permToggles.length > 0) {
+            const visiblePerms = permToggles.filter(p => {
+                const group = p.closest('.perm-group');
+                return group && group.style.display !== 'none';
+            });
+            const checkedPerms = visiblePerms.filter(p => p.checked).length;
+
+            if (maxPerm > 0) {
+                permToggles.forEach(p => {
+                    if (!p.checked && checkedPerms >= maxPerm) p.disabled = true;
+                    else p.disabled = false;
                 });
             } else {
-                toggles.forEach(t => t.disabled = true);
+                permToggles.forEach(p => p.disabled = true);
             }
+        }
 
-            if (counter) counter.textContent = on.length + (maxFeat > 0 ? ' / ' + maxFeat : '');
-
-            // Permission toggles: only apply caps when max_permissions input exists (global mode)
-            if (maxPermInput) {
-                const maxPerm = parseInt(maxPermInput.value || '0', 10);
-                const visiblePerms = permToggles.filter(p => {
-                    const group = p.closest('.perm-group');
-                    return group && group.style.display !== 'none';
-                });
-                const checkedPerms = visiblePerms.filter(p => p.checked).length;
-
-                if (maxPerm > 0) {
-                    permToggles.forEach(p => {
-                        if (!p.checked && checkedPerms >= maxPerm) p.disabled = true;
-                        else p.disabled = false;
-                    });
-                } else {
-                    permToggles.forEach(p => p.disabled = true);
-                }
-            }
-
-            const set = new Set(on);
-            groups.forEach(g => {
-                g.style.display = set.has(g.dataset.feature) ? '' : 'none';
-            });
-        };
-        toggles.forEach(t => t.addEventListener('change', apply));
-        permToggles.forEach(p => p.addEventListener('change', apply));
-        maxFeatInput?.addEventListener('input', apply);
-        maxPermInput?.addEventListener('input', apply);
-        apply();
-    })();
+        const set = new Set(on);
+        groups.forEach(g => {
+            g.style.display = set.has(g.dataset.feature) ? '' : 'none';
+        });
+    };
+    toggles.forEach(t => t.addEventListener('change', apply));
+    permToggles.forEach(p => p.addEventListener('change', apply));
+    maxFeatInput?.addEventListener('input', apply);
+    maxPermInput?.addEventListener('input', apply);
+    apply();
+})();
 </script>
 @endpush
 @endsection
