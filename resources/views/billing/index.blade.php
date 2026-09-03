@@ -32,7 +32,7 @@
                     </form>
                 @else
                     <p class="text-muted">{{ __('messages.no_active_subscription') }}</p>
-                    <a href="{{ route('plans.index') }}" class="btn btn-primary">{{ __('messages.subscribe') }}</a>
+                    <a href="{{ route('plans.index') }}" class="btn btn-primary">{{ ui('subscribe') }}</a>
                 @endif
             </div>
         </div>
@@ -56,11 +56,11 @@
         <table class="table table-hover mb-0">
             <thead>
                 <tr>
-                    <th>{{ __('messages.invoice') }}</th>
-                    <th>{{ __('messages.plan') }}</th>
-                    <th>{{ __('messages.amount') }}</th>
-                    <th>{{ __('messages.status') }}</th>
-                    <th>{{ __('messages.date') }}</th>
+                    <th>{{ ui('invoice') }}</th>
+                    <th>{{ ui('plan') }}</th>
+                    <th>{{ ui('amount') }}</th>
+                    <th>{{ ui('status') }}</th>
+                    <th>{{ ui('date') }}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -78,7 +78,7 @@
                         <td>{{ $p->created_at->format('Y-m-d') }}</td>
                         <td>
                             @if($p->isPaid())
-                                <a href="{{ route('billing.invoice', $p) }}" class="btn btn-sm btn-outline-secondary">{{ __('messages.download') }}</a>
+                                <a href="{{ route('billing.invoice', $p) }}" class="btn btn-sm btn-outline-secondary">{{ ui('download') }}</a>
                             @endif
                         </td>
                     </tr>

@@ -141,9 +141,12 @@ return [
 
     // ── plans / licensing ──
     'plans' => 'Paket',
-    'plans_intro' => 'Kelola paket berlangganan. Slug, harga, limit, dan fitur sepenuhnya custom.',
-    'new_plan' => 'Paket Baru',
+    'plans_intro' => 'Kelola paket langganan. Slug, harga, limit, dan fitur sepenuhnya kustom.',
+    'plan' => 'Paket',
+    'invoice' => 'Invoice',
+    'amount' => 'Jumlah',
     'subscribe' => 'Berlangganan',
+    'new_plan' => 'Paket Baru',
     'edit_plan' => 'Edit Paket',
     'price_monthly' => 'Harga (bulanan)',
     'limits' => 'Limit',

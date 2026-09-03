@@ -142,8 +142,11 @@ return [
     // ── plans / licensing ──
     'plans' => 'Plans',
     'plans_intro' => 'Manage subscription plans. Slug, price, limits and features are fully custom.',
-    'new_plan' => 'New Plan',
+    'plan' => 'Plan',
+    'invoice' => 'Invoice',
+    'amount' => 'Amount',
     'subscribe' => 'Subscribe',
+    'new_plan' => 'New Plan',
     'edit_plan' => 'Edit Plan',
     'price_monthly' => 'Price (monthly)',
     'limits' => 'Limits',
