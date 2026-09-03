@@ -228,4 +228,17 @@ return [
     'selected' => 'selected',
     'confirm_bulk_delete_title' => 'Confirm bulk delete',
     'confirm_bulk_delete_body' => 'You are about to :action :count item(s). Continue?',
+
+    // ── sidebar / nav ──
+    'main_menu' => 'Main Menu',
+    'dashboard' => 'Dashboard',
+    'access_management' => 'Access Management',
+    'monitoring' => 'Monitoring',
+    'logs' => 'Logs',
+    'system_logs' => 'System Logs',
+    'telescope' => 'Telescope',
+    'periscope' => 'Periscope',
+    'settings' => 'Settings',
+    'sessions' => 'Sessions',
+    'logout' => 'Logout',
 ];

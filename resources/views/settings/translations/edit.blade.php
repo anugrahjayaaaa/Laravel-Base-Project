@@ -5,7 +5,7 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <h1 class="m-0 h3">{{ __('messages.translations') }}: {{ $line->group }}.{{ $line->key }}</h1>
+        <h1 class="m-0 h3">{{ ui('translations') }}: {{ $line->group }}.{{ $line->key }}</h1>
     </div>
 </div>
 
@@ -23,7 +23,7 @@
                                    value="{{ old($locale, $line->text[$locale] ?? '') }}" required>
                         </div>
                     @endforeach
-                    <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ ui('save') }}</button>
                     <a href="{{ route('translations.index') }}" class="btn btn-link">{{ ui('cancel') }}</a>
                 </form>
             </div>

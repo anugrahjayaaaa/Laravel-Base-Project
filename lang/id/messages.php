@@ -1,33 +1,10 @@
 <?php
 
 return [
-    // ── common (navigation / sidebar labels) ──
-    'dashboard' => 'Dasbor',
-    'users' => 'Pengguna',
-    'roles' => 'Peran',
-    'permissions' => 'Izin',
-    'audit_log' => 'Log Audit',
-    'logs' => 'Log',
-    'telescope' => 'Telescope',
-    'profile' => 'Profil',
-    'sessions' => 'Sesi',
-    'api_tokens' => 'Token API',
-    'settings' => 'Pengaturan',
-    'features' => 'Fitur',
-    'logout' => 'Keluar',
-    'system_logs' => 'Log Sistem',
+    // ── locale toggle labels ──
     'language' => 'Bahasa',
     'english' => 'Inggris',
     'indonesian' => 'Indonesia',
-    'main_menu' => 'Menu Utama',
-    'access_management' => 'Manajemen Akses',
-    'monitoring' => 'Pemantauan',
-    'periscope' => 'Periscope',
-    'template' => 'Template',
-    'login' => 'Masuk',
-    'translations' => 'Terjemahan',
-    'save' => 'Simpan',
-    'saved' => 'Tersimpan.',
 
     // ── flash / action messages ──
     'user_created' => 'Pengguna dibuat.',

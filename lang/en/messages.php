@@ -1,33 +1,10 @@
 <?php
 
 return [
-    // ── common (navigation / sidebar labels) ──
-    'dashboard' => 'Dashboard',
-    'users' => 'Users',
-    'roles' => 'Roles',
-    'permissions' => 'Permissions',
-    'audit_log' => 'Audit Log',
-    'logs' => 'Logs',
-    'telescope' => 'Telescope',
-    'profile' => 'Profile',
-    'sessions' => 'Sessions',
-    'api_tokens' => 'API Tokens',
-    'settings' => 'Settings',
-    'features' => 'Features',
-    'logout' => 'Logout',
-    'system_logs' => 'System Logs',
+    // ── locale toggle labels ──
     'language' => 'Language',
     'english' => 'English',
     'indonesian' => 'Indonesian',
-    'main_menu' => 'Main Menu',
-    'access_management' => 'Access Management',
-    'monitoring' => 'Monitoring',
-    'periscope' => 'Periscope',
-    'template' => 'Template',
-    'login' => 'Login',
-    'translations' => 'Translations',
-    'save' => 'Save',
-    'saved' => 'Saved.',
 
     // ── flash / action messages ──
     'user_created' => 'User created.',

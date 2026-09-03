@@ -79,9 +79,9 @@
                     </li>
                     <li><hr class="dropdown-divider my-0"></li>
                     <li><a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> {{ ui('profile') }}</a></li>
-                    <li><a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> {{ __('messages.sessions') }}</a></li>
+                    <li><a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> {{ ui('sessions') }}</a></li>
                     @can('feature.manage')
-                    <li><a href="{{ route('settings.system') }}" class="dropdown-item py-2"><i class="bi bi-gear me-2"></i> {{ __('messages.system_settings') }}</a></li>
+                    <li><a href="{{ route('settings.system') }}" class="dropdown-item py-2"><i class="bi bi-gear me-2"></i> {{ ui('system_settings') }}</a></li>
                     @endcan
                     <li><hr class="dropdown-divider my-0"></li>
                     <li class="dropdown-item-text pb-1">
@@ -103,7 +103,7 @@
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button class="dropdown-item py-2 text-danger w-100 text-start"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
+                            <button class="dropdown-item py-2 text-danger w-100 text-start"><i class="bi bi-box-arrow-right me-2"></i> {{ ui('logout') }}</button>
                         </form>
                     </li>
                 </ul>

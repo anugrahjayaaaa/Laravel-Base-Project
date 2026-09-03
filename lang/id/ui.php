@@ -228,4 +228,17 @@ return [
     'selected' => 'dipilih',
     'confirm_bulk_delete_title' => 'Konfirmasi hapus massal',
     'confirm_bulk_delete_body' => 'Anda akan :action :count item. Lanjutkan?',
+
+    // ── sidebar / nav ──
+    'main_menu' => 'Menu Utama',
+    'dashboard' => 'Dasbor',
+    'access_management' => 'Manajemen Akses',
+    'monitoring' => 'Monitoring',
+    'logs' => 'Log',
+    'system_logs' => 'Log Sistem',
+    'telescope' => 'Telescope',
+    'periscope' => 'Periscope',
+    'settings' => 'Pengaturan',
+    'sessions' => 'Sesi',
+    'logout' => 'Keluar',
 ];

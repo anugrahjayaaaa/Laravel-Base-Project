@@ -23,7 +23,7 @@
                         'lifetime', 'manual' => 'period_lifetime',
                         default => 'period_monthly',
                     })
-                    <p class="text-muted">{{ __('messages.billing_period') }}: {{ __('messages.'.$periodKey) }}</p>
+                    <p class="text-muted">{{ ui('billing_period') }}: {{ ui($periodKey) }}</p>
                     <p>{{ __('messages.license') }}: <code>{{ $license->license_key }}</code></p>
                     <p>{{ __('messages.expires') }}: {{ $license->expires_at ? $license->expires_at->format('Y-m-d') : __('messages.lifetime') }}</p>
                     <form method="POST" action="{{ route('billing.cancel') }}" class="mt-3">
