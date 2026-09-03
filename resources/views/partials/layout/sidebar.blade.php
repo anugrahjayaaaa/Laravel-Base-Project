@@ -82,7 +82,11 @@
                         <li class="nav-item"><a href="{{ route('api-tokens.index') }}" data-menu-text="{{ ui('api_tokens') }}" class="nav-link {{ request()->routeIs('api-tokens.*') ? 'active' : '' }}"><i class="nav-icon bi bi-hdd-network"></i> <span>{{ ui('api_tokens') }}</span></a></li>
                         @endfeature
                         @endcanany
+                        @can('feature.manage')
+                        @feature('features')
                         <li class="nav-item"><a href="{{ route('features.index') }}" data-menu-text="{{ ui('features') }}" class="nav-link {{ request()->routeIs('features.*') ? 'active' : '' }}"><i class="nav-icon bi bi-toggle-on"></i> <span>{{ ui('features') }}</span></a></li>
+                        @endfeature
+                        @endcan
                         @can('feature.manage')
                         @feature('plans')
                         <li class="nav-item"><a href="{{ route('plans.index') }}" data-menu-text="{{ ui('plans') }}" class="nav-link {{ request()->routeIs('plans.*') ? 'active' : '' }}"><i class="nav-icon bi bi-tags"></i> <span>{{ ui('plans') }}</span></a></li>

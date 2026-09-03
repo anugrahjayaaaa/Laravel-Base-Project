@@ -67,6 +67,7 @@ return [
         'sessions' => ['label' => 'Sessions', 'group' => 'settings'],
         'api-tokens' => ['label' => 'API Tokens', 'group' => 'settings'],
         'translations' => ['label' => 'Translations', 'group' => 'settings'],
+        'features' => ['label' => 'Features Management', 'group' => 'settings'], // toggle the Feature Management module itself
         // Billing
         'plans' => ['label' => 'Plans', 'group' => 'billing'],
         'billing' => ['label' => 'Billing', 'group' => 'billing'],
