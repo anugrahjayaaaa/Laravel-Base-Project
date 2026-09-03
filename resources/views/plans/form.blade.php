@@ -178,7 +178,8 @@
                     else t.disabled = false;
                 });
             } else {
-                toggles.forEach(t => t.disabled = false);
+                // max_features = 0 → no features allowed, disable all
+                toggles.forEach(t => t.disabled = true);
             }
             if (counter) counter.textContent = on.length + (max > 0 ? ' / ' + max : '');
             const set = new Set(on);
