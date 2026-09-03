@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="input-group mb-3">
-                    <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror"
+                    <input type="tel" name="phone" inputmode="numeric" class="form-control @error('phone') is-invalid @enderror"
                            placeholder="{{ ui('phone_optional') }}" value="{{ old('phone') }}">
                     @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-telephone"></i></div>

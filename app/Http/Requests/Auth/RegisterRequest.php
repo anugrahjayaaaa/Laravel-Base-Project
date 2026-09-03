@@ -25,7 +25,7 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|max:255',
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:255', 'unique:users,phone'],
+            'phone' => ['nullable', 'string', 'max:255', 'regex:/^\+?[0-9\s\-\(\)]+$/', 'unique:users,phone'],
             // Strong password: min 12 chars with upper/lower/number/symbol (doc auth.md §Password rules)
             'password' => ['required', 'string', 'min:12', 'confirmed', 'regex:/[A-Z]/', 'regex:/[a-z]/', 'regex:/[0-9]/', 'regex:/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.?<>\/]/'],
         ];
@@ -39,6 +39,7 @@ class RegisterRequest extends FormRequest
             'password.min' => __('messages.password_min', ['min' => 12]),
             'password.confirmed' => __('messages.password_confirmed_mismatch'),
             'password.regex' => __('messages.password_strong_required'),
+            'phone.regex' => __('messages.phone_invalid'),
         ];
     }
 }

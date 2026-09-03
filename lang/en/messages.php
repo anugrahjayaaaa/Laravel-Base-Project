@@ -42,6 +42,7 @@ return [
     'profile_updated' => 'Profile updated.',
     'password_changed' => 'Password changed.',
     'password_required' => 'Password is required.',
+    'phone_invalid' => 'Phone must contain only digits, +, spaces, dashes, and parentheses.',
     'password_min' => 'Password must be at least :min characters.',
     'password_confirmed_mismatch' => 'Password confirmation does not match.',
     'password_strong_required' => 'Password must contain upper and lowercase, number, and symbol.',

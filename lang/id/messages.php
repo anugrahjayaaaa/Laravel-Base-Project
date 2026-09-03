@@ -42,6 +42,7 @@ return [
     'profile_updated' => 'Profil diperbarui.',
     'password_changed' => 'Kata sandi diubah.',
     'password_required' => 'Kata sandi wajib diisi.',
+    'phone_invalid' => 'Nomor telepon hanya diperbolehkan angka, +, spasi, strip, dan tanda kurung.',
     'password_min' => 'Kata sandi minimal :min karakter.',
     'password_confirmed_mismatch' => 'Konfirmasi kata sandi tidak cocok.',
     'password_strong_required' => 'Kata sandi harus mengandung huruf besar, huruf kecil, angka, dan simbol.',
