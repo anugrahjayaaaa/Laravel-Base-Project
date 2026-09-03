@@ -73,7 +73,6 @@ return [
     'language_desc' => 'Default locale for new visitors.',
     'registration_enabled' => 'Registration Enabled',
     'registration_desc' => 'Allow visitors to create an account',
-    'system_settings' => 'System Settings',
     'registration_success_verify_email' => 'Account created! Please check your email to verify before logging in.',
     'token_revoked' => 'Token revoked.',
     'feature_enabled' => ':label enabled.',

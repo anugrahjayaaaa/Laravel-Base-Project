@@ -73,7 +73,6 @@ return [
     'language_desc' => 'Lokale default untuk pengunjung baru.',
     'registration_enabled' => 'Registrasi Diaktifkan',
     'registration_desc' => 'Izinkan pengunjung membuat akun',
-    'system_settings' => 'Pengaturan Sistem',
     'registration_success_verify_email' => 'Akun berhasil dibuat! Silakan cek email untuk verifikasi sebelum masuk.',
     'token_revoked' => 'Token dicabut.',
     'feature_enabled' => ':label diaktifkan.',

@@ -13,6 +13,7 @@ return [
     'delete' => 'Hapus',
     'confirm_delete' => 'Konfirmasi hapus',
     'delete_confirm_body' => 'Yakin ingin menghapus item ini? Tindakan tidak dapat dibatalkan.',
+    'system_settings' => 'Pengaturan Sistem',
     'close' => 'Tutup',
     'search' => 'Cari',
     'search_translation' => 'Cari grup, kunci, atau teks…',
