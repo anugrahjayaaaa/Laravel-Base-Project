@@ -38,6 +38,10 @@ return [
     // ── auth ──
     'sign_in_with' => 'Masuk dengan email atau username',
     'sign_in' => 'Masuk',
+    'sign_up' => 'Daftar',
+    'sign_up_to_account' => 'Buat akun Anda',
+    'no_account_register' => 'Belum punya akun? Daftar',
+    'already_have_account' => 'Sudah punya akun? Masuk',
     'forgot_your_password' => 'Lupa kata sandi?',
     'forgot_password_intro' => 'Lupa kata sandi? Masukkan email dan kami akan mengirimkan tautan reset.',
     'send_reset_link' => 'Kirim tautan reset',

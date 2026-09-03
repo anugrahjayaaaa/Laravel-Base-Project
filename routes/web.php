@@ -6,6 +6,7 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\BillingAdminController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\LocaleController;
@@ -38,6 +39,15 @@ Route::middleware('guest')->group(function () {
     Route::post('forgot-password', [ForgotPasswordController::class, 'store'])->middleware('throttle:10,15')->name('password.email');
     Route::get('reset-password/{token}', [ForgotPasswordController::class, 'edit'])->name('password.reset');
     Route::post('reset-password', [ForgotPasswordController::class, 'update'])->name('password.store');
+
+    // Self-service registration — only available when Setting::get('registration_enabled') is truthy.
+    // When disabled the route never matches → 404 (fail-closed for security).
+    Route::get('register', [RegisterController::class, 'show'])
+        ->name('register')
+        ->middleware('registration.enabled');
+    Route::post('register', [RegisterController::class, 'store'])
+        ->middleware(['throttle:10,15', 'registration.enabled'])
+        ->name('register.store');
 });
 
 Route::middleware('auth')->group(function () {

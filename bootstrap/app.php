@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [SetApiLocale::class]);
         $middleware->alias([
             'feature' => EnsureFeatureEnabled::class,
+            'registration.enabled' => \App\Http\Middleware\RegistrationEnabled::class,
         ]);
     })
     ->withProviders([

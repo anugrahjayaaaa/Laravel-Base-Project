@@ -68,6 +68,7 @@ return [
     'password_min' => 'Kata sandi minimal :min karakter.',
     'password_confirmed_mismatch' => 'Konfirmasi kata sandi tidak cocok.',
     'password_strong_required' => 'Kata sandi harus mengandung huruf besar, huruf kecil, angka, dan simbol.',
+    'registration_success_verify_email' => 'Akun berhasil dibuat! Silakan cek email untuk verifikasi sebelum masuk.',
     'token_revoked' => 'Token dicabut.',
     'feature_enabled' => ':label diaktifkan.',
     'feature_disabled' => ':label dinonaktifkan.',

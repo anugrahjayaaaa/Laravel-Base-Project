@@ -38,6 +38,10 @@ return [
     // ── auth ──
     'sign_in_with' => 'Sign in with email or username',
     'sign_in' => 'Sign in',
+    'sign_up' => 'Sign Up',
+    'sign_up_to_account' => 'Create your account',
+    'no_account_register' => 'No account yet? Register',
+    'already_have_account' => 'Already have an account? Sign in',
     'forgot_your_password' => 'Forgot your password?',
     'forgot_password_intro' => 'Forgot your password? Enter your email and we\'ll send a reset link.',
     'send_reset_link' => 'Send reset link',

@@ -45,6 +45,12 @@
             <p class="mb-0 mt-2">
                 <a href="{{ route('password.request') }}">{{ ui('forgot_your_password') }}</a>
             </p>
+
+            @if(\App\Models\Setting::get('registration_enabled', false))
+                <p class="mb-0 mt-2 text-center">
+                    <a href="{{ route('register') }}" class="text-center">{{ ui('no_account_register') }}</a>
+                </p>
+            @endif
         </div>
     </div>
 </div>

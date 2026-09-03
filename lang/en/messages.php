@@ -68,6 +68,7 @@ return [
     'password_min' => 'Password must be at least :min characters.',
     'password_confirmed_mismatch' => 'Password confirmation does not match.',
     'password_strong_required' => 'Password must contain upper and lowercase, number, and symbol.',
+    'registration_success_verify_email' => 'Account created! Please check your email to verify before logging in.',
     'token_revoked' => 'Token revoked.',
     'feature_enabled' => ':label enabled.',
     'feature_disabled' => ':label disabled.',
