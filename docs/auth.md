@@ -25,8 +25,17 @@
 - Change password: old password required; audit; revoke other sessions.
 
 ## Self-service
-- Profile: name, avatar, phone; change password; view active sessions.
-- Session mgmt: list devices, logout all other devices.
+|- Profile: name, avatar, phone; change password; view active sessions.
+|- Session mgmt: list devices, logout all other devices.
+|- **Registration (toggle):** self-service sign-up available only when `Setting::get('registration_enabled')` is truthy. When disabled, `/register` routes 404 (fail-closed via `RegistrationEnabled` middleware). New users created with email verification pending (`MustVerifyEmail`).
+
+## Registration
+|- Gate: `Setting::get('registration_enabled')` — default **disabled** (no public sign-up).
+|- Toggle: `UPDATE settings SET value='1' WHERE key='registration_enabled';`
+|- Route: `GET|POST /register` (guest, throttle:10,15) — middleware `registration.enabled`.
+|- Validation: name, username (unique), email (unique), phone (nullable/unique), password min:12 + strong (upper/lower/number/symbol).
+|- Flow: create user via `UserService::create()` → fire `Registered` event → send verification email → redirect to login with status "verify your email".
+|- New users have **no roles assigned** (no access to admin features; super-admin must approve).
 
 ## Security gate (must be green)
 - Boundary validation; parameterized SQL; output escaped.

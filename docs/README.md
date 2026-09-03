@@ -36,7 +36,7 @@ with docs, **docs win** (change via an ADR).
 | custom/README.md | **Custom features** for derived projects (separate from base docs) |
 
 ## LOCKED DECISIONS (user confirmed, 27 Aug 2026)
-1. All proposed extra features are in v1 (reset pwd, lockout, verify, self-service, session mgmt, seed, dashboard, /up).
+1. Auth: login (username|phone), logout, register (toggleable), reset password, failed-login lockout, email verify, profile self-service, session mgmt, seed, dashboard, /up).
 2. Template **AdminLTE 4.9.1** (dist zip from GitHub release).
 3. Verification is **email only**; MFA/2FA is not v1.
 4. i18n: **English + Indonesian** (en first, id mirrored). Files are source of truth; `language_lines` DB rows override at runtime.
