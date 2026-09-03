@@ -40,10 +40,9 @@ class RegisterController extends Controller
         return DB::transaction(function () use ($request) {
             $user = app(UserService::class)->create($request->validated());
 
-            // ponytail: mustVerifyEmail — user stays unverified until they click the link
-            // (implements MustVerifyEmail on the User model, so they CAN log in but
-            // cannot access protected pages until verified).
-            event(new Registered($user));
+            // ponytail: manually send verification (Laravel auto-listener may register
+            // twice causing duplicate emails); direct call guarantees single dispatch).
+            $user->sendEmailVerificationNotification();
 
             return redirect()->route('login')
                 ->with('status', __('messages.registration_success_verify_email'));

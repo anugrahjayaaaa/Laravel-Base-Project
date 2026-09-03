@@ -1,9 +1,12 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Activitylog\Models\Activity;
+
+uses(RefreshDatabase::class);
 
 beforeEach(fn () => $this->seed());
 
@@ -48,11 +51,11 @@ it('forgot password stores token and reset works', function () {
     $this->post(route('password.store'), [
         'token' => $token,
         'email' => $u->email,
-        'password' => 'newpassword1',
-        'password_confirmation' => 'newpassword1',
+        'password' => 'NewStrong@base12345',
+        'password_confirmation' => 'NewStrong@base12345',
     ])->assertRedirect(route('login'));
 
-    expect(Hash::check('newpassword1', $u->fresh()->password))->toBeTrue();
+    expect(Hash::check('NewStrong@base12345', $u->fresh()->password))->toBeTrue();
 
     // old password no longer works
     $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'Admin@base12345'])

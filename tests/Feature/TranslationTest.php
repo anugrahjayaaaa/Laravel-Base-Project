@@ -16,12 +16,12 @@ it('lists translations for admin', function () {
         ->get(route('translations.index'))
         ->assertOk()
         ->assertSee('messages') // group column
-        ->assertSee('users');    // key column (rendered in <code>)
+        ->assertSee('user_created');    // key column (rendered in <code>)
 });
 
 it('updates a translation value and reflects in __()', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $line = LanguageLine::where('group', 'messages')->where('key', 'users')->first();
+    $line = LanguageLine::where('group', 'messages')->where('key', 'user_created')->first();
 
     $this->actingAs($u)
         ->put(route('translations.update', $line), ['en' => 'Users', 'id' => 'Pengguna Edit'])
@@ -33,7 +33,7 @@ it('updates a translation value and reflects in __()', function () {
     session(['locale' => 'id']);
     $request = request()->create('/dashboard');
     app(SetLocale::class)->handle($request, function ($req) {
-        expect(__('messages.users'))->toBe('Pengguna Edit');
+        expect(__('messages.user_created'))->toBe('Pengguna Edit');
     });
 });
 
