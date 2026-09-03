@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Locale\LocaleUpdateRequest;
+use App\Enums\LicenseMode;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Setting;
@@ -26,6 +26,7 @@ class SettingsController extends Controller
         return view('settings.system', [
             'defaultLocale' => Setting::get('locale_default', config('app.locale', 'en')),
             'registrationEnabled' => (bool) Setting::get('registration_enabled', false),
+            'licenseMode' => Setting::get('license_mode', 'global'),
             'defaultPlan' => Setting::get('default_plan', null),
             'defaultRole' => Setting::get('default_role', null),
             'availableLocales' => config('app.available_locales', ['en', 'id']),
@@ -41,12 +42,14 @@ class SettingsController extends Controller
         $request->validate([
             'locale_default' => ['required', 'string', 'in:' . implode(',', config('app.available_locales', ['en', 'id']))],
             'registration_enabled' => ['boolean'],
+            'license_mode' => ['required', 'string', 'in:global,per_user'],
             'default_plan' => ['nullable', 'string', 'exists:plans,slug'],
             'default_role' => ['nullable', 'string', 'exists:roles,name'],
         ]);
 
         Setting::set('locale_default', $request->input('locale_default'));
         Setting::set('registration_enabled', $request->boolean('registration_enabled'));
+        Setting::set('license_mode', $request->input('license_mode'));
         Setting::set('default_plan', $request->input('default_plan'));
         Setting::set('default_role', $request->input('default_role'));
 

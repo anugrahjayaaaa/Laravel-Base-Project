@@ -28,10 +28,20 @@ final class PlanService
     }
 
     /** Model 1: $scope = null. Model 2: $scope = Tenant. */
-    public static function for(?object $scope = null): self
+    public static function for(?object $scope = null, ?User $user = null): self
     {
         // ponytail: Model 2 seam — read plan_slug from tenant when present
         // Default plan (no license) vs active_plan (license runtime). See docs/licensing-and-billing.md §3.
+        $mode = Setting::get('license_mode', 'global');
+
+        // Per-user mode: resolve plan from user's own license
+        if ($mode === 'per_user' && $user) {
+            $slug = $user->license?->plan_slug ?? Setting::get('default_plan', 'free');
+            $license = $user->license;
+            $plan = Plan::where('slug', $slug)->firstOrFail();
+            return new self($plan, $license);
+        }
+
         $licenseKey = Setting::get('license_key');
         $slug = $scope->plan_slug
             ?? ($licenseKey ? Setting::get('active_plan', 'free') : Setting::get('default_plan', 'free'));

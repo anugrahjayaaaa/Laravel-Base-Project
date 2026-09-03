@@ -42,6 +42,16 @@
                 <div class="mb-3">
                     <label for="default_plan" class="form-label">{{ __('messages.default_plan') }}</label>
                     <p class="text-muted small">{{ __('messages.default_plan_desc') }}</p>
+                    <select name="license_mode" id="license_mode" class="form-select @error('license_mode') is-invalid @enderror">
+                        <option value="global" {{ ($licenseMode ?? 'global') === 'global' ? 'selected' : '' }}>Global (Instance)</option>
+                        <option value="per_user" {{ ($licenseMode ?? 'global') === 'per_user' ? 'selected' : '' }}>Per-User</option>
+                    </select>
+                    @error('license_mode')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="default_plan" class="form-label">{{ __('messages.default_plan') }}</label>
+                    <p class="text-muted small">{{ __('messages.default_plan_desc') }}</p>
                     <select name="default_plan" id="default_plan" class="form-select @error('default_plan') is-invalid @enderror">
                         <option value="">{{ __('messages.no_default_plan') }}</option>
                         @foreach ($plans as $plan)

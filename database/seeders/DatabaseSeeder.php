@@ -52,9 +52,9 @@ class DatabaseSeeder extends Seeder
 
         // Default active plan = free (Model 1 instance setting).
         Setting::updateOrCreate(['key' => 'active_plan'], ['value' => 'free']);
-        // ponytail: default plan+role for self-service registrants (SettingsController toggles these).
         Setting::updateOrCreate(['key' => 'default_plan'], ['value' => 'free']);
         Setting::updateOrCreate(['key' => 'default_role'], ['value' => 'staff']);
+        Setting::updateOrCreate(['key' => 'license_mode'], ['value' => 'global']);
 
         // Roles
         $superAdmin = Role::findOrCreate('super-admin', 'web');
