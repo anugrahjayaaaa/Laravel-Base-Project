@@ -45,9 +45,11 @@
                 </div>
             </div>
 
-            {{-- Capacity --}}
+            {{-- Capacity (global mode shows all; per-user shows only max_permissions + max_features) --}}
+            @php($licenseMode = \App\Models\Setting::get('license_mode', 'global'))
             <h6 class="text-uppercase text-muted small fw-bold mb-3">{{ ui('capacity_limits') }}</h6>
             <div class="row g-3 mb-1">
+                @if ($licenseMode === 'global')
                 <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_members') }}</label>
                     <input type="number" min="0" name="max_members" class="form-control"
@@ -63,6 +65,7 @@
                     <input type="number" min="0" name="max_roles" class="form-control"
                            value="{{ old('max_roles', $plan?->limit('max_roles') ?? 0) }}">
                 </div>
+                @endif
                 <div class="col-md-4 col-lg-2">
                     <label class="form-label">{{ ui('limit_max_permissions') }}</label>
                     <input type="number" min="0" name="max_permissions" class="form-control"
@@ -73,16 +76,22 @@
                     <input type="number" min="0" name="max_features" id="max_features" class="form-control"
                            value="{{ old('max_features', $plan?->limit('max_features') ?? 0) }}">
                 </div>
+                @if ($licenseMode === 'global')
                 <div class="col-md-4 col-lg-2 d-flex align-items-end">
                     <small class="text-muted">{{ ui('roles_auto_create') }}</small>
                 </div>
+                @endif
             </div>
 
             {{-- Features --}}
+            @if (\App\Models\Setting::get('license_mode', 'global') === 'global')
             <h6 class="text-uppercase text-muted small fw-bold mt-4 mb-2 d-flex justify-content-between">
                 <span>{{ ui('features') }}</span>
                 <span class="badge bg-secondary" id="feature-counter">0</span>
             </h6>
+            @else
+            <h6 class="text-uppercase text-muted small fw-bold mb-2">{{ ui('features') }}</h6>
+            @endif
             <div class="row row-cols-2 row-cols-md-3 g-2 mb-4" id="feature-list">
                 @foreach(config('pennant.features') as $slug => $cfg)
                     @php($checked = in_array($slug, old('features', $plan->features ?? [])))
