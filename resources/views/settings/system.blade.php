@@ -15,7 +15,6 @@
         <div class="card-body">
             <form method="POST" action="{{ route('settings.system.update') }}">
                 @csrf
-                @method('PUT')
 
                 <div class="mb-3">
                     <label for="locale_default" class="form-label">{{ __('messages.default_language') }}</label>
