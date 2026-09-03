@@ -159,6 +159,7 @@ return [
     'billing_period' => 'Billing period',
     'period_monthly' => 'Monthly',
     'period_lifetime' => 'Lifetime',
+    'payment_history' => 'Payment History',
     'common_info' => 'General',
     'max_features_help' => 'Max features allowed. Beyond the cap, remaining feature checkboxes are disabled.',
     'limit_max_members' => 'Max members',

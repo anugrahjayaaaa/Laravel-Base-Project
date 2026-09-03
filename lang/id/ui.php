@@ -159,6 +159,7 @@ return [
     'billing_period' => 'Periode tagihan',
     'period_monthly' => 'Bulanan',
     'period_lifetime' => 'Lifetime',
+    'payment_history' => 'Riwayat Pembayaran',
     'common_info' => 'Umum',
     'max_features_help' => 'Maks. fitur yang diizinkan. Melewati batas, sisa checkbox fitur dinonaktifkan.',
     'limit_max_members' => 'Maks. member',

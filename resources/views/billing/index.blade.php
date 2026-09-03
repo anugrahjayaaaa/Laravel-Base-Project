@@ -50,7 +50,7 @@
     </div>
 </div>
 
-<h5 class="mt-4">{{ __('messages.payment_history') }}</h5>
+<h5 class="mt-4">{{ ui('payment_history') }}</h5>
 <div class="card shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover mb-0">
