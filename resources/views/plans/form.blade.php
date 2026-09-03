@@ -161,35 +161,60 @@
         }
     })();
 
-    // Feature checkboxes: respect max_features (disable extras), update counter,
-    // and toggle permission accordion groups by enabled feature.
+    // Feature + permission checkboxes: respect max_features and max_permissions caps.
     (() => {
-        const maxInput = document.getElementById('max_features');
+        const maxFeatInput = document.getElementById('max_features');
+        const maxPermInput = document.getElementById('max_permissions');
         const toggles = Array.from(document.querySelectorAll('.feat-toggle'));
         const counter = document.getElementById('feature-counter');
         const groups = Array.from(document.querySelectorAll('.perm-group'));
+        const permToggles = Array.from(document.querySelectorAll('input[name="allowed_permissions[]"]'));
 
         const apply = () => {
             const on = toggles.filter(t => t.checked).map(t => t.dataset.feature);
-            const max = parseInt(maxInput?.value || '0', 10);
-            if (max > 0) {
+            const maxFeat = parseInt(maxFeatInput?.value || '0', 10);
+            const maxPerm = parseInt(maxPermInput?.value || '0', 10);
+
+            // Feature toggles: max 0 → disable all
+            if (maxFeat > 0) {
                 toggles.forEach(t => {
-                    if (!t.checked && on.length >= max) t.disabled = true;
+                    if (!t.checked && on.length >= maxFeat) t.disabled = true;
                     else t.disabled = false;
                 });
             } else {
-                // max_features = 0 → no features allowed, disable all
                 toggles.forEach(t => t.disabled = true);
             }
-            if (counter) counter.textContent = on.length + (max > 0 ? ' / ' + max : '');
+
+            if (counter) counter.textContent = on.length + (maxFeat > 0 ? ' / ' + maxFeat : '');
+
+            // Permission toggles: only apply caps when max_permissions input exists (global mode)
+            if (maxPermInput) {
+                const maxPerm = parseInt(maxPermInput.value || '0', 10);
+                const visiblePerms = permToggles.filter(p => {
+                    const group = p.closest('.perm-group');
+                    return group && group.style.display !== 'none';
+                });
+                const checkedPerms = visiblePerms.filter(p => p.checked).length;
+
+                if (maxPerm > 0) {
+                    permToggles.forEach(p => {
+                        if (!p.checked && checkedPerms >= maxPerm) p.disabled = true;
+                        else p.disabled = false;
+                    });
+                } else {
+                    permToggles.forEach(p => p.disabled = true);
+                }
+            }
+
             const set = new Set(on);
             groups.forEach(g => {
-                const show = set.has(g.dataset.feature);
-                g.style.display = show ? '' : 'none';
+                g.style.display = set.has(g.dataset.feature) ? '' : 'none';
             });
         };
         toggles.forEach(t => t.addEventListener('change', apply));
-        maxInput?.addEventListener('input', apply);
+        permToggles.forEach(p => p.addEventListener('change', apply));
+        maxFeatInput?.addEventListener('input', apply);
+        maxPermInput?.addEventListener('input', apply);
         apply();
     })();
 </script>
