@@ -20,7 +20,7 @@
 - Admin can **lock** permanently via `POST /users/{user}/lock` (sets `locked_permanently=true`; only unlock clears it), **unlock** via `POST /users/{user}/unlock` (clears `locked_until` and `locked_permanently`), and **send a reset link** via `POST /users/{user}/reset-password` (uses the `users` password broker; requires `MAIL_*` to deliver). Both lock/unlock require the `user.lock` permission (self-lock blocked); reset-password requires `user.edit`. All three actions are written to `activity_log` (`user_locked`, `user_unlocked`, `user_reset_link_sent`). Permanent lock shows as "perm locked" (red) and blocks login with "Contact an administrator"; the 15m auto-lock shows as "locked" (warning).
 - Rate limit: /login, /password/* (e.g. 10/15m).
 - Reset: hashed token, 60m expiry, single-use, stored in DB table `password_reset_tokens`.
-- Verify: email activation before full access.
+|`- Verify: email activation before full access. New self-service registrants (`MustVerifyEmail`) are **rejected at login** until they click the verification link (not just gated from protected routes).`
 - Logout: invalidate session + regenerate CSRF token; audit.
 - Change password: old password required; audit; revoke other sessions.
 

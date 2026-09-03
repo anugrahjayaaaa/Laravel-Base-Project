@@ -79,6 +79,15 @@ class LoginController extends Controller
             ]);
         }
 
+        // ponytail: MustVerifyEmail blocks protected routes, but does NOT block login itself —
+        // reject login outright for unverified emails (doc auth.md §Email verification).
+        if (! $user->hasVerifiedEmail()) {
+            Auth::guard('web')->logout();
+            throw ValidationException::withMessages([
+                'email' => __('messages.email_not_verified'),
+            ]);
+        }
+
         // ponytail: attempt() may not fire Login event under test session guard; dispatch explicitly so audit is consistent
         event(new Login('web', $user, $request->boolean('remember')));
 

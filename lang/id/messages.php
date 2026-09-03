@@ -65,6 +65,7 @@ return [
     'invalid_verification_link' => 'Tautan verifikasi tidak valid atau kedaluwarsa.',
     'verification_link_sent' => 'Tautan verifikasi dikirim.',
     'logged_out' => 'Berhasil keluar.',
+    'email_not_verified' => 'Silakan verifikasi email Anda sebelum masuk. Periksa kotak masuk untuk tautan verifikasi.',
     'reset_link_sent_simple' => 'Tautan reset kata sandi sudah kami kirim.',
     'token_created' => 'Token dibuat. Simpan sekarang — tidak akan ditampilkan lagi.',
 

@@ -87,3 +87,16 @@ it('logs password_reset_request to audit on reset link send', function () {
         ->exists();
     expect($logged)->toBeTrue();
 });
+
+it('rejects login for unverified email', function () {
+    $u = User::factory()->create([
+        'username' => 'unverified'.time(),
+        'email' => 'unverified@laravel-base.local',
+        'password' => bcrypt('Strong@base12345'),
+        'email_verified_at' => null,
+    ]);
+
+    $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'Strong@base12345'])
+        ->assertSessionHasErrors('email');
+    expect(auth()->check())->toBeFalse();
+});
