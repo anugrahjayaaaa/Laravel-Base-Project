@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">{{ ui('system_settings') }}</h1>
+        <h1 class="h3 mb-0">{{ __('messages.system_settings') }}</h1>
     </div>
 
     @if (session('status'))
