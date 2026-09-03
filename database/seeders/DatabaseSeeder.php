@@ -49,8 +49,6 @@ class DatabaseSeeder extends Seeder
                 'features' => ['audit', 'telescope'],
             ]
         );
-
-        // Default active plan = free (Model 1 instance setting).
         Setting::updateOrCreate(['key' => 'active_plan'], ['value' => 'free']);
         Setting::updateOrCreate(['key' => 'default_plan'], ['value' => 'free']);
         Setting::updateOrCreate(['key' => 'default_role'], ['value' => 'staff']);
