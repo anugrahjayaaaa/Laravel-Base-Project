@@ -39,6 +39,30 @@
                     @error('registration_enabled')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
 
+                <div class="mb-3">
+                    <label for="default_plan" class="form-label">{{ __('messages.default_plan') }}</label>
+                    <p class="text-muted small">{{ __('messages.default_plan_desc') }}</p>
+                    <select name="default_plan" id="default_plan" class="form-select @error('default_plan') is-invalid @enderror">
+                        <option value="">{{ __('messages.no_default_plan') }}</option>
+                        @foreach ($plans as $plan)
+                            <option value="{{ $plan->slug }}" {{ ($defaultPlan ?? null) === $plan->slug ? 'selected' : '' }}>{{ $plan->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('default_plan')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="default_role" class="form-label">{{ __('messages.default_role') }}</label>
+                    <p class="text-muted small">{{ __('messages.default_role_desc') }}</p>
+                    <select name="default_role" id="default_role" class="form-select @error('default_role') is-invalid @enderror">
+                        <option value="">{{ __('messages.no_default_role') }}</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->name }}" {{ ($defaultRole ?? null) === $role->name ? 'selected' : '' }}>{{ $role->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('default_role')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                </div>
+
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">{{ ui('save') }}</button>
                 </div>

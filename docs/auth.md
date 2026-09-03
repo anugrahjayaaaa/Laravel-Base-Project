@@ -31,11 +31,12 @@
 
 ## Registration
 |- Gate: `Setting::get('registration_enabled')` — default **disabled** (no public sign-up).
+|- default_plan / default_role : set in **System → Settings** (feature.manage); `default_role` auto-assigned to new self-service registrants. `UserService::rolesFromInput()` falls back to this when `roles` is empty.
 |- Toggle: `UPDATE settings SET value='1' WHERE key='registration_enabled';`
 |- Route: `GET|POST /register` (guest, throttle:10,15) — middleware `registration.enabled`.
 |- Validation: name, username (unique), email (unique), phone (nullable/unique), password min:12 + strong (upper/lower/number/symbol).
 |- Flow: create user via `UserService::create()` → fire `Registered` event → send verification email → redirect to login with status "verify your email".
-|- New users have **no roles assigned** (no access to admin features; super-admin must approve).
+|- New users have **no roles assigned** by default
 
 ## Security gate (must be green)
 - Boundary validation; parameterized SQL; output escaped.

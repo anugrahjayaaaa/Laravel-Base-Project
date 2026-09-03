@@ -147,7 +147,7 @@ class LoginController extends Controller
     /**
      * Log the current user out and destroy the session.
      */
-    public function destroy(LoginRequest $request): RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
         $request->session()->invalidate();
