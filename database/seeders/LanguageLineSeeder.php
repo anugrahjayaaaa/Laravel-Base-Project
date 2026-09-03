@@ -20,6 +20,12 @@ class LanguageLineSeeder extends Seeder
                     continue;
                 }
                 foreach (require $path as $key => $text) {
+                    // ponytail: spatie getTranslation(): ?string — skip array values.
+                    // Laravel's validation.php ships nested keys (e.g. 'between' => ['numeric' => ...]);
+                    // storing those as JSON makes getTranslation() return an array → TypeError.
+                    if (is_array($text)) {
+                        continue;
+                    }
                     $keys[$key][$locale] = $text;
                 }
             }
