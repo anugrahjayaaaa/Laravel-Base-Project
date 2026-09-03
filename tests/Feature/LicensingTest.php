@@ -71,6 +71,14 @@ it('default free plan is active after seed', function () {
         ->and(PlanService::for()->membersLeft())->toBe(2 - \App\Models\User::count());
 });
 
+it('uses default_plan when no license is active', function () {
+    \App\Models\Setting::set('default_plan', 'free');
+
+    $plan = PlanService::for();
+    expect($plan->can('audit'))->toBeTrue()
+        ->and($plan->can('kanban'))->toBeFalse(); // kanban is pro-only
+});
+
 it('tamper: flipping settings.active_plan without a valid license yields no paid features', function () {
     // client owns the DB and edits the setting directly (Model 1, §10.1)
     \App\Models\Setting::set('active_plan', 'pro');

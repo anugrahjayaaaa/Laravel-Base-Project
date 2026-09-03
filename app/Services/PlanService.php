@@ -31,7 +31,10 @@ final class PlanService
     public static function for(?object $scope = null): self
     {
         // ponytail: Model 2 seam — read plan_slug from tenant when present
-        $slug = $scope->plan_slug ?? Setting::get('active_plan', 'free');
+        // Default plan (no license) vs active_plan (license runtime). See docs/licensing-and-billing.md §3.
+        $licenseKey = Setting::get('license_key');
+        $slug = $scope->plan_slug
+            ?? ($licenseKey ? Setting::get('active_plan', 'free') : Setting::get('default_plan', 'free'));
         $plan = Plan::where('slug', $slug)->firstOrFail();
 
         // §10.1 tamper resistance: re-verify the ACTIVATED license on every

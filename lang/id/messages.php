@@ -70,6 +70,7 @@ return [
     'email_already_verified' => 'Email sudah terverifikasi.',
     'invalid_verification_link' => 'Tautan verifikasi tidak valid atau kedaluwarsa.',
     'verification_link_sent' => 'Tautan verifikasi dikirim.',
+    'email_verified' => 'Email Anda berhasil diverifikasi! Silakan masuk.',
     'logged_out' => 'Berhasil keluar.',
     'email_not_verified' => 'Silakan verifikasi email Anda sebelum masuk. Periksa kotak masuk untuk tautan verifikasi.',
     'reset_link_sent_simple' => 'Tautan reset kata sandi sudah kami kirim.',
