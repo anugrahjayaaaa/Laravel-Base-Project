@@ -78,24 +78,11 @@
                         </div>
                     </li>
                     <li><hr class="dropdown-divider my-0"></li>
-                    <li><a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> Profile</a></li>
+                    <li><a href="{{ route('profile.show') }}" class="dropdown-item py-2"><i class="bi bi-person me-2"></i> {{ ui('profile') }}</a></li>
                     <li><a href="{{ route('sessions.index') }}" class="dropdown-item py-2"><i class="bi bi-pc-display me-2"></i> {{ __('messages.sessions') }}</a></li>
-                    <li><hr class="dropdown-divider my-0"></li>
-                    <li class="dropdown-item-text pb-1">
-                        <div class="text-muted small text-uppercase px-2">{{ __('messages.language') }}</div>
-                        <div class="d-flex gap-1 px-2 pt-1">
-                            <form method="POST" action="{{ route('locale.update') }}" class="flex-fill">
-                                @csrf
-                                <input type="hidden" name="locale" value="en">
-                                <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'en' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">{{ __('messages.english') }}</button>
-                            </form>
-                            <form method="POST" action="{{ route('locale.update') }}" class="flex-fill">
-                                @csrf
-                                <input type="hidden" name="locale" value="id">
-                                <button type="submit" class="btn btn-sm {{ app()->getLocale() === 'id' ? 'btn-primary' : 'btn-outline-secondary' }} w-100">{{ __('messages.indonesian') }}</button>
-                            </form>
-                        </div>
-                    </li>
+                    @can('feature.manage')
+                    <li><a href="{{ route('settings.system') }}" class="dropdown-item py-2"><i class="bi bi-gear me-2"></i> {{ __('messages.system_settings') }}</a></li>
+                    @endcan
                     <li><hr class="dropdown-divider my-0"></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">

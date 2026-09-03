@@ -17,6 +17,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -124,6 +125,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/translations', [TranslationController::class, 'index'])->name('translations.index');
         Route::get('/translations/{languageLine}/edit', [TranslationController::class, 'edit'])->name('translations.edit')->middleware('can:translation.edit');
         Route::put('/translations/{languageLine}', [TranslationController::class, 'update'])->name('translations.update')->middleware('can:translation.edit');
+    });
+
+    // System settings (default locale + registration toggle) — gated by feature.manage
+    Route::prefix('settings')->name('settings.')->middleware('can:feature.manage')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('system');
+        Route::post('/', [SettingsController::class, 'update'])->name('system.update');
     });
 
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');

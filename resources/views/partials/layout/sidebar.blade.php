@@ -98,6 +98,9 @@
                         <li class="nav-item"><a href="{{ route('translations.index') }}" data-menu-text="{{ __('messages.translations') }}" class="nav-link {{ request()->routeIs('translations.*') ? 'active' : '' }}"><i class="nav-icon bi bi-translate"></i> <span>{{ __('messages.translations') }}</span></a></li>
                         @endfeature
                         @endcan
+                        @can('feature.manage')
+                        <li class="nav-item"><a href="{{ route('settings.system') }}" data-menu-text="{{ __('messages.system_settings') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}"><i class="nav-icon bi bi-gear-fill"></i> <span>{{ __('messages.system_settings') }}</span></a></li>
+                        @endcan
                     </ul>
                 </li>
 
