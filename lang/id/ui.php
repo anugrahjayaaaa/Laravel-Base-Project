@@ -127,6 +127,7 @@ return [
     'status' => 'Status',
     'enabled' => 'Aktif',
     'disabled' => 'Nonaktif',
+    'change_status_of' => 'Ubah status dari',
     'no_features' => 'Tidak ada fitur.',
     'feature_group_access' => 'Manajemen Akses',
     'feature_group_monitoring' => 'Pemantauan',

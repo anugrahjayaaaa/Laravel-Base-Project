@@ -127,6 +127,7 @@ return [
     'status' => 'Status',
     'enabled' => 'Enabled',
     'disabled' => 'Disabled',
+    'change_status_of' => 'Change status of',
     'no_features' => 'No features.',
     'feature_group_access' => 'Access Management',
     'feature_group_monitoring' => 'Monitoring',
