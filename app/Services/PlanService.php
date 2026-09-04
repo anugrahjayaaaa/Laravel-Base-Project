@@ -91,14 +91,6 @@ final class PlanService
         return max(0, $max - User::count());
     }
 
-    public function projectsLeft(): int
-    {
-        $max = $this->limit('max_projects', 0);
-
-        // ponytail: Model 1 counts globally; Model 2 scopes by tenant
-        return max(0, $max - 0);
-    }
-
     private function limit(string $key, int $default): int
     {
         // paid plan without a valid license => no headroom (tamper-safe, §10.1)
@@ -121,14 +113,10 @@ final class PlanService
             ?? [];
     }
 
-    /** Whether subscribers can create roles (derived: true iff 'roles' feature is on). */
-    public function canCreateRoles(): bool
-    {
-        return (bool) ($this->limits()['can_create_roles'] ?? false);
-    }
-
     /** Permission names a subscriber may assign when creating/editing roles.
      *  Empty array = no permission assigned (deny) unless explicitly listed.
+     *  Role creation itself is gated by the `role.create` permission (Form
+     *  Request authz), not by a separate plan flag.
      */
     public function allowedPermissions(): array
     {

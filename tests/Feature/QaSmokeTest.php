@@ -17,7 +17,7 @@ it('checkout route exists and method is reachable (dummy mode)', function () {
 
     Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'billing_period' => 'monthly',
-        'limits' => ['max_members' => 5], 'features' => ['kanban'],
+        'limits' => ['max_members' => 5], 'features' => ['api-tokens'],
     ]);
 
     // form posts plan_slug (as plans/index.blade does)
@@ -51,7 +51,7 @@ it('webhook with valid signature completes payment', function () {
     config(['billing.fake' => true, 'billing.webhook_secret' => 'test-secret']);
     Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'billing_period' => 'monthly',
-        'limits' => ['max_members' => 5], 'features' => ['kanban'],
+        'limits' => ['max_members' => 5], 'features' => ['api-tokens'],
     ]);
 
     $this->post(route('billing.webhook'), [
@@ -71,11 +71,11 @@ it('tampered plan setting reverts to free features (§10.1)', function () {
     Plan::firstOrCreate(['slug' => 'pro'], [
         'name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true,
         'billing_period' => 'monthly',
-        'limits' => ['max_members' => 5], 'features' => ['kanban'],
+        'limits' => ['max_members' => 5], 'features' => ['api-tokens'],
     ]);
 
     // no activated license -> PlanService refuses paid features
-    expect(PlanService::for()->can('kanban'))->toBeFalse();
+    expect(PlanService::for()->can('api-tokens'))->toBeFalse();
     expect(Setting::get('active_plan'))->toBe('pro'); // setting persists but features locked
 });
 

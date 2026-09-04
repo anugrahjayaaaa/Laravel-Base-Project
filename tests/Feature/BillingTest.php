@@ -15,7 +15,7 @@ it('dummy checkout completes and grants a lifetime license', function () {
     config(['billing.fake' => true]);
     $plan = Plan::firstOrCreate(['slug' => 'pro'], [
         'name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true,
-        'limits' => ['max_members' => 5], 'features' => ['kanban'],
+        'limits' => ['max_members' => 5], 'features' => ['api-tokens'],
     ]);
 
     $payment = BillingService::checkout($plan, 1);
@@ -23,14 +23,14 @@ it('dummy checkout completes and grants a lifetime license', function () {
     expect($payment->status)->toBe('paid')
         ->and($payment->gateway_ref)->not->toBeNull()
         ->and(LicenseService::status())->toBe('active')
-        ->and(PlanService::for()->can('kanban'))->toBeTrue()
+        ->and(PlanService::for()->can('api-tokens'))->toBeTrue()
         ->and(PlanService::for()->membersLeft())->toBe(5 - User::count());
 });
 
 it('webhook completes idempotently (no double license)', function () {
     config(['billing.fake' => true]);
     Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban']]);
+        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['api-tokens']]);
 
     $ref = 'order-abc-123';
     $first = BillingService::handleWebhook(['order_id' => $ref, 'status' => 'paid', 'plan_slug' => 'pro']);

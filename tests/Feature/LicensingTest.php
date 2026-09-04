@@ -14,8 +14,8 @@ beforeEach(fn () => $this->seed());
 it('issues and activates a signed license, then gates features', function () {
     Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true,
-        'limits' => ['max_members' => 5, 'max_projects' => 3],
-        'features' => ['kanban', 'audit', 'telescope'],
+        'limits' => ['max_members' => 5, 'max_roles' => 3],
+        'features' => ['api-tokens', 'audit', 'telescope'],
     ]);
 
     $key = LicenseService::issue('pro', ['type' => 'manual', 'expires_at' => null]);
@@ -26,7 +26,7 @@ it('issues and activates a signed license, then gates features', function () {
         ->and(LicenseService::daysLeft())->toBeNull(); // lifetime
 
     $plan = PlanService::for();
-    expect($plan->can('kanban'))->toBeTrue()
+    expect($plan->can('api-tokens'))->toBeTrue()
         ->and($plan->can('audit'))->toBeTrue()
         ->and($plan->membersLeft())->toBe(5 - User::count());
 });

@@ -28,12 +28,11 @@ it('creates a role with permissions', function () {
     expect($role->hasPermissionTo($perm->name))->toBeTrue();
 });
 
-it('subscriber on free plan cannot create roles (plan limit)', function () {
-    // free plan has no 'roles' feature -> can_create_roles is false
-    // ponytail: admin role has feature.manage (seeded); create a role with
-    // only role.create (no feature.manage) to simulate a subscriber
+it('subscriber without role.create permission cannot create roles', function () {
+    // role creation is gated by the `role.create` permission (FormRequest authz),
+    // not a separate plan flag (can_create_roles removed).
     $subRole = Role::create(['name' => 'sub_role', 'guard_name' => 'web']);
-    $subRole->syncPermissions(['role.create', 'role.view', 'user.view']);
+    $subRole->syncPermissions(['role.view', 'user.view']); // no role.create
     $plain = User::create([
         'name' => 'Plain', 'username' => 'plain', 'email' => 'plain@example.com',
         'phone' => '+628****0002', 'password' => bcrypt('x'), 'email_verified_at' => now(),
@@ -51,7 +50,7 @@ it('subscriber with roles feature can create roles but permissions are filtered'
         [
             'name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true,
             'billing_period' => 'monthly',
-            'limits' => ['max_members' => 5, 'max_roles' => 3, 'can_create_roles' => true, 'allowed_permissions' => ['user.view']],
+            'limits' => ['max_members' => 5, 'max_roles' => 3, 'allowed_permissions' => ['user.view']],
             'features' => ['users', 'roles'],
         ]
     );

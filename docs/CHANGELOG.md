@@ -40,7 +40,7 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 - Added `Setting::updateOrCreate(['key' => 'license_mode'], ['value' => 'global'])`
 - Staff role: `syncPermissions([])` — no direct permission assignment
 - Permissions come from plan sync, NOT role assignment
-- Free plan seed: `features: ['audit', 'telescope']`, `limits: ['max_members' => 2, 'max_projects' => 1, 'max_storage_mb' => 500]`
+- Free plan seed: `features: []`, `limits: ['max_members' => 2, 'max_storage_mb' => 500, 'max_roles' => 3, 'max_permissions' => 0]`
 
 ## Plan Form & Validation
 
@@ -61,7 +61,8 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 - JS IIFE: handle `max_features=0` → disable all feature checkboxes; `max_permissions=0` → disable permission checkboxes (global mode only)
 
 ### `app/Models/Plan.php`
-- LIMIT_KEYS: 5 standard keys — NO `max_projects` (base project doesn't use it yet)
+- LIMIT_KEYS: exact final schema — `max_members`, `max_roles`, `max_permissions`, `max_features`, `max_storage_mb` + `allowed_permissions`
+  - Removed: `max_projects` (never implemented), `can_create_roles` (replaced by `role.create` permission via `roles` feature)
   ```php
   'max_members', 'max_roles', 'max_permissions', 'max_features', 'max_storage_mb'
   ```

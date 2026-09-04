@@ -45,7 +45,7 @@ only the scope source changes.
 plans
   id, slug (unique, CUSTOM — any string, e.g. 'starter-2026'), name,
   price_monthly decimal(12,2), is_active bool,
-  limits  json,   -- {"max_members":N,"max_projects":N,"max_storage_mb":N}  (all custom)
+  limits  json,   -- {"max_members":N,"max_roles":N,"max_permissions":N,"max_features":N,"max_storage_mb":N,"allowed_permissions":[...]}  (see Plan::LIMIT_KEYS)
   features json    -- custom list, e.g. ["kanban","audit","telescope","api","sso"]
   -- FULL CRUD: admin can create/edit/delete plans, any slug, any price,
   -- any limits/features. No fixed tier enum. 'free' is just a plan row with
@@ -136,8 +136,6 @@ final class PlanService
         $used = User::count();                        // Model 1: global. Model 2: scoped where tenant
         return max(0, ($this->plan->limits['max_members'] ?? 0) - $used);
     }
-
-    public function projectsLeft(): int { /* same pattern */ }
 }
 ```
 
@@ -418,9 +416,13 @@ source the admin UI, `PlanService`, and the license snapshot all read.
 - `max_members`, `max_storage_mb`, `max_roles`, `max_permissions`, `max_features` — numeric caps.
 - `allowed_permissions` — array of `permissions.name` a subscriber may assign when
   creating roles. Empty = allow any permission of enabled features.
-- `can_create_roles` — **derived**, NOT an input. True iff the `roles` feature is
-  enabled on the plan (`in_array('roles', $features)` in `PlanRequest::toPlanData()`).
-  No separate toggle: granting the `roles` feature implicitly grants role creation.
++ **Role creation is gated by the `role.create` permission** (Form Request
+  `authorize()`), NOT by a `can_create_roles` field. Role creation capability
+  flows from the `roles` **feature**: plans with the `roles` feature have
+  their subscribers' roles granted `role.create` by
+  `PlanService::syncPermissionsForPlan()`, which maps `role.*` permissions to
+  the `roles` feature via `Permission::featureOf()`. Free plan (`features=[]`)
+  → no `role.create` grant → subscribers forbidden.
 
 ### 11.2 `features` + permission mapping
 - `features` is a subset of `config('pennant.features')` slugs.
@@ -440,6 +442,6 @@ disabled features, but the request rules are the real gate.
 
 ### 11.4 Authorization
 Plan routes are gated route-level (`routes/web.php` → `can:feature.manage`);
-the Form Request `authorize()` re-checks the same permission. `can_create_roles`
-and `allowed_permissions` are enforced on the **subscriber** side
-(`RoleController`/`PermissionController`) — not yet built (open item).
+the Form Request `authorize()` re-checks the same permission. Role creation
+for subscribers is gated by the `role.create` permission, granted via the
+`roles` plan feature — see §11.1.

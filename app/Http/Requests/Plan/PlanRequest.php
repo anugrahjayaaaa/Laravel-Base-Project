@@ -52,8 +52,6 @@ class PlanRequest extends FormRequest
                 $limits[$key] = (int) $this->input($key);
             }
         }
-        // Subscriber can create roles iff the `roles` feature is enabled — no separate toggle.
-        $limits['can_create_roles'] = in_array('roles', $this->input('features', []), true);
         $limits['allowed_permissions'] = $this->input('allowed_permissions', []);
 
         return [
