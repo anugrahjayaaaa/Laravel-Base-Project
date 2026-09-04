@@ -176,6 +176,17 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 ### `resources/views/partials/layout/header.blade.php`
 - Notification link: hardcode ke audit.index — VERIFIED OK (audit log adalah notification utama)
 
+### `resources/views/monitoring/audit/index.blade.php`
+- IP header hardcode → `{{ ui('ip') }}` — i18n consistency
+- Modal detail IP label hardcode → `{{ ui('ip') }}`
+
+### `resources/views/monitoring/logs/index.blade.php`
+- Already consistent: form-select, table, all ui() labels (Stack trace = technical term)
+
+### `resources/views/notifications/index.blade.php`
+- "read" hardcode → `{{ ui('read') }}` — i18n
+- Add `read` key to lang/en/ui.php + lang/id/ui.php
+
 ## Testing
 - All 140 tests pass (375 assertions)
 - Auth subset: 29/29 pass
