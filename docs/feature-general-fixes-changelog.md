@@ -108,9 +108,9 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 - Tambah `sr-only` label
 
 ### `resources/views/auth/reset-password.blade.php`
-- Tambah `id` di semua input + `aria-describedby` + `aria-invalid`
-- Error: pindah ke luar input-group, konsisten dengan pattern
-- Tambah `sr-only` label untuk email, password, password_confirmation
+- Tambah password visibility toggle — konsisten dengan login/register (UX consistency)
+- Add `@push('scripts')` dengan JS toggle (reusable IIFE pattern sama register)
+- Fix DOM: push script & form closing berada di luar form yang benar (sebelumnya nested broken)
 
 ## General UI/UX Consistency (All Views)
 
