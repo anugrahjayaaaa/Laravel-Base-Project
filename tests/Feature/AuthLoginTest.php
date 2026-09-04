@@ -12,14 +12,14 @@ beforeEach(fn () => $this->seed());
 
 it('logs in with email', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'Admin@base12345'])
+    $this->post(route('login.store'), ['identifier' => $u->email, 'password' => '#Password123'])
         ->assertRedirect(route('dashboard'));
     expect(auth()->check())->toBeTrue();
 });
 
 it('logs in with username', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
-    $this->post(route('login.store'), ['identifier' => $u->username, 'password' => 'Admin@base12345'])
+    $this->post(route('login.store'), ['identifier' => $u->username, 'password' => '#Password123'])
         ->assertRedirect(route('dashboard'));
     expect(auth()->check())->toBeTrue();
 });
@@ -27,7 +27,7 @@ it('logs in with username', function () {
 it('rejects phone login (removed)', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     // use a fake phone-like identifier; should NOT resolve to a user
-    $this->post(route('login.store'), ['identifier' => '+62812345678', 'password' => 'Admin@base12345'])
+    $this->post(route('login.store'), ['identifier' => '+62812345678', 'password' => '#Password123'])
         ->assertSessionHasErrors('identifier');
 });
 
@@ -58,7 +58,7 @@ it('forgot password stores token and reset works', function () {
     expect(Hash::check('NewStrong@base12345', $u->fresh()->password))->toBeTrue();
 
     // old password no longer works
-    $this->post(route('login.store'), ['identifier' => $u->email, 'password' => 'Admin@base12345'])
+    $this->post(route('login.store'), ['identifier' => $u->email, 'password' => '#Password123'])
         ->assertSessionHasErrors();
 });
 

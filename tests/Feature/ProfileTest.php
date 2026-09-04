@@ -38,7 +38,7 @@ it('changes password with correct current password', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($u)
         ->post(route('profile.password'), [
-            'current_password' => 'Admin@base12345',
+            'current_password' => '#Password123',
             'password' => 'NewPass@12345',
             'password_confirmation' => 'NewPass@12345',
         ])
@@ -62,7 +62,7 @@ it('rejects password shorter than 12 chars', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($u)
         ->post(route('profile.password'), [
-            'current_password' => 'Admin@base12345',
+            'current_password' => '#Password123',
             'password' => 'short1',
             'password_confirmation' => 'short1',
         ])

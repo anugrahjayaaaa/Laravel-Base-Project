@@ -90,7 +90,7 @@ it('returns localized API message end-to-end (login + logout)', function () {
 
     $login = $this->postJson('/api/v1/login', [
         'identifier' => $u->username,
-        'password' => 'Admin@base12345', // seeded default
+        'password' => '#Password123', // seeded default
         'device_name' => 'e2e-test',
     ])->assertOk();
 

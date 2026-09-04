@@ -15,7 +15,7 @@ it('logs in and returns a bearer token', function () {
     $u = User::where('email', 'admin@laravel-base.local')->first();
     $r = $this->postJson('/api/v1/login', [
         'identifier' => $u->email,
-        'password' => 'Admin@base12345',
+        'password' => '#Password123',
         'device_name' => 'test',
     ]);
     $r->assertOk()->assertJsonStructure(['token', 'user']);

@@ -74,7 +74,7 @@ it('bulk force deletes selected users', function () {
 
 it('changes own password', function () {
     $this->post(route('profile.password'), [
-        'current_password' => 'Admin@base12345',
+        'current_password' => '#Password123',
         'password' => 'NewSecret@123456',
         'password_confirmation' => 'NewSecret@123456',
     ])->assertRedirect();

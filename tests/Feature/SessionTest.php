@@ -58,7 +58,7 @@ it('regenerates device session with valid password (Auth facade regression)', fu
     $this->actingAs($u);
 
     $this->post(route('sessions.logoutOthers'), [
-        'password' => 'Admin@base12345',
+        'password' => '#Password123',
     ])->assertRedirect(route('sessions.index'))
         ->assertSessionHas('success');
 });
