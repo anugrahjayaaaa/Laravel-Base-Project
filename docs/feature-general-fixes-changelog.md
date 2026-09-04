@@ -112,6 +112,57 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 - Error: pindah ke luar input-group, konsisten dengan pattern
 - Tambah `sr-only` label untuk email, password, password_confirmation
 
+## General UI/UX Consistency (All Views)
+
+### Two-form-pattern standard (established):
+- **Auth forms** (`auth/*`): `sr-only` label (placeholder-only UX) + aria attributes (WCAG 2.1)
+- **Admin forms** (`access/*`, `plans/*`, `settings/*`): visible `<label class="form-label">` + per-field error
+
+### Checkbox standard:
+- All checkboxes (boolean): hidden input `value=0` + checkbox `value=1` (prevents null-on-unchecked validation failure)
+  - Examples: `is_active` (plans/form), `registration_enabled` (settings/system)
+
+### Error display standard:
+- General errors: `@if($errors->any())` alert block
+- Field errors: `@error('field') <div class="invalid-feedback d-block">` (d-block required for server-side errors)
+- Error block always OUTSIDE `.input-group` (mencegah layout shift/icon displacement)
+- All error: `role="alert"` + `aria-live="polite"`
+
+### Submit button / footer standard:
+- All forms: `<div class="card-footer d-flex justify-content-end gap-2">` + btn-light cancel + btn-primary save
+
+### `resources/views/access/users/edit.blade.php`
+- Tambah password visibility toggle (sama kayak auth/register) — konsisten
+- Per-field error: `invalid-feedback d-block` + `aria-describedby`
+- Add `id` attributes untuk toggle JS target
+
+### `resources/views/access/roles/edit.blade.php`
+- Tambah `permissions[]` field error display
+- `invalid-feedback d-block` + aria attributes pada semua field
+
+### `resources/views/access/permissions/edit.blade.php`
+- `invalid-feedback d-block` + `aria-describedby` + `aria-invalid`
+- Add `id` attributes
+
+### `resources/views/plans/form.blade.php`
+- Ganti submit button wrapper `<div class="mt-4">` → `card-footer d-flex justify-content-end gap-2` — konsisten
+- Hapus h3 hardcode (layout sudah punya content header via $title variable)
+- Per-field error display pada capacity/permission checkboxes
+
+### `resources/views/settings/system.blade.php`
+- Tambah hidden input pada `registration_enabled` checkbox
+
+### `resources/views/settings/translations/edit.blade.php`
+- Refactor ke card-footer pattern
+- Per-field error display per locale + aria attributes
+
+### `resources/views/partials/layout/header.blade.php`
+- Notification link: hardcode ke audit.index — VERIFIED OK (audit log adalah notification utama)
+
 ## Testing
-- All 140 tests pass
-- Key test files: `LicensingTest.php`, `PlanTest.php` (7 tests), `RbacTest.php`, `QaSmokeTest.php`
+- All 140 tests pass (375 assertions)
+- Auth subset: 29/29 pass
+- User tests: 31 pass
+- Role+Permission tests: 21 pass
+- Plan tests: 7 pass
+- Key test files: `LicensingTest.php`, `PlanTest.php`, `RbacTest.php`, `QaSmokeTest.php`
