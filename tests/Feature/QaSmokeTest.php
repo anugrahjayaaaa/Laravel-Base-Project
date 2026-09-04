@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\LicenseService;
 use App\Services\PlanService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -26,7 +26,7 @@ it('checkout route exists and method is reachable (dummy mode)', function () {
         ->assertRedirect(route('billing.index'));
 
     // dummy mode should have paid immediately
-    $payments = \App\Models\Payment::where('plan_slug', 'pro')->get();
+    $payments = Payment::where('plan_slug', 'pro')->get();
     expect($payments->count())->toBe(1)
         ->and($payments->first()->status)->toBe('paid');
 });
@@ -62,13 +62,13 @@ it('webhook with valid signature completes payment', function () {
         'X-Billing-Signature' => 'test-secret',
     ])->assertOk();
 
-    expect(\App\Models\Payment::where('gateway_ref', 'order-test-1')->first()->status)->toBe('paid');
+    expect(Payment::where('gateway_ref', 'order-test-1')->first()->status)->toBe('paid');
 });
 
 it('tampered plan setting reverts to free features (§10.1)', function () {
     // client edits settings.active_plan directly without valid license
-    \App\Models\Setting::set('active_plan', 'pro');
-    \App\Models\Setting::set('license_key', null);
+    Setting::set('active_plan', 'pro');
+    Setting::set('license_key', null);
 
     Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'billing_period' => 'monthly',

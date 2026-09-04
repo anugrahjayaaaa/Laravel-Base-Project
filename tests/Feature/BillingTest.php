@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\License;
 use App\Models\Plan;
+use App\Models\User;
 use App\Services\BillingService;
 use App\Services\LicenseService;
 use App\Services\PlanService;
@@ -22,7 +24,7 @@ it('dummy checkout completes and grants a lifetime license', function () {
         ->and($payment->gateway_ref)->not->toBeNull()
         ->and(LicenseService::status())->toBe('active')
         ->and(PlanService::for()->can('kanban'))->toBeTrue()
-        ->and(PlanService::for()->membersLeft())->toBe(5 - \App\Models\User::count());
+        ->and(PlanService::for()->membersLeft())->toBe(5 - User::count());
 });
 
 it('webhook completes idempotently (no double license)', function () {
@@ -35,6 +37,6 @@ it('webhook completes idempotently (no double license)', function () {
     $second = BillingService::handleWebhook(['order_id' => $ref, 'status' => 'paid', 'plan_slug' => 'pro']);
 
     expect($first->id)->toBe($second->id)
-        ->and(\App\Models\License::count())->toBe(1)
+        ->and(License::count())->toBe(1)
         ->and(LicenseService::status())->toBe('active');
 });

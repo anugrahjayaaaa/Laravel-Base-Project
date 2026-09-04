@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\License;
 use App\Models\Plan;
+use App\Models\Setting;
+use App\Models\User;
 use App\Services\LicenseService;
 use App\Services\PlanService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,7 +29,7 @@ it('issues and activates a signed license, then gates features', function () {
     $plan = PlanService::for();
     expect($plan->can('kanban'))->toBeTrue()
         ->and($plan->can('audit'))->toBeTrue()
-        ->and($plan->membersLeft())->toBe(5 - \App\Models\User::count());
+        ->and($plan->membersLeft())->toBe(5 - User::count());
 });
 
 it('rejects a forged license key', function () {
@@ -50,7 +53,7 @@ it('expired license downgrades to free', function () {
         ->and(LicenseService::status())->toBe('none');
 
     // active plan stays free (default seeded)
-    expect(\App\Models\Setting::get('active_plan'))->toBe('free');
+    expect(Setting::get('active_plan'))->toBe('free');
 });
 
 it('revoke instantly locks features', function () {
@@ -62,17 +65,17 @@ it('revoke instantly locks features', function () {
     LicenseService::revoke($key, 'abuse');
     // instance deactivated: no active license, plan falls back to free
     expect(LicenseService::status())->toBe('none')
-        ->and(\App\Models\Setting::get('active_plan'))->toBe('free')
-        ->and(\App\Models\License::where('license_key', $key)->first()->status)->toBe('revoked');
+        ->and(Setting::get('active_plan'))->toBe('free')
+        ->and(License::where('license_key', $key)->first()->status)->toBe('revoked');
 });
 
 it('default free plan is active after seed', function () {
     expect(PlanService::for()->can('audit'))->toBeTrue()
-        ->and(PlanService::for()->membersLeft())->toBe(2 - \App\Models\User::count());
+        ->and(PlanService::for()->membersLeft())->toBe(2 - User::count());
 });
 
 it('uses default_plan when no license is active', function () {
-    \App\Models\Setting::set('default_plan', 'free');
+    Setting::set('default_plan', 'free');
 
     $plan = PlanService::for();
     expect($plan->can('audit'))->toBeTrue()
@@ -81,8 +84,8 @@ it('uses default_plan when no license is active', function () {
 
 it('tamper: flipping settings.active_plan without a valid license yields no paid features', function () {
     // client owns the DB and edits the setting directly (Model 1, §10.1)
-    \App\Models\Setting::set('active_plan', 'pro');
-    \App\Models\Setting::set('license_key', null);
+    Setting::set('active_plan', 'pro');
+    Setting::set('license_key', null);
 
     // no matching signed license row -> entitlement uses the 'pro' plan row but
     // with NO snapshot, and there is no pro plan seeded -> falls back to free.
