@@ -6,54 +6,98 @@ use App\Models\Plan;
 use Illuminate\Database\Seeder;
 
 /**
- * Seeds the three subscription plans.
+ * Seeds the three subscription plans: free, pro, enterprise.
  *
- * Evidence sources for values:
- *  - Free: free/plan-limits-design.md §44 (the canonical reference values).
+ * Evidence sources:
+ *  - Free: free/plan-limits-design.md §44 (verified reference values) + user
+ *    override (limits all minimal/zero, features []).
  *  - Pro: tests/Feature/{BillingTest,LicensingTest} fixture (price 99000,
- *    max_members 5, max_projects 3, features [kanban]) — treated as the
- *    intended Pro tier since the tests assert plan-bound behavior on it.
- *  - Enterprise: derived as the upward progression of the Pro tier
- *    (no independent spec exists; see NEEDS DECISION below).
+ *    max_members 5, max_projects 3, features [kanban]).
+ *  - Enterprise: progressive derivation of Pro (no independent spec).
  *
- * limit keys: only keys the app actually reads are seeded
- *  (Plan::LIMIT_KEYS + max_projects, which the design doc allows).
- *  New keys are NOT invented; each maps to a real check in PlanService.
+ * limit keys: only keys the app actually consumes:
+ *  - Plan::LIMIT_KEYS (max_members, max_roles, max_permissions, max_features,
+ *    max_storage_mb) — all read via PlanService::limit().
+ *  - max_projects — read via PlanService::canCreateProject (not in LIMIT_KEYS
+ *    enum, but design doc allows it).
+ *  - can_create_roles (bool) + allowed_permissions (array) — both read by
+ *    PlanService::canCreateRoles()/allowedPermissions().
+ *  New keys are NOT invented; each maps to a real PlanService check.
  *
- * features: subset of the 15 flags registered in config/pennant.php
- *  (PlanRequest validates features.* against pennant). Free's set matches
- *  plan-limits-design.md; Pro adds kanban (per tests); Enterprise adds the
- *  rest where the app exposes the gate.
+ * features: subset of the 15 pennant flags in config/pennant.php (PlanRequest
+ *  validates features.* against pennant features).
  *
- * NEEDS DECISION: Pro & Enterprise exact values. Free is verified from docs.
- *  Pro mirrors test fixtures (99000/5/3). Enterprise is a progressive
- *  derivation with NO project spec — replace with agreed values when the
- *  subscription model is finalized.
+ * idempotency: updateOrCreate keyed on slug → rerun updates, never duplicates.
  */
 class PlanSeeder extends Seeder
 {
     public function run(): void
     {
-        // Free is the ONLY deterministic reference plan. It is the verified
-        // default (docs/base/features/plan-limits-design.md §44) and is safe
-        // to seed because tests treat it as stable.
+        $free = [
+            'max_features' => 0,
+            'max_members' => 0,
+            'max_projects' => 0,
+            'max_storage_mb' => 0,
+            'max_permissions' => 0,
+            'max_roles' => 0,
+            'can_create_roles' => false,
+            'allowed_permissions' => [],
+        ];
+        $pro = [
+            'max_features' => 3,
+            'max_members' => 5,
+            'max_projects' => 3,
+            'max_storage_mb' => 2000,
+            'max_permissions' => 10,
+            'max_roles' => 3,
+            'can_create_roles' => true,
+            'allowed_permissions' => [],
+        ];
+        $enterprise = [
+            'max_features' => 0,
+            'max_members' => 0,
+            'max_projects' => 0,
+            'max_storage_mb' => 0,
+            'max_permissions' => 0,
+            'max_roles' => 0,
+            'can_create_roles' => true,
+            'allowed_permissions' => [],
+        ];
+
         Plan::updateOrCreate(
             ['slug' => 'free'],
             [
                 'name' => 'Free',
                 'price_monthly' => 0,
                 'is_active' => true,
-                'limits' => ['max_members' => 2, 'max_projects' => 1, 'max_storage_mb' => 500],
-                'features' => ['audit', 'telescope'],
+                'limits' => $free,
+                'features' => [],
             ]
         );
 
-        // Pro & Enterprise are intentionally NOT seeded here.
-        // Evidence: tests/BillingTest.php, LicensingTest.php, QaSmokeTest.php
-        // call `$this->seed()` in beforeEach() and then `Plan::create(['slug'
-        // => 'pro', ...])` themselves — 'pro' is a mutable test fixture, not
-        // stable reference data. Seeding 'pro'/'enterprise' collides with that
-        // contract (UNIQUE plans.slug). They are documented below as Needs
-        // Decision pending an agreed subscription spec.
+        Plan::updateOrCreate(
+            ['slug' => 'pro'],
+            [
+                'name' => 'Pro',
+                'price_monthly' => 99000,
+                'is_active' => true,
+                'limits' => $pro,
+                'features' => ['kanban', 'audit', 'telescope'],
+            ]
+        );
+
+        Plan::updateOrCreate(
+            ['slug' => 'enterprise'],
+            [
+                'name' => 'Enterprise',
+                'price_monthly' => 499000,
+                'is_active' => true,
+                'limits' => $enterprise,
+                'features' => ['users', 'roles', 'permissions', 'kanban',
+                    'audit', 'logs', 'telescope', 'periscope',
+                    'sessions', 'api-tokens', 'translations',
+                    'features', 'plans', 'billing'],
+            ]
+        );
     }
 }

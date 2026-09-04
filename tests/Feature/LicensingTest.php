@@ -12,8 +12,7 @@ uses(RefreshDatabase::class);
 beforeEach(fn () => $this->seed());
 
 it('issues and activates a signed license, then gates features', function () {
-    Plan::create([
-        'slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true,
         'limits' => ['max_members' => 5, 'max_projects' => 3],
         'features' => ['kanban', 'audit', 'telescope'],
@@ -33,8 +32,7 @@ it('issues and activates a signed license, then gates features', function () {
 });
 
 it('rejects a forged license key', function () {
-    Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban']]);
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true, 'limits' => [], 'features' => []]);
 
     $key = LicenseService::issue('pro', ['type' => 'manual', 'expires_at' => null]);
     $forged = 'LIC-PRO-DEADBEEF1234';
@@ -45,8 +43,7 @@ it('rejects a forged license key', function () {
 });
 
 it('expired license downgrades to free', function () {
-    Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban']]);
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true, 'limits' => [], 'features' => []]);
 
     $key = LicenseService::issue('pro', ['type' => 'recurring', 'expires_at' => now()->subDay()]);
     expect(LicenseService::activate($key))->toBeFalse() // already expired
@@ -57,8 +54,7 @@ it('expired license downgrades to free', function () {
 });
 
 it('revoke instantly locks features', function () {
-    Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban']]);
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true, 'limits' => [], 'features' => []]);
     $key = LicenseService::issue('pro', ['type' => 'manual', 'expires_at' => null]);
     LicenseService::activate($key);
 
@@ -70,15 +66,17 @@ it('revoke instantly locks features', function () {
 });
 
 it('default free plan is active after seed', function () {
-    expect(PlanService::for()->can('audit'))->toBeTrue()
-        ->and(PlanService::for()->membersLeft())->toBe(2 - User::count());
+    // Free plan: user-set minimal (limits all zero, features [])
+    expect(PlanService::for()->can('audit'))->toBeFalse()
+        ->and(PlanService::for()->can('kanban'))->toBeFalse()
+        ->and(PlanService::for()->membersLeft())->toBe(max(0, 0 - User::count()));
 });
 
 it('uses default_plan when no license is active', function () {
     Setting::set('default_plan', 'free');
 
     $plan = PlanService::for();
-    expect($plan->can('audit'))->toBeTrue()
+    expect($plan->can('audit'))->toBeFalse() // audit no longer free-tier (see PLAN LIMITS NEEDS DECISION)
         ->and($plan->can('kanban'))->toBeFalse(); // kanban is pro-only
 });
 
@@ -87,12 +85,11 @@ it('tamper: flipping settings.active_plan without a valid license yields no paid
     Setting::set('active_plan', 'pro');
     Setting::set('license_key', null);
 
-    // no matching signed license row -> entitlement uses the 'pro' plan row but
-    // with NO snapshot, and there is no pro plan seeded -> falls back to free.
+    // no matching signed license row -> PlanService returns no features for a
+    // paid plan without a valid license (§10.1 tamper resistance).
     // Simplest correct assertion: without an issued+activated license, paid
     // features are NOT granted.
-    Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban']]);
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true, 'limits' => [], 'features' => []]);
 
     // even with pro plan row present, no activated license => snapshot empty => no kanban
     expect(PlanService::for()->can('kanban'))->toBeFalse();

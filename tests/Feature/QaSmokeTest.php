@@ -15,8 +15,7 @@ it('checkout route exists and method is reachable (dummy mode)', function () {
     $user = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($user);
 
-    Plan::create([
-        'slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'billing_period' => 'monthly',
         'limits' => ['max_members' => 5], 'features' => ['kanban'],
     ]);
@@ -50,8 +49,7 @@ it('webhook rejects invalid signature (403)', function () {
 
 it('webhook with valid signature completes payment', function () {
     config(['billing.fake' => true, 'billing.webhook_secret' => 'test-secret']);
-    Plan::create([
-        'slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'billing_period' => 'monthly',
         'limits' => ['max_members' => 5], 'features' => ['kanban'],
     ]);
@@ -70,9 +68,11 @@ it('tampered plan setting reverts to free features (§10.1)', function () {
     Setting::set('active_plan', 'pro');
     Setting::set('license_key', null);
 
-    Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'billing_period' => 'monthly',
-        'limits' => ['max_members' => 5], 'features' => ['kanban']]);
+    Plan::firstOrCreate(['slug' => 'pro'], [
+        'name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true,
+        'billing_period' => 'monthly',
+        'limits' => ['max_members' => 5], 'features' => ['kanban'],
+    ]);
 
     // no activated license -> PlanService refuses paid features
     expect(PlanService::for()->can('kanban'))->toBeFalse();

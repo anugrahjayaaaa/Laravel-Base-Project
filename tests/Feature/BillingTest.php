@@ -13,9 +13,9 @@ beforeEach(fn () => $this->seed());
 
 it('dummy checkout completes and grants a lifetime license', function () {
     config(['billing.fake' => true]);
-    $plan = Plan::create([
-        'slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
-        'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban'],
+    $plan = Plan::firstOrCreate(['slug' => 'pro'], [
+        'name' => 'Pro', 'price_monthly' => 99000, 'is_active' => true,
+        'limits' => ['max_members' => 5], 'features' => ['kanban'],
     ]);
 
     $payment = BillingService::checkout($plan, 1);
@@ -29,7 +29,7 @@ it('dummy checkout completes and grants a lifetime license', function () {
 
 it('webhook completes idempotently (no double license)', function () {
     config(['billing.fake' => true]);
-    Plan::create(['slug' => 'pro', 'name' => 'Pro', 'price_monthly' => 99000,
+    Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['kanban']]);
 
     $ref = 'order-abc-123';

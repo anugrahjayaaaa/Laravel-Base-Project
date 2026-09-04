@@ -45,46 +45,40 @@ Dependencies:
 | PermissionSeeder  | spatie `permissions`              | 33 permissions (web guard)     | `docs/base/modules/backend.md` §RBAC |
 | RoleSeeder        | spatie `roles` + assignment       | super-admin, admin, staff      | `docs/authorization.md` §Roles |
 | SettingSeeder     | `settings` key/value              | active_plan=free, default_plan=free, default_role=staff, license_mode=global | `docs/base/features/licensing-and-billing.md` §46-49 |
-| PlanSeeder        | `plans`                           | Free only (see below)          | `docs/base/features/plan-limits-design.md` §44 |
+| PlanSeeder        | `plans`                           | free, pro, enterprise (3 tiers) | `docs/base/features/plan-limits-design.md` §44 |
 | AdminUserSeeder   | `users` first-run admin           | admin@laravel-base.local       | dev/first-run only |
 | LanguageLineSeeder| spatie `language_lines`           | from `lang/{en,id}/`           | `docs/i18n.md` |
 
 ## Plans
 
-Only **Free** is seeded as deterministic reference data.
-Free values (verified):
+All three tiers are seeded (`PlanSeeder`): free, pro, enterprise.
 
-| slug   | price | members | projects | storage_mb | features      |
-| ------ | ----- | ------- | -------- | ---------- | ------------- |
-| free   | 0     | 2       | 1        | 500        | [audit, telescope] |
+| slug | price | members | projects | storage_mb | features | rbac |
+| --- | --- | --- | --- | --- | --- | --- |
+| free | 0 | 0 | 0 | 0 | [] | can_create_roles=false, allowed_permissions=[] |
+| pro | 99000 | 5 | 3 | 2000 | kanban, audit, telescope | can_create_roles=true |
+| enterprise | 499000 | 0 (unlimited) | 0 | 0 | all 15 pennant flags | can_create_roles=true |
 
-Pro and Enterprise are **NOT seeded**. They are created on-demand per
-subscription context. Intended Pro baseline (from test fixtures:
-`tests/Feature/BillingTest.php`, `LicensingTest.php`):
-
-| slug   | price  | members | projects | storage_mb | features |
-| ------ | ------ | ------- | -------- | ---------- | -------- |
-| pro    | 99000  | 5       | 3        | 2000       | [kanban,…] |
-| enterprise | 499000 | 0 (unlimited) | 0 | 0 | all pennant flags |
-
-### needs-decision / plans
-
-`Plan::firstOrCreate('pro')` + `enterprise` values have **no project spec**.
-Test fixtures give a Pro baseline (99000 / 5 / 3 / kanban). Enterprise is a
-progressive derivation with no independent evidence. These are intentionally
-kept out of `PlanSeeder` to avoid inventing subscription business rules
-(see `docs/base/features/plan-limits-design.md` §51 "needs decision").
+- `0` in numeric limits = unlimited (`PlanService::limit` returns int; callers like `membersLeft` use `max(0, limit - count)`).
+- `features` are a subset of the 15 pennant flags in `config/pennant.php`;
+  `PlanRequest` validates `features.*` against pennant.
+- Pro baseline (99000/5/3/kanban+audit+telescope) is sourced from test
+  fixtures (`tests/Feature/{BillingTest,LicensingTest,QaSmokeTest}`);
+  Enterprise is a progressive derivation — see plan-limits-design.md §4.
+- Free uses all-minimal/zero limits by explicit project decision.
 
 ## Admin user (security)
 
 - **Development / first-run seed data only.**
-- email `admin@laravel-base.local` is a reserved placeholder (not a real inbox).
-- Password is seeded as `Hash::make(...)` (bcrypt) — never plaintext in repo.
-- Phone is masked (`+628****0001`) — no real PII.
-- In production this credential is replaced by env-driven provisioning.
+- email `admin@laravel-base.local` reserved placeholder (not a real inbox).
+- Password seeded via `Hash::make('#Password123')` (bcrypt) — never plaintext
+  in repo.
+- Phone masked `+628****0001` — no real PII.
+- In production, replaced by env-driven provisioning.
 
 ## Idempotency
 
-- `updateOrCreate` keyed on `slug`/`email`/`key` — reruns update, never duplicate.
+- `updateOrCreate` keyed on `slug` / `email` / `key` — reruns update, never
+  duplicate.
 - `Permission::findOrCreate` (spatie) — reruns are no-ops.
 - `Role::syncPermissions` — replaces the permission set per run.
