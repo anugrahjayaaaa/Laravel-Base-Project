@@ -33,7 +33,7 @@
                         @else
                             <span class="badge text-bg-secondary">{{ ui('inactive') }}</span>
                         @endif
-                        <span class="badge text-bg-light">{{ ui('period_'.$plan->billing_period) }}</span>
+                        <span class="badge text-bg-light">{{ ui('period_'.$plan->billing_period) ?: ucfirst($plan->billing_period) }}</span>
                     </td>
                     <td class="text-end">
                         <a href="{{ route('plans.edit', $plan) }}" class="btn btn-sm btn-light border">{{ ui('edit') }}</a>
