@@ -14,49 +14,50 @@
             <form method="POST" action="{{ route('register.store') }}">
                 @csrf
                 <div class="input-group mb-3">
-                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                           placeholder="{{ ui('full_name') }}" value="{{ old('name') }}" required autofocus>
-                @error('name')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
+                    <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" placeholder="{{ ui('full_name') }}" value="{{ old('name') }}" required autofocus aria-describedby="name-error" @error('name') aria-invalid="true" @enderror>
+                    <label for="name" class="sr-only">{{ ui('full_name') }}</label>
                     <div class="input-group-text"><i class="bi bi-person"></i></div>
+                    @error('name')<div id="name-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="input-group mb-3">
-                    <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                           placeholder="{{ ui('username') }}" value="{{ old('username') }}" required>
-                @error('username')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
+                    <input type="text" name="username" id="username" class="form-control @error('username') is-invalid @enderror" placeholder="{{ ui('username') }}" value="{{ old('username') }}" required aria-describedby="username-error" @error('username') aria-invalid="true" @enderror>
+                    <label for="username" class="sr-only">{{ ui('username') }}</label>
                     <div class="input-group-text"><i class="bi bi-person-badge"></i></div>
+                    @error('username')<div id="username-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                           placeholder="{{ ui('email') }}" value="{{ old('email') }}" required>
-                @error('email')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
+                    <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" placeholder="{{ ui('email') }}" value="{{ old('email') }}" required aria-describedby="email-error" @error('email') aria-invalid="true" @enderror>
+                    <label for="email" class="sr-only">{{ ui('email') }}</label>
                     <div class="input-group-text"><i class="bi bi-envelope"></i></div>
+                    @error('email')<div id="email-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="input-group mb-3">
-                    <input type="tel" name="phone" inputmode="numeric" class="form-control @error('phone') is-invalid @enderror"
-                           placeholder="{{ ui('phone_optional') }}" value="{{ old('phone') }}">
-                @error('phone')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
+                    <input type="tel" name="phone" id="phone" inputmode="numeric" class="form-control @error('phone') is-invalid @enderror" placeholder="{{ ui('phone_optional') }}" value="{{ old('phone') }}" aria-describedby="phone-error" @error('phone') aria-invalid="true" @enderror>
+                    <label for="phone" class="sr-only">{{ ui('phone_optional') }}</label>
                     <div class="input-group-text"><i class="bi bi-telephone"></i></div>
+                    @error('phone')<div id="phone-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="input-group mb-3">
-                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror"
-                           placeholder="{{ ui('password') }}" required>
+                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ ui('password') }}" required aria-describedby="password-error" @error('password') aria-invalid="true" @enderror>
+                    <label for="password" class="sr-only">{{ ui('password') }}</label>
                     <button type="button" class="input-group-text" id="toggle-password" aria-label="{{ ui('show_password') }}" style="cursor:pointer">
                         <i class="bi bi-eye" id="password-icon"></i>
                     </button>
                 </div>
-                @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                @error('password')<div id="password-error" class="invalid-feedback d-block w-100 mt-1" role="alert" aria-live="polite">{{ $message }}</div>@enderror
 
                 <div class="input-group mb-3">
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="{{ ui('confirm_password') }}" required>
+                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="{{ ui('confirm_password') }}" required aria-describedby="password_confirmation-error" @error('password_confirmation') aria-invalid="true" @enderror>
+                    <label for="password_confirmation" class="sr-only">{{ ui('confirm_password') }}</label>
                     <button type="button" class="input-group-text" id="toggle-password-confirm" aria-label="{{ ui('show_password') }}" style="cursor:pointer">
                         <i class="bi bi-eye" id="password-confirm-icon"></i>
                     </button>
                 </div>
-                @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('password_confirmation')<div id="password_confirmation-error" class="invalid-feedback d-block w-100 mt-1" role="alert" aria-live="polite">{{ $message }}</div>@enderror
 
                 <div class="row">
                     <div class="col-12">
