@@ -73,7 +73,7 @@
                                 :forceDelete="$user->trashed() && auth()->user()->can('user.force-delete') ? route('users.forceDelete', $user->id) : null" />
                             @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.edit'))
                             <form method="POST" action="{{ route('users.reset-password', $user) }}" class="d-inline">@csrf
-                                <button type="submit" class="btn btn-sm btn-light border rounded-2" data-bs-toggle="tooltip" data-bs-title="Send reset password" aria-label="Send reset password" style="min-width:38px">
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2" data-bs-toggle="tooltip" data-bs-title="{{ ui('send_reset_email') }}" aria-label="{{ ui('send_reset_email') }}" style="min-width:38px">
                                     <i class="bi bi-envelope"></i>
                                 </button>
                             </form>
@@ -81,13 +81,13 @@
                             @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.lock'))
                             @if ($user->isLocked())
                             <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
-                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-warning" data-bs-toggle="tooltip" data-bs-title="Unlock account" aria-label="Unlock account" style="min-width:38px">
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-warning" data-bs-toggle="tooltip" data-bs-title="{{ ui('unlock') }}" aria-label="{{ ui('unlock') }}" style="min-width:38px">
                                     <i class="bi bi-unlock-fill"></i>
                                 </button>
                             </form>
                             @else
                             <form method="POST" action="{{ route('users.lock', $user) }}" class="d-inline">@csrf
-                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Lock account" aria-label="Lock account" style="min-width:38px">
+                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-danger" data-bs-toggle="tooltip" data-bs-title="{{ ui('lock') }}" aria-label="{{ ui('lock') }}" style="min-width:38px">
                                     <i class="bi bi-lock-fill"></i>
                                 </button>
                             </form>
