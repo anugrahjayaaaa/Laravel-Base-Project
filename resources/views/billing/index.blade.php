@@ -32,7 +32,7 @@
                     </form>
                 @else
                     <p class="text-muted">{{ __('messages.no_active_subscription') }}</p>
-                    <a href="{{ route('plans.index') }}" class="btn btn-primary">{{ ui('subscribe') }}</a>
+                    <a href="{{ route('plans.index') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> {{ ui('subscribe') }}</a>
                 @endif
             </div>
         </div>

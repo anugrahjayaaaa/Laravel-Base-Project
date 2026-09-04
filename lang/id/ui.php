@@ -210,6 +210,7 @@ return [
     'date' => 'Tanggal',
     'message' => 'Pesan',
     'no_log_entries' => 'Tidak ada entri log.',
+    'stack_trace' => 'Stack trace',
     'all_actions' => 'Semua tindakan',
     'time' => 'Waktu',
     'causer' => 'Penyebab',

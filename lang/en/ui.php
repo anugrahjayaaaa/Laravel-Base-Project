@@ -210,6 +210,7 @@ return [
     'date' => 'Date',
     'message' => 'Message',
     'no_log_entries' => 'No log entries.',
+    'stack_trace' => 'Stack trace',
     'all_actions' => 'All actions',
     'time' => 'Time',
     'causer' => 'Causer',
