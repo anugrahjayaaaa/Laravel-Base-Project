@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureFeatureEnabled;
 use App\Http\Middleware\LogHttpErrors;
+use App\Http\Middleware\RegistrationEnabled;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetApiLocale;
 use App\Http\Middleware\SetLocale;
@@ -30,7 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [SetApiLocale::class]);
         $middleware->alias([
             'feature' => EnsureFeatureEnabled::class,
-            'registration.enabled' => \App\Http\Middleware\RegistrationEnabled::class,
+            'registration.enabled' => RegistrationEnabled::class,
         ]);
     })
     ->withProviders([

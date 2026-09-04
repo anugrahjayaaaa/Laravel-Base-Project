@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\AuditController;
-use App\Http\Controllers\BillingController;
-use App\Http\Controllers\BillingAdminController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BillingAdminController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\LocaleController;
