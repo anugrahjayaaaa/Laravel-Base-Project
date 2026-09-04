@@ -1,9 +1,10 @@
 @extends('layouts.app')
 @section('content')
+@php($title = ui('profile'))
 @include('partials.flash-message')
 <div class="row">
     <div class="col-md-6">
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header">{{ ui('profile') }}</div>
             <div class="card-body">
                 <form method="POST" action="{{ route('profile.update') }}">
@@ -35,40 +36,67 @@
                         <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone) }}">
                         @error('phone')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     </div>
-                    <div class="card-footer d-flex justify-content-end gap-2">
-                        <button class="btn btn-primary">{{ ui('update_profile') }}</button>
-                    </div>
-                </form>
             </div>
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-primary">{{ ui('update_profile') }}</button>
+            </div>
+            </form>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header">{{ ui('change_password') }}</div>
             <div class="card-body">
                 <form method="POST" action="{{ route('profile.password') }}">
                     @csrf
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label class="form-label">{{ ui('current_password') }}</label>
-                        <input type="password" name="current_password" class="form-control @error('current_password') is-invalid @enderror" required>
+                        <input type="password" name="current_password" id="current_password" class="form-control @error('current_password') is-invalid @enderror" required>
                         @error('current_password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label class="form-label">{{ ui('new_password_hint') }}</label>
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
-                        @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+                        <button type="button" class="btn btn-outline-secondary btn-sm position-absolute top-50 translate-middle-y" style="right: 8px;" id="toggle-password" aria-label="{{ ui('show_password') }}">
+                            <i class="bi bi-eye-slash" id="password-icon"></i>
+                        </button>
+                        @error('password')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label class="form-label">{{ ui('confirm') }}</label>
-                        <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
-                        @error('password_confirmation')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="card-footer d-flex justify-content-end">
-                            <button class="btn btn-warning">{{ ui('change_password') }}</button>
-                        </div>
-                </form>
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
+                        <button type="button" class="btn btn-outline-secondary btn-sm position-absolute top-50 translate-middle-y" style="right: 8px;" id="toggle-password-confirm" aria-label="{{ ui('show_password') }}">
+                            <i class="bi bi-eye-slash" id="password-confirm-icon"></i>
+                        </button>
+                        @error('password_confirmation')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
+                    </div>
             </div>
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-warning">{{ ui('change_password') }}</button>
+            </div>
+            </form>
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+    (function () {
+        for (const [field, btn, icon] of [
+            ['password', 'toggle-password', 'password-icon'],
+            ['password_confirmation', 'toggle-password-confirm', 'password-confirm-icon']
+        ]) {
+            const pwd = document.getElementById(field);
+            const b = document.getElementById(btn);
+            const i = document.getElementById(icon);
+            if (pwd && b && i) {
+                b.addEventListener('click', function () {
+                    const show = pwd.type === 'password';
+                    pwd.type = show ? 'text' : 'password';
+                    i.className = show ? 'bi bi-eye' : 'bi bi-eye-slash';
+                });
+            }
+        }
+    })();
+</script>
+@endpush
 @endsection
