@@ -191,6 +191,7 @@ return [
     'notifications' => 'Notifikasi',
     'notifications_intro' => 'Aktivitas akun dan admin terbaru Anda.',
     'unread' => 'belum dibaca',
+    'read' => 'dibaca',
     'no_notifications_yet' => 'Belum ada notifikasi.',
     'coming_later' => 'Akan hadir di fase berikutnya.',
 

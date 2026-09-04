@@ -191,6 +191,7 @@ return [
     'notifications' => 'Notifications',
     'notifications_intro' => 'Your recent account and admin activity.',
     'unread' => 'unread',
+    'read' => 'read',
     'no_notifications_yet' => 'No notifications yet.',
     'coming_later' => 'Coming in a later phase.',
 
