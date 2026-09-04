@@ -16,6 +16,7 @@ return [
     'system_settings' => 'System Settings',
     'close' => 'Close',
     'search' => 'Search',
+    'search_menu' => 'Search menu…',
     'search_translation' => 'Search group, key, or text…',
     'filter' => 'Filter',
     'copy' => 'Copy',

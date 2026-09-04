@@ -16,6 +16,7 @@ return [
     'system_settings' => 'Pengaturan Sistem',
     'close' => 'Tutup',
     'search' => 'Cari',
+    'search_menu' => 'Cari menu…',
     'search_translation' => 'Cari grup, kunci, atau teks…',
     'filter' => 'Filter',
     'copy' => 'Salin',
