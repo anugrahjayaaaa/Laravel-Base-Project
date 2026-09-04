@@ -19,8 +19,8 @@
                 @csrf
                 <div class="input-group mb-3">
                     <input type="text" name="identifier" class="form-control @error('identifier') is-invalid @enderror" placeholder="{{ ui('email_or_username') }}" value="{{ old('identifier') }}" required autofocus>
-                    @error('identifier')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-person"></i></div>
+                    @error('identifier')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                 </div>
                 <div class="input-group mb-3">
                     <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ ui('password') }}" required>
@@ -28,7 +28,7 @@
                         <i class="bi bi-eye" id="password-icon"></i>
                     </button>
                 </div>
-                @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 <div class="row">
                     <div class="col-8">
                         <div class="form-check">

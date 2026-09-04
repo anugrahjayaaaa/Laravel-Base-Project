@@ -51,14 +51,11 @@
                 @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
 
                 <div class="input-group mb-3">
-                    <input type="password" name="password_confirmation" id="password_confirmation"
-                           class="form-control @error('password_confirmation') is-invalid @enderror"
-                           placeholder="{{ ui('confirm_password') }}" required>
+                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="{{ ui('confirm_password') }}" required>
                     <button type="button" class="input-group-text" id="toggle-password-confirm" aria-label="{{ ui('show_password') }}" style="cursor:pointer">
-                        <i class="bi bi-eye" id="password-confirm-icon"></i>
                     </button>
                 </div>
-                @error('password_confirmation')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
 
                 <div class="row">
                     <div class="col-12">
