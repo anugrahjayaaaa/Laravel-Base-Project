@@ -24,7 +24,7 @@ HTTP (web Blade / API JSON)
   `config/permission.php` maps spatie to the custom Role/Permission.
 Cross-cutting: auth, rbac(`can:` middleware), feature(`feature:` flag gate), force-json, log-activity middleware;
 Exceptions → Sentry + structured log. **Authorization is wired on routes, not controllers —
-see `docs/coding-standard.md` §Authorization and `docs/adr.md` ADR-0010.**
+see `docs/base/conventions/coding.md` §Authorization and `docs/architecture/decisions/index.md` ADR-0010.**
 ```
 
 ---

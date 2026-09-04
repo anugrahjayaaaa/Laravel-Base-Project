@@ -1,3 +1,9 @@
+---
+id: BASE-008
+name: Notifications
+status: implemented
+---
+
 # Notifications
 
 Native Laravel notifications (`laravel/notifications`, database channel) — the standard Laravel way,

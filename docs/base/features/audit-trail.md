@@ -1,3 +1,9 @@
+---
+id: BASE-004
+name: Audit Trail
+status: implemented
+---
+
 # Audit Trail
 
 Uses `spatie/laravel-activitylog`. Every user action is logged automatically.

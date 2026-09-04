@@ -1,3 +1,9 @@
+---
+id: BASE-013
+name: Plan Limits Design
+status: design
+---
+
 # License Mode: Global vs Per-User
 
 ## Problem

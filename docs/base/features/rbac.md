@@ -1,3 +1,9 @@
+---
+id: BASE-003
+name: RBAC (Authorization Model)
+status: implemented
+---
+
 # Authorization (Dynamic RBAC)
 
 Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI (dynamic).
@@ -30,13 +36,13 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
 - `can:{perm}` is Laravel's built-in authorization middleware (spatie
   permission registered as the gate). Do **not** use a custom `permission:`
   middleware, and do **not** call `$this->middleware()` inside a controller
-  `__construct()` — see `docs/coding-standard.md` §Authorization.
+  `__construct()` — see `docs/base/conventions/coding.md` §Authorization.
 - Ownership checks (if needed) go in a Form Request `authorize()` or a Policy,
   not in the controller body. Current modules gate purely by permission; no
   per-resource Policy is registered.
 - Every role/permission change → audit trail.
 - **Feature flags** sit above RBAC: a module route is also wrapped in
-  `feature:{slug}` (see `docs/feature-flags.md`). Permission alone is not enough —
+  `feature:{slug}` (see `docs/base/features/feature-flags.md`). Permission alone is not enough —
   the feature must be enabled, or the route 404s and its sidebar item hides.
 
 ## Initial seed
@@ -50,4 +56,4 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
 ## Gate
 - Every route/action is protected by a permission (`can:` middleware). RED if
   any action lacks authz. Authorization lives on the route, not in a controller
-  constructor (see `docs/coding-standard.md` §Authorization).
+  constructor (see `docs/base/conventions/coding.md` §Authorization).

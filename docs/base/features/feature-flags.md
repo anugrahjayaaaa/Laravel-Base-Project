@@ -1,3 +1,9 @@
+---
+id: BASE-005
+name: Feature Flags
+status: implemented
+---
+
 # Feature Flags
 
 A feature flag is a layer **above** RBAC. Access to a module requires BOTH:

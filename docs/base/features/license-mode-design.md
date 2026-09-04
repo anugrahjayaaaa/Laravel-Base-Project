@@ -1,3 +1,9 @@
+---
+id: BASE-011
+name: License Mode Design
+status: design
+---
+
 # License Mode Design System
 
 ## Overview

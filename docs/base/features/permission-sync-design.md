@@ -1,3 +1,9 @@
+---
+id: BASE-012
+name: Permission Sync Design
+status: design
+---
+
 # Permission Sync Design (Global License Mode)
 
 ## Problem

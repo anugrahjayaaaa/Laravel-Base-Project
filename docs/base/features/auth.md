@@ -1,3 +1,9 @@
+---
+id: BASE-002
+name: Auth
+status: implemented
+---
+
 # Authentication
 
 ## User fields

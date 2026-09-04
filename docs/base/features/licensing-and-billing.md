@@ -1,3 +1,9 @@
+---
+id: BASE-007
+name: Licensing & Billing
+status: implemented
+---
+
 # Licensing, Plans & Billing — Design & Flow
 
 Status: DESIGN (not yet implemented). Current model = **Model 1 (per-client license)**,

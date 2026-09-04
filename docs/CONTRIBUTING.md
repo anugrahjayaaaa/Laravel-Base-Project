@@ -50,5 +50,5 @@ php artisan migrate --seed
 
 ## Open items (not v1)
 - MFA/2FA, SMS OTP, in-app notifications, file-upload module.
-- Subscriber-side RBAC enforcement: `can_create_roles` + `allowed_permissions` gate at `RoleController`/`PermissionController` (doc licensing §11.4). Currently open — plan limits are NOT enforced when subscribers create roles/permissions. Add when subscriber RBAC is needed.
-- Midtrans integration: swap `billing.fake=true` dummy checkout for real PG (Midtrans Snap + webhook). See `licensing-and-billing.md` §6.
+- Subscriber-side RBAC enforcement: `can_create_roles` + `allowed_permissions` gate at `RoleController`/`PermissionController` (doc licensing §11.4). Currently open — plan limits are NOT enforced when subscribers create roles/permissions. Add when subscriber RBAC is needed. See [licensing-and-billing.md](./base/features/licensing-and-billing.md) §11.4 (Subscriber RBAC).
+- Midtrans integration: swap `billing.fake=true` dummy checkout for real PG (Midtrans Snap + webhook). See [licensing-and-billing.md](./base/features/licensing-and-billing.md) §6.

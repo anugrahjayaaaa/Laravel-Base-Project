@@ -1,3 +1,9 @@
+---
+id: BASE-009
+name: API Tokens
+status: implemented
+---
+
 # API Tokens (Personal Access Tokens)
 
 Web UI for creating and revoking Sanctum personal access tokens, plus the mobile API they authenticate

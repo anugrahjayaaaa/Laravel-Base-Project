@@ -1,3 +1,9 @@
+---
+id: BASE-010
+name: Mobile API
+status: implemented
+---
+
 # API for Mobile
 
 One app: web (session) + mobile (Sanctum token).

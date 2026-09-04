@@ -53,4 +53,4 @@
   `Illuminate\Routing\Controller` so the helper exists if ever needed, but routes are the
   single place authorization is wired.
 - Consequences: one visible place for authz; no dependency on controller base wiring;
-  new modules follow `docs/coding-standard.md` §Authorization.
+  new modules follow `docs/base/conventions/coding.md` §Authorization.

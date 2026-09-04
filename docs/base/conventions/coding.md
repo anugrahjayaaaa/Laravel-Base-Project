@@ -29,8 +29,8 @@ controller extending a specific base. It also composes with feature flags
 (`feature:{slug}`) in the same `middleware([...])` array.
 
 **Every protected resource route MUST carry `can:{perm}`.** Module routes also
-carry `feature:{slug}`. Reference: `routes/web.php`, `docs/authorization.md`,
-`docs/feature-flags.md`.
+carry `feature:{slug}`. Reference: `routes/web.php`, `docs/base/features/rbac.md`,
+`docs/base/features/feature-flags.md`.
 
 ## 2. Base Controller
 `app/Http/Controllers/Controller` MUST extend `Illuminate\Routing\Controller`.
