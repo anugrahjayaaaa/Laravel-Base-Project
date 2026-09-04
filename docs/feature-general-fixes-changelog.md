@@ -156,6 +156,22 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 - Refactor ke card-footer pattern
 - Per-field error display per locale + aria attributes
 
+### `resources/views/access/permissions/create.blade.php`
+- Ganti hardcode `<h3>New Permission</h3>` → `<h3>{{ ui('new_permission') }}</h3>` — i18n consistency
+
+### `resources/views/access/roles/create.blade.php`
+- Ganti hardcode `<h3>New Role</h3>` → `<h3>{{ ui('new_role') }}</h3>` — i18n consistency
+
+### `resources/views/billing/` (index + invoice)
+- Already consistent: card + table + card-footer pattern, all i18n labels
+
+### `resources/views/admin/billing/index.blade.php`
+- Already consistent: stat cards + breakdown tables, all i18n labels
+
+### `resources/views/profile/show.blade.php`
+- Ganti submit button `<button>` langsung → `card-footer d-flex justify-content-end`
+- Semua `@error` → `invalid-feedback d-block` (server-side visibility)
+
 ### `resources/views/partials/layout/header.blade.php`
 - Notification link: hardcode ke audit.index — VERIFIED OK (audit log adalah notification utama)
 
