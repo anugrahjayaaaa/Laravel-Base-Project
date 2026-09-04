@@ -8,6 +8,7 @@ use App\Http\Requests\Profile\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @group Profile
@@ -36,7 +37,7 @@ class ProfileApiController extends Controller
     public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
         $user = $request->user();
-        $user->update(['password' => bcrypt($request->validated()['password'])]);
+        $request->user()->update(['password' => Hash::make($request->validated()['password'])]);
         $user->tokens()->delete();
         auth()->logoutOtherDevices($request->validated()['password']);
 

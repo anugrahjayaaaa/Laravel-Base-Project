@@ -95,6 +95,7 @@ class RoleController extends Controller
             return [];
         }
         $allowedIds = Permission::whereIn('name', $allowedNames)->pluck('id')->all();
+
         return array_intersect($permIds, $allowedIds);
     }
 

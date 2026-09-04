@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Plan;
 
 use App\Models\Permission;
+use App\Models\Plan;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Validator;
 
 /**
@@ -45,7 +47,7 @@ class PlanRequest extends FormRequest
     public function toPlanData(): array
     {
         $limits = [];
-        foreach (array_keys(\App\Models\Plan::LIMIT_KEYS) as $key) {
+        foreach (array_keys(Plan::LIMIT_KEYS) as $key) {
             if ($this->filled($key)) {
                 $limits[$key] = (int) $this->input($key);
             }
@@ -56,7 +58,7 @@ class PlanRequest extends FormRequest
 
         return [
             'name' => $this->input('name'),
-            'slug' => $this->input('slug') ?: \Illuminate\Support\Str::slug($this->input('name')),
+            'slug' => $this->input('slug') ?: Str::slug($this->input('name')),
             'price_monthly' => $this->input('price_monthly'),
             'billing_period' => $this->input('billing_period'),
             'is_active' => $this->boolean('is_active'),

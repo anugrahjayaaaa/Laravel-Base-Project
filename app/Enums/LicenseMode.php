@@ -9,7 +9,7 @@ enum LicenseMode: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::GLOBAL => 'Global (Instance)',
             self::PER_USER => 'Per-User',
         };

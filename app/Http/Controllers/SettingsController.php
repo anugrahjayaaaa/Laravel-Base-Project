@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\LicenseMode;
+use App\Http\Requests\Settings\SystemSettingsRequest;
 use App\Models\Plan;
 use App\Models\Role;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
@@ -36,22 +35,15 @@ class SettingsController extends Controller
     }
 
     /** Update system settings (default locale + registration toggle). */
-    public function update(Request $request): RedirectResponse
+    public function update(SystemSettingsRequest $request): RedirectResponse
     {
-        // ponytail: minimal validation — no FormRequest needed for these simple toggles
-        $request->validate([
-            'locale_default' => ['required', 'string', 'in:' . implode(',', config('app.available_locales', ['en', 'id']))],
-            'registration_enabled' => ['boolean'],
-            'license_mode' => ['required', 'string', 'in:global,per_user'],
-            'default_plan' => ['nullable', 'string', 'exists:plans,slug'],
-            'default_role' => ['nullable', 'string', 'exists:roles,name'],
-        ]);
+        $data = $request->validated();
 
-        Setting::set('locale_default', $request->input('locale_default'));
-        Setting::set('registration_enabled', $request->boolean('registration_enabled'));
-        Setting::set('license_mode', $request->input('license_mode'));
-        Setting::set('default_plan', $request->input('default_plan'));
-        Setting::set('default_role', $request->input('default_role'));
+        Setting::set('locale_default', $data['locale_default']);
+        Setting::set('registration_enabled', $data['registration_enabled']);
+        Setting::set('license_mode', $data['license_mode']);
+        Setting::set('default_plan', $data['default_plan']);
+        Setting::set('default_role', $data['default_role']);
 
         return back()->with('status', __('messages.settings_updated'));
     }

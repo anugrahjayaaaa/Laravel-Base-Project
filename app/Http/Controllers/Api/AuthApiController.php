@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\PasswordResetRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
@@ -58,7 +59,7 @@ class AuthApiController extends AuthController
     {
         $status = Password::broker('users')->reset(
             $request->validated(),
-            fn ($user, $password) => $user->forceFill(['password' => bcrypt($password)])->save()
+            fn ($user, $password) => $user->forceFill(['password' => Hash::make($password)])->save()
         );
 
         if ($status === Password::PASSWORD_RESET) {

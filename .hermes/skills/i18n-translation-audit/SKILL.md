@@ -79,3 +79,25 @@ echo "missing keys: ", $miss ? implode(",", array_values(array_unique($miss))) :
 - Editing `language_lines` table directly in DB is fine for runtime overrides,
   but the **file is the source of truth** — the seeder will overwrite DB-only
   keys on the next run.
+
+## Fallback traps (i18n null bug hazard)
+
+- **Never hardcode an English fallback after a translation call.**
+  ` __('messages.saved') ?? 'Saved.'`  /  `ui('submit') ?? 'Save'`
+  is a silent bug. Laravel's translator returns the *key string* (not null)
+  on a missing key in most paths, so the `??` branch rarely fires — but
+  spatie TranslationLoader can return null in edge cases, leaking the literal
+  English into the UI. Remove every `?? '...'` fallback; if the key is missing,
+  **add the key** to both `lang/en` and `lang/id` (and re-seed). The fallback
+  should be the key itself, never prose.
+- **Backend flash-status hazard.** A controller that flashes a status via
+  `__('messages.x') ?? '...'` (instead of `ui('x')` for page chrome) silently
+  mixes the two groups. If the key is only in `ui.php`, `__('messages.x')`
+  returns the literal key string — fix the call site, don't fallback around it.
+  Audit sweep (controller + views):
+  ```bash
+  grep -rn "?? '\|?? \"" app/Http/Controllers/ resources/views/
+  ```
+- **Root fix > workaround.** When a key lookup returns null/key-string at runtime,
+  the fix is to define the key in the correct lang file + re-seed
+  `language_lines`, not to paper over it with a fallback that hides the bug.

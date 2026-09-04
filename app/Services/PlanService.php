@@ -40,6 +40,7 @@ final class PlanService
             $slug = $user->license?->plan_slug ?? Setting::get('default_plan', 'free');
             $license = $user->license;
             $plan = Plan::where('slug', $slug)->firstOrFail();
+
             return new self($plan, $license);
         }
 
@@ -114,6 +115,7 @@ final class PlanService
         if ($this->plan->slug !== 'free' && ! $this->license) {
             return [];
         }
+
         return $this->license?->snapshot['limits']
             ?? $this->plan->limits
             ?? [];
@@ -131,6 +133,7 @@ final class PlanService
     public function allowedPermissions(): array
     {
         $allowed = $this->limits()['allowed_permissions'] ?? [];
+
         return is_array($allowed) ? $allowed : [];
     }
 
