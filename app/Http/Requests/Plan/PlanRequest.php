@@ -36,7 +36,7 @@ class PlanRequest extends FormRequest
             'max_storage_mb' => 'nullable|integer|min:0',
             'allowed_permissions' => 'array',
             'allowed_permissions.*' => 'string|exists:permissions,name',
-            'features' => 'array',
+            'features' => 'nullable|array',
             'features.*' => 'string|in:'.implode(',', array_keys(config('pennant.features', []))),
         ];
     }

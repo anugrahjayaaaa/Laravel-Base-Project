@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('content')
 @include('partials.flash-message')
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
+    </ul>
+</div>
+@endif
 <h3>{{ $plan ? ui('edit_plan') : ui('new_plan') }}</h3>
 
 <div class="card shadow-sm">
