@@ -25,6 +25,7 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 - Added `?User $user = null` param to `for()` method
 - Per-user mode: resolves plan from `$user->license?->plan_slug`
 - Global mode: uses `settings.active_plan` or `settings.default_plan` (unchanged)
+- Added `syncPermissionsForPlan(Plan $plan)` — sync permission ke user berdasarkan plan features
 
 ### `app/Http/Controllers/SettingsController.php`
 - Added `license_mode` field to validation + setting persistence
@@ -37,6 +38,9 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 
 ### `database/seeders/DatabaseSeeder.php`
 - Added `Setting::updateOrCreate(['key' => 'license_mode'], ['value' => 'global'])`
+- Staff role: `syncPermissions([])` — no direct permission assignment
+- Permissions come from plan sync, NOT role assignment
+- Free plan seed: `features: ['audit', 'telescope']`, `limits: ['max_members' => 2, 'max_projects' => 1, 'max_storage_mb' => 500]`
 
 ## Plan Form & Validation
 
@@ -73,29 +77,41 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 - Per-user mode: skipped — sync happens via LicenseService when license assigned
 - Uses `Permission::featureOf($perm->name)` to map permission → feature slug
 
-### `database/seeders/DatabaseSeeder.php`
-- Staff role: `syncPermissions([])` — no direct permission assignment
-- Permissions come from plan sync, NOT role assignment
-- Free plan seed: `features: ['audit', 'telescope']`, `limits: ['max_members' => 2, 'max_projects' => 1, 'max_storage_mb' => 500]`
-
 ## Sidebar & Navigation
 
 ### `resources/views/partials/layout/sidebar.blade.php`
 - Features menu: wrapped in `@can('feature.manage')` + `@feature('features')`
 - All nav items already gated by `@can` + `@feature` combination
 
-### i18n labels (lang/en/ui.php + lang/id/ui.php)
-- No new keys needed — `limit_max_members`, `limit_max_roles`, `limit_max_permissions`, `limit_max_features`, `limit_max_storage_mb` already exist
-- DO NOT add `limit_max_projects` label yet (not used)
+## Auth Form Validation & Accessibility Fixes
 
-## Auth Form Validation Display Fixes
+### Error display pattern (semua auth form konsisten)
+Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` invalid-feedback (field-level)
 
 ### `resources/views/auth/login.blade.php`
-- Hapus `@error('identifier')` block — LoginController already keys error to `identifier` field, alert div (`$errors->first()`) cukup
-- Password error: ganti `invalid-feedback d-block` → `invalid-feedback` (di luar input-group, setelah icon)
+- Hapus `@error('identifier')` block — LoginController already keys error to `identifier` (caused duplicate display)
+- Password error: ganti `invalid-feedback d-block` → `invalid-feedback` tanpa `d-block` (di luar input-group)
+- Tambah `id="identifier"` + `aria-describedby` + `aria-invalid` di semua input
+- Tambah `sr-only` label untuk accessibility (WCAG 2.1)
+- Error block pindah ke luar input-group (setelah icon) — mencegah layout shift
 
 ### `resources/views/auth/register.blade.php`
-- Semua `@error` block pindah ke luar `input-group` (setelah icon) — mencegah icon pindah kebawah
+- Semua `@error` block pindah ke luar input-group (setelah icon) — mencegah icon pindah kebawah
 - Password toggle icon: kembalikan `<i class="bi bi-eye" id="password-confirm-icon">` — sebelumnya hilang
 - Konsistenkan `invalid-feedback d-block w-100` untuk server-side errors
+- Tambah `id`, `aria-describedby`, `aria-invalid` di semua input
+- Tambah `sr-only` label untuk semua field (name, username, email, phone, password, password_confirmation)
+
+### `resources/views/auth/forgot-password.blade.php`
+- Tambah `id="email"` + `aria-describedby` + `aria-invalid` di input
+- Error: pindah ke luar input-group, pakai `invalid-feedback d-block w-100` + `role="alert"` + `aria-live="polite"`
+- Tambah `sr-only` label
+
+### `resources/views/auth/reset-password.blade.php`
+- Tambah `id` di semua input + `aria-describedby` + `aria-invalid`
+- Error: pindah ke luar input-group, konsisten dengan pattern
+- Tambah `sr-only` label untuk email, password, password_confirmation
+
+## Testing
+- All 140 tests pass
 - Key test files: `LicensingTest.php`, `PlanTest.php` (7 tests), `RbacTest.php`, `QaSmokeTest.php`
