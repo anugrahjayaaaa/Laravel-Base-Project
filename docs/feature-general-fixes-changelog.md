@@ -188,10 +188,49 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 - Add `read` key to lang/en/ui.php + lang/id/ui.php
 
 ## Testing
-- All 140 tests pass (375 assertions)
-- Auth subset: 29/29 pass
-- User tests: 31 pass
-- Role+Permission tests: 21 pass
-- Plan tests: 7 pass
-- Profile+User tests: 37 pass
-- Key test files: `LicensingTest.php`, `PlanTest.php`, `RbacTest.php`, `QaSmokeTest.php`
+|- All 140 tests pass (375 assertions)
+|- Auth subset: 29/29 pass
+|- User tests: 31 pass
+|- Role+Permission tests: 21 pass
+|- Plan tests: 7 pass
+|- Profile+User tests: 37 pass
+|- Key test files: LicensingTest.php, PlanTest.php, RbacTest.php, QaSmokeTest.php
+
+## Component & Button UI Consistency (Final Pass)
+
+### Button Style Standardization
+- All create buttons: `btn btn-primary` + `bi-plus-lg me-1` (replaced btn-sm, bi-plus-circle, missing spacing)
+- Files: plans/index, billing/index, access/*/index, settings/api-tokens/index
+- Subscribe buttons: added `bi-bell` icon (billing/index, plans/index)
+
+### Action Buttons Component
+- `<x-action-buttons>`: edit(pencil)/delete(trash)/restore(arrow)/forceDelete(x-circle), tooltip, min-width:38px
+- Standardized all delete/moderation action icons in tables → use component, not text buttons
+
+### Card Footer Standard
+- All form submit sections: `<div class="card-footer d-flex justify-content-end gap-2">`
+- Modal footers: `btn-secondary` cancel LEFT + `btn-danger/primary` confirm RIGHT
+- Files: plans/form, profile/show, settings/translations/edit, all edit forms
+
+### Modal Consistency
+- delete-modal, force-delete-modal, feature-toggle-modal, bulk-confirm modal
+- Pattern: modal-header(title) + modal-body(text) + modal-footer(cancel kiri, confirm kanan)
+- bulk-actions modal uses JS form.submit() (dynamic action), modal-detail uses inline form
+
+## Recent Commits (views/ux consistency)
+
+### `7306cf9` — Create button standardization
+- plans/index: btn-sm → btn, add bi-plus-lg me-1
+- settings/api-tokens/index: bi-plus-circle → bi-plus-lg me-1
+
+### `2b5ef55` — Billing + logs i18n
+- billing/index: subscribe button add bi-plus-lg icon
+- monitoring/logs/index: "Stack trace" → ui('stack_trace')
+
+### `345a210` — Profile DOM fix
+- profile/show: fix nested card-footer DOM structure
+- Add password toggle visibility (konsisten register/admin user edit)
+
+### `fdf9cb3` — Plans UX
+- plans/index: billing period fallback ucfirst()
+- plans/index: action buttons text → icon
