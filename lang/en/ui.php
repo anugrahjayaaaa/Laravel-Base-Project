@@ -211,7 +211,11 @@ return [
     'no_field_changes' => 'No field changes recorded.',
     'audit_entries' => 'Audit Entries',
     'database' => 'Database',
-    'search_menu' => 'Search menu…',
+    'toggle_theme' => 'Toggle light/dark theme',
+    'toggle_sidebar' => 'Toggle sidebar',
+    'recent_activity' => 'Recent activity',
+    'view_all_notifications' => 'View all notifications',
+    'no_activity_yet' => 'No activity yet.',
     'no_menu_found' => 'No menu found',
     'action' => 'Action',
 

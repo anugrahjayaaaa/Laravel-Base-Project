@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#" data-lte-toggle="sidebar" role="button" title="Toggle sidebar">
+                <a class="nav-link" href="#" data-lte-toggle="sidebar" role="button" title="{{ ui('toggle_sidebar') }}">
                     <i class="bi bi-list fs-4"></i>
                 </a>
             </li>
@@ -23,7 +23,7 @@
         <ul class="navbar-nav ms-auto align-items-center">
             {{-- Theme toggle --}}
             <li class="nav-item">
-                <button class="btn btn-link nav-link px-2" id="theme-toggle" type="button" title="Toggle light/dark" aria-label="Toggle theme">
+                <button class="btn btn-link nav-link px-2" id="theme-toggle" type="button" title="{{ ui('toggle_theme') }}" aria-label="{{ ui('toggle_theme') }}">
                     <i class="bi bi-moon-stars fs-5" id="theme-icon"></i>
                 </button>
             </li>
@@ -39,7 +39,7 @@
                     @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg py-0" style="width:320px">
-                    <span class="dropdown-item dropdown-header d-flex justify-content-between"><span>Recent activity</span><span class="badge bg-primary-subtle text-primary">{{ $notifications['items']->count() }}</span></span>
+                    <span class="dropdown-item dropdown-header d-flex justify-content-between"><span>{{ ui('recent_activity') }}</span><span class="badge bg-primary-subtle text-primary">{{ $notifications['items']->count() }}</span></span>
                     <div class="dropdown-divider my-0"></div>
                     <div style="max-height:280px;overflow:auto">
                     @forelse ($notifications['items'] as $n)
@@ -53,11 +53,11 @@
                             </div>
                         </a>
                     @empty
-                        <span class="dropdown-item text-muted">No activity yet.</span>
+                        <span class="dropdown-item text-muted">{{ ui('no_activity_yet') }}</span>
                     @endforelse
                     </div>
                     <div class="dropdown-divider my-0"></div>
-                    <a href="{{ route('notifications.index') }}" class="dropdown-item dropdown-footer text-center text-primary">View all notifications</a>
+                    <a href="{{ route('notifications.index') }}" class="dropdown-item dropdown-footer text-center text-primary">{{ ui('view_all_notifications') }}</a>
                 </div>
             </li>
 

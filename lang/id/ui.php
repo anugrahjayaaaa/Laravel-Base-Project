@@ -211,7 +211,11 @@ return [
     'no_field_changes' => 'Tidak ada perubahan field.',
     'audit_entries' => 'Entri Audit',
     'database' => 'Basis Data',
-    'search_menu' => 'Cari menu…',
+    'toggle_theme' => 'Ganti tema terang/gelap',
+    'toggle_sidebar' => 'Ganti bilah sisi',
+    'recent_activity' => 'Aktivitas terbaru',
+    'view_all_notifications' => 'Lihat semua notifikasi',
+    'no_activity_yet' => 'Belum ada aktivitas.',
     'no_menu_found' => 'Menu tidak ditemukan',
     'action' => 'Aksi',
 

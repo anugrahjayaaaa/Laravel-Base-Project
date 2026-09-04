@@ -28,7 +28,7 @@
                 const matches = q === '' ? [] : items.filter(i => i.text.toLowerCase().includes(q));
                 results.innerHTML = matches.length
                     ? matches.map(i => `<li><a class="dropdown-item py-2" href="${i.href}"><i class="bi bi-box-arrow-up-right me-2 opacity-50"></i>${i.text}</a></li>`).join('')
-                    : `<li><span class="dropdown-item text-muted">No menu found</span></li>`;
+                    : `<li><span class="dropdown-item text-muted">{{ ui('no_menu_found') }}</span></li>`;
                 results.style.display = 'block';
                 input.setAttribute('aria-expanded', 'true');
             };
