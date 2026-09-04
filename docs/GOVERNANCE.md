@@ -84,6 +84,18 @@ A feature moves from `custom/` to `base/features/` ONLY when implementation is
 complete and verified. The custom spec is NOT deleted — it becomes the
 design record retained as `base/features/<name>/design.md` if it exists.
 
+## Ponytail / minimal-diff enforcement
+
+This repository operates under **Ponytail full-mode** as the working
+default. The shortest correct diff wins over a broader redesign. Before any
+UI/docs change ask: (1) does this fix need to exist at all? (2) is there an
+existing pattern to reuse? Only then ship minimal code.
+
+For UI audit findings: cosmetic-only issues without functional/security impact
+are recorded as `Needs Decision` and **not fixed** — over-fixing is a defect
+equal to a bug. Functional gaps (themed error pages, broken authz at route
+level) are auto-fixed.
+
 ## What this does NOT do
 
 - Does NOT mandate requirement IDs on every base feature doc (only where
