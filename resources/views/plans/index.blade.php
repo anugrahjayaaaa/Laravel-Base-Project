@@ -41,7 +41,7 @@
                         <form method="POST" action="{{ route('billing.checkout') }}" class="d-inline">
                             @csrf
                             <input type="hidden" name="plan_slug" value="{{ $plan->slug }}">
-                            <button class="btn btn-sm btn-primary"><i class="bi bi-bell"></i> {{ ui('subscribe') }}</button>
+                            <button class="btn btn-primary"><i class="bi bi-bell"></i> {{ ui('subscribe') }}</button>
                         </form>
                         @endif
                     </td>
