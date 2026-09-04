@@ -20,8 +20,8 @@
                 <div class="input-group mb-3">
                     <input type="text" name="identifier" class="form-control @error('identifier') is-invalid @enderror" placeholder="{{ ui('email_or_username') }}" value="{{ old('identifier') }}" required autofocus>
                     <div class="input-group-text"><i class="bi bi-person"></i></div>
-                    @error('identifier')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                 </div>
+                @error('identifier')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                 <div class="input-group mb-3">
                     <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ ui('password') }}" required>
                     <button type="button" class="input-group-text" id="toggle-password" aria-label="{{ ui('show_password') }}" style="cursor:pointer">

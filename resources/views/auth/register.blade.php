@@ -16,28 +16,28 @@
                 <div class="input-group mb-3">
                     <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                            placeholder="{{ ui('full_name') }}" value="{{ old('name') }}" required autofocus>
-                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('name')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-person"></i></div>
                 </div>
 
                 <div class="input-group mb-3">
                     <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
                            placeholder="{{ ui('username') }}" value="{{ old('username') }}" required>
-                    @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('username')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-person-badge"></i></div>
                 </div>
 
                 <div class="input-group mb-3">
                     <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                            placeholder="{{ ui('email') }}" value="{{ old('email') }}" required>
-                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('email')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-envelope"></i></div>
                 </div>
 
                 <div class="input-group mb-3">
                     <input type="tel" name="phone" inputmode="numeric" class="form-control @error('phone') is-invalid @enderror"
                            placeholder="{{ ui('phone_optional') }}" value="{{ old('phone') }}">
-                    @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('phone')<div class="invalid-feedback d-block w-100">{{ $message }}</div>@enderror
                     <div class="input-group-text"><i class="bi bi-telephone"></i></div>
                 </div>
 
@@ -53,6 +53,7 @@
                 <div class="input-group mb-3">
                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="{{ ui('confirm_password') }}" required>
                     <button type="button" class="input-group-text" id="toggle-password-confirm" aria-label="{{ ui('show_password') }}" style="cursor:pointer">
+                        <i class="bi bi-eye" id="password-confirm-icon"></i>
                     </button>
                 </div>
                 @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
