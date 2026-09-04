@@ -57,8 +57,15 @@ return [
     'leave_blank_to_keep' => 'leave blank to keep',
 
     // ── dashboard ──
-    'welcome' => 'Welcome, :name',
+    'welcome' => 'Welcome, :name 👋',
     'dashboard_subtitle' => 'Laravel Base Project scaffold — manage users, roles, and monitor activity from the sidebar.',
+    'free_plan' => 'Free plan',
+    'license_active_lifetime' => 'License: Lifetime',
+    'license_active_days' => 'License: :days days left',
+    'license_expired' => 'Expired — downgraded to Free',
+    'license_revoked' => 'Revoked — downgraded to Free',
+    'license_none' => 'No license — Free plan',
+    'license_status' => 'License: :status',
 
     // ── users ──
     'users' => 'Users',

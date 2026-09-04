@@ -57,8 +57,15 @@ return [
     'leave_blank_to_keep' => 'kosongkan bila tidak diubah',
 
     // ── dashboard ──
-    'welcome' => 'Selamat datang, :name',
-    'dashboard_subtitle' => 'Kelola pengguna, peran, dan pantau aktivitas langsung dari sidebar.',
+    'welcome' => 'Selamat datang, :name 👋',
+    'dashboard_subtitle' => 'Laravel Base Project scaffold — kelola pengguna, peran, dan pantau aktivitas dari sidebar.',
+    'free_plan' => 'Paket Gratis',
+    'license_active_lifetime' => 'Lisensi: Lifetime',
+    'license_active_days' => 'Lisensi: :days hari tersisa',
+    'license_expired' => 'Kedaluwarsa — beralih ke Gratis',
+    'license_revoked' => 'Dicabut — beralih ke Gratis',
+    'license_none' => 'Tidak ada lisensi — Paket Gratis',
+    'license_status' => 'Lisensi: :status',
 
     // ── users ──
     'users' => 'Pengguna',

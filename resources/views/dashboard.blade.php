@@ -37,17 +37,19 @@
         default => 'text-bg-warning',
     };
     $licText = match ($licStatus) {
-        'active' => 'License: '.($licenseDaysLeft === null ? 'Lifetime' : $licenseDaysLeft.' days left'),
-        'expired' => 'Expired — downgraded to Free',
-        'revoked' => 'Revoked — downgraded to Free',
-        'none' => 'No license — Free plan',
-        default => 'License: '.$licStatus,
+        'active' => $licenseDaysLeft === null
+            ? ui('license_active_lifetime')
+            : ui('license_active_days', ['days' => $licenseDaysLeft]),
+        'expired'    => ui('license_expired'),
+        'revoked'    => ui('license_revoked'),
+        'none'       => ui('license_none'),
+        default      => ui('license_status', ['status' => $licStatus]),
     };
 @endphp
 <div class="mb-3">
     <span class="badge {{ $licBadge }} fs-6">
         <i class="bi bi-patch-check me-1"></i>{{ $licText }}
-        <span class="opacity-75 ms-1">({{ $activePlan ?? 'free' }})</span>
+        <span class="opacity-75 ms-1">({{ $activePlan ?? ui('free_plan') }})</span>
     </span>
 </div>
 
