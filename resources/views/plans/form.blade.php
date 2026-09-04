@@ -1,15 +1,10 @@
 @extends('layouts.app')
 @section('content')
+@php
+    $title = $plan ? ui('edit_plan') : ui('new_plan');
+    $licenseMode = \App\Models\Setting::get('license_mode', 'global');
+@endphp
 @include('partials.flash-message')
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul class="mb-0">
-        @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
-    </ul>
-</div>
-@endif
-<h3>{{ $plan ? ui('edit_plan') : ui('new_plan') }}</h3>
-
 <div class="card shadow-sm">
     <div class="card-body">
         <form method="POST" action="{{ $plan ? route('plans.update', $plan) : route('plans.store') }}">
@@ -21,27 +16,31 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('name') }}</label>
-                    <input type="text" name="name" id="plan-name" class="form-control"
-                           value="{{ old('name', $plan->name ?? '') }}" required>
+                    <input type="text" name="name" id="plan-name" class="form-control @error('name') is-invalid @enderror"
+                           value="{{ old('name', $plan->name ?? '') }}" required aria-describedby="name-error" @error('name') aria-invalid="true" @enderror>
+                    @error('name')<div id="name-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('slug') }}</label>
-                    <input type="text" name="slug" id="plan-slug" class="form-control"
+                    <input type="text" name="slug" id="plan-slug" class="form-control @error('slug') is-invalid @enderror"
                            value="{{ old('slug', $plan->slug ?? '') }}"
-                           placeholder="{{ ui('slug_auto') }}" {{ $plan && $plan->slug === 'free' ? 'readonly' : '' }}>
+                           placeholder="{{ ui('slug_auto') }}" {{ $plan && $plan->slug === 'free' ? 'readonly' : '' }} aria-describedby="slug-error" @error('slug') aria-invalid="true" @enderror>
                     <div class="form-text">{{ ui('slug_help') }}</div>
+                    @error('slug')<div id="slug-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('price_monthly') }}</label>
-                    <input type="number" step="0.01" min="0" name="price_monthly" class="form-control"
-                           value="{{ old('price_monthly', $plan->price_monthly ?? 0) }}" required>
+                    <input type="number" step="0.01" min="0" name="price_monthly" class="form-control @error('price_monthly') is-invalid @enderror"
+                           value="{{ old('price_monthly', $plan->price_monthly ?? 0) }}" required aria-describedby="price_monthly-error" @error('price_monthly') aria-invalid="true" @enderror>
+                    @error('price_monthly')<div id="price_monthly-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ ui('billing_period') }}</label>
-                    <select name="billing_period" class="form-select">
+                    <select name="billing_period" id="billing_period" class="form-select @error('billing_period') is-invalid @enderror" aria-describedby="billing_period-error" @error('billing_period') aria-invalid="true" @enderror>
                         <option value="monthly" @selected(old('billing_period', $plan->billing_period ?? 'monthly') === 'monthly')>{{ ui('period_monthly') }}</option>
                         <option value="lifetime" @selected(old('billing_period', $plan->billing_period ?? 'monthly') === 'lifetime')>{{ ui('period_lifetime') }}</option>
                     </select>
+                    @error('billing_period')<div id="billing_period-error" class="invalid-feedback d-block w-100" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6 d-flex align-items-end">
                     <div class="form-check form-switch">
@@ -145,9 +144,9 @@
                 @endforeach
             </div>
 
-            <div class="mt-4">
-                <button class="btn btn-primary">{{ ui('save') }}</button>
+            <div class="card-footer d-flex justify-content-end gap-2">
                 <a href="{{ route('plans.index') }}" class="btn btn-light border">{{ ui('cancel') }}</a>
+                <button class="btn btn-primary">{{ ui('save') }}</button>
             </div>
         </form>
     </div>
