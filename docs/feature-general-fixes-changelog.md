@@ -164,6 +164,7 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 
 ### `resources/views/billing/` (index + invoice)
 - Already consistent: card + table + card-footer pattern, all i18n labels
+- Micro: admin stat card `{{ ui('plans') }}` = stat count label, acceptable
 
 ### `resources/views/admin/billing/index.blade.php`
 - Already consistent: stat cards + breakdown tables, all i18n labels
