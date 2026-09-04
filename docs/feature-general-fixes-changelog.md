@@ -165,4 +165,5 @@ Pattern: `@if($errors->any())` alert div (general error) + `@error('field')` inv
 - User tests: 31 pass
 - Role+Permission tests: 21 pass
 - Plan tests: 7 pass
+- Profile+User tests: 37 pass
 - Key test files: `LicensingTest.php`, `PlanTest.php`, `RbacTest.php`, `QaSmokeTest.php`
