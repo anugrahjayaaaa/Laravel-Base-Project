@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
         $staff = Role::findOrCreate('staff', 'web');
 
         $admin->syncPermissions(self::PERMISSIONS);
-        $staff->syncPermissions(['user.view', 'audit.view']);
+        $staff->syncPermissions([]); // ponytail: staff gets permissions via plan features, not direct role assignment
         $superAdmin->syncPermissions(self::PERMISSIONS);
 
         // Super-admin user (first-run)

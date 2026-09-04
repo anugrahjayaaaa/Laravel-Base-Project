@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\License;
+use App\Models\Permission;
 use App\Models\Plan;
 use App\Models\Setting;
 use App\Models\User;
@@ -131,5 +132,44 @@ final class PlanService
     {
         $allowed = $this->limits()['allowed_permissions'] ?? [];
         return is_array($allowed) ? $allowed : [];
+    }
+
+    /** Sync permissions to all users based on plan features + allowed_permissions.
+     *  Called when plan is created/updated. Maps feature slugs → permissions via
+     *  Permission::featureOf(). Users without explicit permission keep only their
+     *  role-derived base permissions.
+     */
+    public static function syncPermissionsForPlan(Plan $plan): void
+    {
+        // ponytail: derive permission names from plan features + allowed_permissions limits
+        $features = (array) ($plan->features ?? []);
+        $limits = (array) ($plan->limits ?? []);
+        $explicit = (array) ($limits['allowed_permissions'] ?? []);
+
+        // Map: feature slug → permission names (permission.* belong to 'permissions' feature, etc.)
+        // Only sync permissions that belong to a feature enabled in this plan.
+        $syncable = [];
+        foreach ($features as $featureSlug) {
+            // ponytail: feature slug maps to permission names via Permission::featureOf()
+            foreach (Permission::all() as $perm) {
+                if (Permission::featureOf($perm->name) === $featureSlug) {
+                    $syncable[$perm->name] = $perm->name;
+                }
+            }
+        }
+
+        // Explicit allowed_permissions overrides (e.g. role.create even if 'roles' feature off)
+        foreach ($explicit as $permName) {
+            $syncable[$permName] = $permName;
+        }
+
+        // ponytail: in global mode sync to ALL users; per-user syncs via LicenseService
+        if (Setting::get('license_mode', 'global') === 'per_user') {
+            return; // per-user: permission sync happens when license assigned
+        }
+
+        foreach (User::all() as $user) {
+            $user->syncPermissions(array_values($syncable));
+        }
     }
 }
