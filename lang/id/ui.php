@@ -259,4 +259,11 @@ return [
     'settings' => 'Pengaturan',
     'sessions' => 'Sesi',
     'logout' => 'Keluar',
+
+    // ── errors ──
+    'page_not_found' => 'Halaman tidak ditemukan',
+    'page_not_found_body' => 'Halaman yang Anda cari tidak ada atau telah dipindahkan.',
+    'access_denied' => 'Akses ditolak',
+    'access_denied_body' => 'Anda tidak memiliki izin untuk melihat halaman ini.',
+    'go_back_to_dashboard' => 'Kembali ke dasbor',
 ];

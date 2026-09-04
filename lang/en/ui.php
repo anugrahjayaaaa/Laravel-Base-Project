@@ -259,4 +259,11 @@ return [
     'settings' => 'Settings',
     'sessions' => 'Sessions',
     'logout' => 'Logout',
+
+    // ── errors ──
+    'page_not_found' => 'Page not found',
+    'page_not_found_body' => 'The page you are looking for does not exist or has been moved.',
+    'access_denied' => 'Access denied',
+    'access_denied_body' => 'You do not have permission to view this page.',
+    'go_back_to_dashboard' => 'Go back to dashboard',
 ];
