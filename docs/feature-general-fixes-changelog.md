@@ -88,6 +88,14 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 - No new keys needed — `limit_max_members`, `limit_max_roles`, `limit_max_permissions`, `limit_max_features`, `limit_max_storage_mb` already exist
 - DO NOT add `limit_max_projects` label yet (not used)
 
-## Testing
-- All 140 tests pass
+## Auth Form Validation Display Fixes
+
+### `resources/views/auth/login.blade.php`
+- Hapus `@error('identifier')` block — LoginController already keys error to `identifier` field, alert div (`$errors->first()`) cukup
+- Password error: ganti `invalid-feedback d-block` → `invalid-feedback` (di luar input-group, setelah icon)
+
+### `resources/views/auth/register.blade.php`
+- Semua `@error` block pindah ke luar `input-group` (setelah icon) — mencegah icon pindah kebawah
+- Password toggle icon: kembalikan `<i class="bi bi-eye" id="password-confirm-icon">` — sebelumnya hilang
+- Konsistenkan `invalid-feedback d-block w-100` untuk server-side errors
 - Key test files: `LicensingTest.php`, `PlanTest.php` (7 tests), `RbacTest.php`, `QaSmokeTest.php`
