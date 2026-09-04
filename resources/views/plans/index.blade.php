@@ -5,7 +5,7 @@
 <p class="text-muted">{{ ui('plans_intro') }}</p>
 
 <div class="d-flex justify-content-end mb-2">
-    <a href="{{ route('plans.create') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> {{ ui('new_plan') }}</a>
+    <a href="{{ route('plans.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> {{ ui('new_plan') }}</a>
 </div>
 
 <div class="card shadow-sm">
