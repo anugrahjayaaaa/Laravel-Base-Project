@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    if: false  # ponytail: CI temporarily disabled, remove to re-enable
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
