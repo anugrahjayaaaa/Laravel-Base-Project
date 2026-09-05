@@ -34,9 +34,12 @@ Blade: `@feature('users') ... @endfeature` (native Pennant directive).
   ```
 - Pennant OFF → 404 for **everyone** (true kill-switch, including `feature.manage`
   holders). Managers reach disabled modules only by re-enabling from `/features`.
+  **Pennant OFF blocks super-admin too** — the platform-level superadmin bypass
+  applies to Plan entitlement only, NOT to the Pennant global kill switch.
 - Pennant ON + Plan feature ON → proceeds to permission gate.
 - Pennant ON + Plan feature OFF → denied by Plan entitlement (Gate `before`
-  returns false → 403).
+  returns false → 403). Super-admin bypasses this (Gate `before` returns null
+  for super-admin via BypassService).
 - A flag off 404s the route and hides its sidebar entry.
 
 ## Management UI

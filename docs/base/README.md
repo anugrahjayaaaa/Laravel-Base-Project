@@ -26,7 +26,7 @@ seam — without re-building auth or authorization each time.
 
 | Role | Access |
 |------|--------|
-| super-admin | holds ALL permissions via the `super-admin` role; NOT a code bypass — subject to Plan boundary Gate check (only `role.*` / `permission.*` exempt) |
+|- super-admin | holds ALL permissions via the `super-admin` role (seeded with full permission set); is a platform-level override — bypasses Plan feature + Plan permission entitlement via `BypassService::isSuperAdmin()` (role-based check, not username-based). Pennant kill switch STILL applies (Pennant OFF → 404 for everyone, including super-admin). `role.*` / `permission.*` permissions are exempt from Plan checks (see §Enforcement). |
 | admin | manages users/roles/permissions within granted permissions |
 | staff | operational access (translations, logs), gated by permissions |
 | end user | self-service: own profile, sessions, api-tokens |

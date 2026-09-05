@@ -448,3 +448,7 @@ Plan routes are gated route-level (`routes/web.php` → `can:feature.manage`);
 the Form Request `authorize()` re-checks the same permission. Role creation
 for subscribers is gated by the `role.create` permission, granted via the
 `roles` plan feature — see §11.1.
+**Super-admin bypass**: super-admin (user holding the `super-admin` Role)
+bypasses Plan permission AND Plan feature entitlement in the Gate `before`
+callback via `BypassService::isSuperAdmin()`. Pennant is NOT bypassed (checked
+at route middleware). See ADR-0011 and `docs/base/features/rbac.md`.

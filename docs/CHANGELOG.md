@@ -2,6 +2,61 @@
 
 All changes for use in Issue Tracker (fork Laravel-Base-Project).
 
+## Platform-Level Superadmin Bypass (Super-Admin Architecture)
+
+### New architecture
+A platform-level `super-admin` user (username `superadmin`) is seeded during
+initialization. This user represents a platform operator, not a commercial
+subscriber, and must NOT be restricted by Plan entitlement.
+
+### `app/Models/User.php`
+- Added `isSuperAdmin(): bool` — returns true when the user holds the `super-admin` **Role**
+  (via `$this->hasRole('super-admin')`). Does NOT check username.
+  This is the single source of truth for super-admin identity.
+
+### `app/Providers/AppServiceProvider.php` (Gate `before` callback)
+- Added `BypassService::isSuperAdmin()` check at the top of the Gate `before` callback.
+- When super-admin: returns `null` (defer to spatie normal Role check) — bypasses
+  BOTH Plan permission boundary (`PlanService::allows()`) AND Plan feature boundary.
+- When NOT super-admin: existing logic — Plan boundary checks remain, `role.*`/`permission.*`
+  still exempt.
+- **Pennant is NOT bypassed** — Pennant is checked at route middleware level
+  (`EnsureFeatureEnabled`), separate from the Gate. Pennant OFF → 404 for everyone,
+  including super-admin.
+
+### `app/Services/BypassService.php` (NEW)
+- Central bypass decision class. `isSuperAdmin()` delegates to `User::isSuperAdmin()`.
+- Designed for extensibility (future: license-status bypass, plan-trial bypass).
+- Keeps bypass logic OUT of the Gate closure — clean separation.
+
+### Key design decisions
+- **Super-admin identity = Role, not username**: The `super-admin` role is seeded with
+  ALL permissions. `isSuperAdmin()` checks `hasRole('super-admin')`. Username `superadmin`
+  is seed data only.
+- **No `model_has_permissions` writes**: Super-admin's permissions come from the role.
+- **No Plan → Role synchronization**: `syncPermissionsForPlan()` remains a no-op.
+- **Pennant kill switch applies everywhere**: Even super-admin gets 404 when a feature
+  is deactivated.
+- **Privilege escalation prevention**: `super-admin` role name is reserved in
+  `StoreRoleRequest`/`UpdateRoleRequest` — cannot be created via UI/API.
+- **Other Plan limits (max_members, quotas, etc.)**: Not enforced in middleware/controllers.
+  Report only — if added later, BypassService needs extension.
+
+### Gate `before` decision table
+
+| User type  | Pennant | Plan permission | Plan feature | Result         |
+|------------|---------|-----------------|--------------|----------------|
+| Normal     | ON      | Allowed         | Allowed      | ALLOW (gate)   |
+| Normal     | ON      | Denied          | —            | 403            |
+| Normal     | OFF     | any             | any          | 404            |
+| Superadmin | ON      | any             | any          | ALLOW (bypass) |
+| Superadmin | OFF     | any             | any          | 404            |
+
+### §Permission Sync (from original audit)
+- `syncPermissionsForPlan()` is a **no-op** — it does NOT copy Plan permissions to Users
+  or Roles. Permissions are evaluated at runtime via Role ∩ Plan, not synced.
+  See §Effective Permission below for the super-admin extension.
+
 ## License Mode Support
 
 ### `config/pennant.php`

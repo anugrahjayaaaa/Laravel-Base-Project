@@ -31,6 +31,9 @@ controller extending a specific base. It also composes with feature flags
 - **Every protected resource route MUST carry `can:{perm}`.** Module routes also
   carry `feature:{slug}` (stacked BEFORE `can:` so Pennant's 404 wins). Reference: `routes/web.php`, `docs/base/features/rbac.md`,
   `docs/base/features/feature-flags.md`.
+- **Super-admin bypass**: `User::isSuperAdmin()` (has the `super-admin` Role, not username-based)
+  bypasses Plan entitlement in the Gate `before` callback. Pennant is NOT bypassed — the global
+  kill switch applies to super-admin too. See ADR-0011.
 
 ## 2. Base Controller
 `app/Http/Controllers/Controller` MUST extend `Illuminate\Routing\Controller`.
