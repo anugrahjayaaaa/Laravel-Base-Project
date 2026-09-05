@@ -76,7 +76,7 @@ class PlanRequest extends FormRequest
                 if ($maxFeatures > 0 && count($features) > $maxFeatures) {
                     $validator->errors()->add(
                         'features',
-                        __('plans.feature_limit_exceeded', ['max' => $maxFeatures])
+                        __('messages.feature_limit_exceeded', ['max' => $maxFeatures])
                     );
                 }
 
@@ -90,7 +90,7 @@ class PlanRequest extends FormRequest
                     if (count($valid) !== count($allowed)) {
                         $validator->errors()->add(
                             'allowed_permissions',
-                            __('plans.permission_feature_mismatch')
+                            __('messages.permission_feature_mismatch')
                         );
                     }
                 }

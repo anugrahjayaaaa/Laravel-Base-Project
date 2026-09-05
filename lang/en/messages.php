@@ -15,6 +15,8 @@ return [
     'user_restored' => 'User restored.',
     'user_permanently_deleted' => 'User permanently deleted.',
     'reset_link_sent' => 'Reset link sent to :email.',
+    'feature_limit_exceeded' => 'Feature count exceeds the plan limit (max :max).',
+    'permission_feature_mismatch' => 'Some allowed permissions do not belong to an enabled feature.',
     'cannot_lock_self' => 'Cannot lock yourself.',
     'cannot_delete_self' => 'Cannot delete yourself.',
     'cannot_delete_self_permanently' => 'Cannot delete yourself permanently.',

@@ -15,6 +15,8 @@ return [
     'user_restored' => 'Pengguna dipulihkan.',
     'user_permanently_deleted' => 'Pengguna dihapus permanen.',
     'reset_link_sent' => 'Tautan reset dikirim ke :email.',
+    'feature_limit_exceeded' => 'Jumlah fitur melebihi batas paket (maks :max).',
+    'permission_feature_mismatch' => 'Beberapa izin yang diizinkan tidak termasuk fitur yang diaktifkan.',
     'cannot_lock_self' => 'Tidak dapat mengunci diri sendiri.',
     'cannot_delete_self' => 'Tidak dapat menghapus diri sendiri.',
     'cannot_delete_self_permanently' => 'Tidak dapat menghapus diri sendiri secara permanen.',

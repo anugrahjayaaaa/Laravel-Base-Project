@@ -82,6 +82,10 @@ return [
     'last_login' => 'Login terakhir: :time (:ip)',
     'lock' => 'Kunci',
     'unlock' => 'Buka kunci',
+    'confirm_lock' => 'Kunci pengguna',
+    'confirm_lock_body' => 'Kunci pengguna ini? Mereka tidak bisa masuk sampai dibuka kunci.',
+    'confirm_unlock' => 'Buka kunci pengguna',
+    'confirm_unlock_body' => 'Buka kunci pengguna ini? Mereka akan bisa masuk lagi.',
     'send_reset_email' => 'Kirim reset kata sandi',
     'send_reset_email_label' => 'Kirim reset kata sandi:',
 

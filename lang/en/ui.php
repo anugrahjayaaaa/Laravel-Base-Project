@@ -82,6 +82,10 @@ return [
     'last_login' => 'Last login: :time (:ip)',
     'lock' => 'Lock',
     'unlock' => 'Unlock',
+    'confirm_lock' => 'Lock user',
+    'confirm_lock_body' => 'Lock this user? They won\'t be able to log in until unlocked.',
+    'confirm_unlock' => 'Unlock user',
+    'confirm_unlock_body' => 'Unlock this user? They will be able to log in again.',
     'send_reset_email' => 'Send reset password',
     'send_reset_email_label' => 'Send reset password:',
 

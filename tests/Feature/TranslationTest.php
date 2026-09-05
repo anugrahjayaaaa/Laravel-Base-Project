@@ -62,6 +62,39 @@ it('lets a feature.manage holder reach translations while the flag is off', func
     // ponytail: kill-switch — disabled flag blocks everyone, including managers.
     Feature::deactivate('translations');
     $u = User::where('email', 'admin@laravel-base.local')->first(); // holds feature.manage
-
     $this->actingAs($u)->get(route('translations.index'))->assertNotFound();
+});
+
+it('keeps en and id locales structurally consistent', function () {
+    // ponytail: guard against drift — every group/key must match across locales, placeholders included.
+    $locales = config('app.available_locales');
+    $groups = ['ui', 'messages'];
+
+    foreach ($groups as $group) {
+        $data = [];
+        foreach ($locales as $locale) {
+            $path = lang_path("{$locale}/{$group}.php");
+            if (! file_exists($path)) {
+                continue;
+            }
+            $data[$locale] = require $path;
+        }
+
+        $base = $data['en'] ?? [];
+        foreach ($base as $key => $val) {
+            if (is_array($val)) {
+                continue;
+            } // skip Laravel validation sub-arrays
+            expect(isset($data['id'][$key]))->toBeTrue("KEY MISSING in id/{$group}:{$key}");
+            $enPh = preg_match_all('/:(\w+)/', $val);
+            $idPh = isset($data['id'][$key]) ? preg_match_all('/:(\w+)/', $data['id'][$key]) : 0;
+            expect($idPh)->toBe($enPh, "PLACEHOLDER MISMATCH in id/{$group}:{$key}");
+        }
+        foreach ($data['id'] ?? [] as $key => $val) {
+            if (is_array($val)) {
+                continue;
+            }
+            expect(isset($base[$key]))->toBeTrue("EXTRA key in id/{$group}:{$key}");
+        }
+    }
 });
