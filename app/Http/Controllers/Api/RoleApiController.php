@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Rbac\RoleStoreRequest;
 use App\Http\Requests\Rbac\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
+use App\Models\Permission;
 use App\Models\Role;
+use App\Services\PlanService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,6 +19,26 @@ use Illuminate\Http\Request;
  */
 class RoleApiController extends Controller
 {
+    /**
+     * Filter permission IDs through the plan's allowed_permissions snapshot.
+     * Mirrors RoleController::filterPermissions — server-side enforcement, not
+     * just UI filtering. When $plan is null (feature.manage holder), all pass.
+     * When allowed_permissions is empty, all are denied (deny by default).
+     */
+    private function filterPermissions(array $permIds, ?PlanService $plan): array
+    {
+        if (! $plan) {
+            return array_map('intval', $permIds);
+        }
+        $allowedNames = $plan->allowedPermissions();
+        if ($allowedNames === []) {
+            return [];
+        }
+        $allowedIds = Permission::whereIn('name', $allowedNames)->pluck('id')->all();
+
+        return array_values(array_intersect($permIds, $allowedIds));
+    }
+
     public function index(Request $request): JsonResponse
     {
         $roles = Role::withTrashed()->with('permissions')
@@ -33,9 +55,12 @@ class RoleApiController extends Controller
 
     public function store(RoleStoreRequest $request): JsonResponse
     {
+        $plan = $request->user()->can('feature.manage') ? null : PlanService::for();
         $data = $request->validated();
+
         $role = Role::create(['name' => $data['name'], 'guard_name' => 'web']);
-        $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
+        $perms = $this->filterPermissions($data['permissions'] ?? [], $plan);
+        $role->syncPermissions($perms);
 
         return response()->json(new RoleResource($role->load('permissions')), 201);
     }
@@ -47,9 +72,12 @@ class RoleApiController extends Controller
      */
     public function update(RoleUpdateRequest $request, Role $role): JsonResponse
     {
+        $plan = $request->user()->can('feature.manage') ? null : PlanService::for();
         $data = $request->validated();
+
         $role->update(['name' => $data['name']]);
-        $role->syncPermissions(array_map('intval', $data['permissions'] ?? []));
+        $perms = $this->filterPermissions($data['permissions'] ?? [], $plan);
+        $role->syncPermissions($perms);
 
         return response()->json(new RoleResource($role->load('permissions')));
     }

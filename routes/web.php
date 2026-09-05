@@ -55,52 +55,53 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Stub routes for sidebar links (filled in by later phases: users/roles/permissions/audit/profile/sessions/api-tokens)
-    Route::get('/users', [UserController::class, 'index'])->name('users.index')->middleware(['can:user.view', 'feature:users']);
+    // pennant: feature flag first (kill switch 404 wins), then permission gate
+    Route::get('/users', [UserController::class, 'index'])->name('users.index')->middleware(['feature:users', 'can:user.view']);
     Route::resource('users', UserController::class)
         ->except(['show'])
-        ->middleware(['can:user.view', 'feature:users']);
-    Route::post('/users/bulk', [UserController::class, 'bulk'])->name('users.bulk')->middleware(['can:user.delete', 'feature:users']);
-    Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore')->middleware(['can:user.restore', 'feature:users']);
-    Route::post('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['can:user.force-delete', 'feature:users']);
-    Route::post('/users/{user}/lock', [UserController::class, 'lock'])->name('users.lock')->middleware(['can:user.lock', 'feature:users']);
-    Route::post('/users/{user}/unlock', [UserController::class, 'unlock'])->name('users.unlock')->middleware(['can:user.lock', 'feature:users']);
-    Route::post('/users/{user}/reset-password', [UserController::class, 'sendResetPassword'])->name('users.reset-password')->middleware(['can:user.edit', 'feature:users']);
+        ->middleware(['feature:users', 'can:user.view']);
+    Route::post('/users/bulk', [UserController::class, 'bulk'])->name('users.bulk')->middleware(['feature:users', 'can:user.delete']);
+    Route::post('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore')->middleware(['feature:users', 'can:user.restore']);
+    Route::post('/users/{user}/force-delete', [UserController::class, 'forceDelete'])->name('users.forceDelete')->middleware(['feature:users', 'can:user.force-delete']);
+    Route::post('/users/{user}/lock', [UserController::class, 'lock'])->name('users.lock')->middleware(['feature:users', 'can:user.lock']);
+    Route::post('/users/{user}/unlock', [UserController::class, 'unlock'])->name('users.unlock')->middleware(['feature:users', 'can:user.lock']);
+    Route::post('/users/{user}/reset-password', [UserController::class, 'sendResetPassword'])->name('users.reset-password')->middleware(['feature:users', 'can:user.edit']);
 
-    Route::resource('roles', RoleController::class)->middleware(['can:role.view', 'feature:roles']);
-    Route::post('/roles/bulk', [RoleController::class, 'bulk'])->name('roles.bulk')->middleware(['can:role.delete', 'feature:roles']);
-    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware(['can:role.restore', 'feature:roles']);
-    Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware(['can:role.force-delete', 'feature:roles']);
+    Route::resource('roles', RoleController::class)->middleware(['feature:roles', 'can:role.view']);
+    Route::post('/roles/bulk', [RoleController::class, 'bulk'])->name('roles.bulk')->middleware(['feature:roles', 'can:role.delete']);
+    Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])->name('roles.restore')->middleware(['feature:roles', 'can:role.restore']);
+    Route::post('/roles/{role}/force-delete', [RoleController::class, 'forceDelete'])->name('roles.forceDelete')->middleware(['feature:roles', 'can:role.force-delete']);
 
-    Route::resource('permissions', PermissionController::class)->middleware(['can:permission.view', 'feature:permissions']);
-    Route::post('/permissions/bulk', [PermissionController::class, 'bulk'])->name('permissions.bulk')->middleware(['can:permission.delete', 'feature:permissions']);
-    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware(['can:permission.restore', 'feature:permissions']);
-    Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware(['can:permission.force-delete', 'feature:permissions']);
+    Route::resource('permissions', PermissionController::class)->middleware(['feature:permissions', 'can:permission.view']);
+    Route::post('/permissions/bulk', [PermissionController::class, 'bulk'])->name('permissions.bulk')->middleware(['feature:permissions', 'can:permission.delete']);
+    Route::post('/permissions/{permission}/restore', [PermissionController::class, 'restore'])->name('permissions.restore')->middleware(['feature:permissions', 'can:permission.restore']);
+    Route::post('/permissions/{permission}/force-delete', [PermissionController::class, 'forceDelete'])->name('permissions.forceDelete')->middleware(['feature:permissions', 'can:permission.force-delete']);
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
 
-    Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index')->middleware(['can:session.view', 'feature:sessions']);
-    Route::post('/sessions/logout-others', [SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware(['can:session.revoke', 'feature:sessions']);
+    Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index')->middleware(['feature:sessions', 'can:session.view']);
+    Route::post('/sessions/logout-others', [SessionController::class, 'logoutOthers'])->name('sessions.logoutOthers')->middleware(['feature:sessions', 'can:session.revoke']);
 
-    Route::get('/audit', [AuditController::class, 'index'])->name('audit.index')->middleware(['can:audit.view', 'feature:audit']);
-    Route::get('/audit/export', [AuditController::class, 'export'])->name('audit.export')->middleware(['can:audit.view', 'feature:audit']);
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index')->middleware(['can:audit.view', 'feature:audit']);
-    Route::get('/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware(['can:api-token.view', 'feature:api-tokens']);
+    Route::get('/audit', [AuditController::class, 'index'])->name('audit.index')->middleware(['feature:audit', 'can:audit.view']);
+    Route::get('/audit/export', [AuditController::class, 'export'])->name('audit.export')->middleware(['feature:audit', 'can:audit.view']);
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index')->middleware(['feature:audit', 'can:audit.view']);
+    Route::get('/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index')->middleware(['feature:api-tokens', 'can:api-token.view']);
     Route::resource('api-tokens', ApiTokenController::class)
         ->only(['store', 'destroy'])
-        ->middleware(['can:api-token.create', 'feature:api-tokens']);
+        ->middleware(['feature:api-tokens', 'can:api-token.create']);
 
     // Web log viewer
     Route::get('/logs', [LogViewerController::class, 'index'])
-        ->name('logs.index')->middleware(['can:logs.view', 'feature:logs']);
+        ->name('logs.index')->middleware(['feature:logs', 'can:logs.view']);
 
     // Feature flags management (self-gated: feature.manage permission)
     Route::get('/features', [FeatureController::class, 'index'])->name('features.index')->middleware('can:feature.manage');
     Route::post('/features/{slug}/toggle', [FeatureController::class, 'toggle'])->name('features.toggle')->middleware('can:feature.manage');
 
     // Plan management (full CRUD, custom slug/price/limits/features — doc §9b)
-    Route::resource('plans', PlanController::class)->middleware(['can:feature.manage', 'feature:plans']);
+    Route::resource('plans', PlanController::class)->middleware(['feature:plans', 'can:feature.manage']);
 
     // Billing: user portal + checkout (dummy mode completes at once)
     Route::prefix('billing')->middleware('feature:billing')->group(function () {
@@ -108,20 +109,20 @@ Route::middleware('auth')->group(function () {
         Route::post('/checkout', [BillingController::class, 'checkout'])
             ->name('billing.checkout')->middleware('throttle:10,1');
         Route::post('/cancel', [BillingController::class, 'cancel'])
-            ->name('billing.cancel')->middleware('can:billing.cancel');
+            ->name('billing.cancel')->middleware(['feature:billing', 'can:billing.cancel']);
         Route::get('/invoice/{payment}', [BillingController::class, 'invoice'])
             ->name('billing.invoice');
     });
 
     // Billing admin: KPIs + analytics (separate popular page, gated by billing.view)
-    Route::prefix('admin/billing')->middleware(['can:billing.view', 'feature:billing'])->group(function () {
+    Route::prefix('admin/billing')->middleware(['feature:billing', 'can:billing.view'])->group(function () {
         Route::get('/', [BillingAdminController::class, 'index'])->name('admin.billing.index');
     });
 
     Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
 
     // Translations management (under Settings, gated by RBAC + feature flag)
-    Route::prefix('settings')->middleware(['can:translation.view', 'feature:translations'])->group(function () {
+    Route::prefix('settings')->middleware(['feature:translations', 'can:translation.view'])->group(function () {
         Route::get('/translations', [TranslationController::class, 'index'])->name('translations.index');
         Route::get('/translations/{languageLine}/edit', [TranslationController::class, 'edit'])->name('translations.edit')->middleware('can:translation.edit');
         Route::put('/translations/{languageLine}', [TranslationController::class, 'update'])->name('translations.update')->middleware('can:translation.edit');
