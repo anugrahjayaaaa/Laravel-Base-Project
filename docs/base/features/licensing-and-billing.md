@@ -416,13 +416,16 @@ source the admin UI, `PlanService`, and the license snapshot all read.
 - `max_members`, `max_storage_mb`, `max_roles`, `max_permissions`, `max_features` — numeric caps.
 - `allowed_permissions` — array of `permissions.name` a subscriber may assign when
   creating roles. Empty = allow any permission of enabled features.
-+ **Role creation is gated by the `role.create` permission** (Form Request
+|+ **Role creation is gated by the `role.create` permission** (Form Request
   `authorize()`), NOT by a `can_create_roles` field. Role creation capability
   flows from the `roles` **feature**: plans with the `roles` feature have
-  their subscribers' roles granted `role.create` by
-  `PlanService::syncPermissionsForPlan()`, which maps `role.*` permissions to
-  the `roles` feature via `Permission::featureOf()`. Free plan (`features=[]`)
-  → no `role.create` grant → subscribers forbidden.
+  `role.create` in their `allowed_permissions`; `syncPermissionsForPlan()` is
+  a no-op (see `docs/base/features/permission-sync-design.md`), so `role.create`
+  is NOT auto-assigned to roles. Instead, the super-admin/admin role is seeded
+  with `role.*` permissions directly (Challenge 3 exempts `role.*` from the
+  Plan boundary Gate check). Free plan (`features=[]`) → no `roles` feature →
+  `role.create` not in `allowed_permissions` → `filterPermissions` blocks assignment
+  → subscribers forbidden.
 
 ### 11.2 `features` + permission mapping
 - `features` is a subset of `config('pennant.features')` slugs.

@@ -13,6 +13,11 @@ status: design
 1. **Global** (`license_mode = global`): One license for the entire instance
 2. **Per-User** (`license_mode = per_user`): Each user has their own license
 
+> **Status:** Global mode is the production-supported path. Per-user mode is
+> **INCOMPLETE** — `PlanService::for()` references `$user->license` (singular
+> accessor) but the `User` model does not provide this accessor, and there is
+> no complete assignment flow/UI. Per-user mode is NOT production-ready.
+
 ## Schema
 
 ```sql

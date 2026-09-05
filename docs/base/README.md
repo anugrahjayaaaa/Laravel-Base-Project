@@ -26,7 +26,7 @@ seam — without re-building auth or authorization each time.
 
 | Role | Access |
 |------|--------|
-| super-admin | bypasses RBAC (special guard), holds everything incl. `feature.manage` |
+| super-admin | holds ALL permissions via the `super-admin` role; NOT a code bypass — subject to Plan boundary Gate check (only `role.*` / `permission.*` exempt) |
 | admin | manages users/roles/permissions within granted permissions |
 | staff | operational access (translations, logs), gated by permissions |
 | end user | self-service: own profile, sessions, api-tokens |

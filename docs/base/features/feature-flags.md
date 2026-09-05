@@ -6,11 +6,10 @@ status: implemented
 
 # Feature Flags
 
-A feature flag is a layer **above** RBAC. Access to a module requires BOTH:
-`has permission` **AND** `feature enabled`. When a feature is off, access is
-denied to everyone except holders of the `feature.manage` permission — by
-product rule: *flag off => inaccessible to normal users, but managers stay in*
-so they can operate/audit modules while disabled.
+A feature flag is a layer **above** RBAC + Plan. Access to a module requires ALL:
+`Pennant ON` AND `Plan feature allowed` AND `Role permission` AND `Plan permission
+allowed` (for domain permissions). When a feature is off, access is denied to
+everyone — true global kill switch.
 
 Implemented with **Laravel Pennant** (`laravel/pennant`).
 
@@ -29,19 +28,21 @@ Blade: `@feature('users') ... @endfeature` (native Pennant directive).
 
 ## Enforcement
 - Route middleware `feature:{slug}` (`App\Http\Middleware\EnsureFeatureEnabled`),
-  stacked with `can:{perm}`:
+  stacked BEFORE `can:{perm}`:
   ```php
-  Route::resource('users', ...)->middleware(['can:user.view', 'feature:users']);
+  Route::resource('users', ...)->middleware(['feature:users', 'can:user.view']);
   ```
-- A flag off 404s the route and hides its menu item for **everyone** (true
-  kill-switch, including `feature.manage` holders) so the toggle is a real switch.
-  Managers reach disabled modules only by re-enabling them from `/features`.
+- Pennant OFF → 404 for **everyone** (true kill-switch, including `feature.manage`
+  holders). Managers reach disabled modules only by re-enabling from `/features`.
+- Pennant ON + Plan feature ON → proceeds to permission gate.
+- Pennant ON + Plan feature OFF → denied by Plan entitlement (Gate `before`
+  returns false → 403).
+- A flag off 404s the route and hides its sidebar entry.
 
 ## Management UI
 - `/features` lives **under the Settings submenu** (gated by `feature.manage` permission; `staff` + `super-admin` get it).
 - Lists all flags with a **toggle switch** (auto-submits on change) for enable/disable.
-- A `feature.manage` holder is exempt from the off-gate (see Bypass) so they can still
-  use modules while a flag is off.
+- A `feature.manage` holder can toggle flags (re-enable a disabled module from `/features`), but cannot access a module whose flag is currently OFF — the kill switch applies to everyone.
 
 ## Known flags
 - `users`, `roles`, `permissions`, `audit`, `sessions`, `api-tokens`, `translations`, `logs`, `telescope`, `periscope`, `plans`, `billing`

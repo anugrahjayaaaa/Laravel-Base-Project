@@ -22,10 +22,11 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 - Do NOT overwrite — revert if changed
 
 ### `app/Services/PlanService.php`
-- Added `?User $user = null` param to `for()` method
-- Per-user mode: resolves plan from `$user->license?->plan_slug`
-- Global mode: uses `settings.active_plan` or `settings.default_plan` (unchanged)
-- Added `syncPermissionsForPlan(Plan $plan)` — sync permission ke user berdasarkan plan features
+|- Added `?User $user = null` param to `for()` method
+|- Per-user mode: resolves plan from `$user->license?->plan_slug`
+|- Global mode: uses `settings.active_plan` or `settings.default_plan` (unchanged)
+|- `syncPermissionsForPlan()` is a **no-op** — permissions are evaluated at runtime
+  via Role ∩ Plan, not synced into Users. See §Permission Resolution.
 
 ### `app/Http/Controllers/SettingsController.php`
 - Added `license_mode` field to validation + setting persistence
@@ -38,8 +39,8 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
 
 ### `database/seeders/DatabaseSeeder.php`
 - Added `Setting::updateOrCreate(['key' => 'license_mode'], ['value' => 'global'])`
-- Staff role: `syncPermissions([])` — no direct permission assignment
-- Permissions come from plan sync, NOT role assignment
+|- Staff role: `syncPermissions([])` — no direct permission assignment
+|- Permissions come from Role assignment + Plan runtime check, NOT plan sync
 - Free plan seed: `features: []`, `limits: ['max_members' => 2, 'max_storage_mb' => 500, 'max_roles' => 3, 'max_permissions' => 0]`
 
 ## Plan Form & Validation
@@ -68,15 +69,28 @@ All changes for use in Issue Tracker (fork Laravel-Base-Project).
   ```
 
 ### `app/Http/Controllers/PlanController.php`
-- Call `PlanService::syncPermissionsForPlan($plan)` after `store()` + `update()`
+|- Calls `PlanService::syncPermissionsForPlan($plan)` after `store()` + `update()`
+  (no-op — preserved as call site for future use; does NOT sync to Users)
 
-## Permission Sync
+## Permission Resolution (CHALLENGE 2 architecture)
 
-### `PlanService::syncPermissionsForPlan(Plan $plan)` (NEW method)
-- Derives permission names from plan `features` + `limits.allowed_permissions`
-- Global mode: syncs to ALL users via `$user->syncPermissions([...])`
-- Per-user mode: skipped — sync happens via LicenseService when license assigned
-- Uses `Permission::featureOf($perm->name)` to map permission → feature slug
+`syncPermissionsForPlan(Plan $plan)` is a **no-op** — it does NOT copy Plan
+permissions to Users or Roles. Permissions are resolved at runtime:
+
+```
+Effective Permission = User.Role.Permission AND Plan.allows(Permission)
+```
+
+- **Plan.allowed_permissions** = commercial entitlement boundary (what the Plan
+  *permits*). Does NOT grant by itself. Plan changes do NOT modify
+  `model_has_permissions`, `model_has_roles`, or `role_has_permissions`.
+- **Role.permissions** = persistent assignment. Plan downgrade does NOT remove
+  permissions from Roles. Permissions stored under a previous Pro plan remain.
+- **Gate `before`** (`AppServiceProvider`): checks Plan.allows(perm) for all
+  domain permissions; `role.*` / `permission.*` are exempt.
+- **RoleController::filterPermissions** (web + API): server-side enforcement —
+  a subscriber with role management capability can only assign permissions in
+  the Plan's `allowed_permissions`.
 
 ## Sidebar & Navigation
 

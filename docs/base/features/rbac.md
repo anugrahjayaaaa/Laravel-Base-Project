@@ -11,7 +11,7 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
 ## Model
 - `permissions`: granular actions (`user.view`, `user.create`, `role.edit`).
 - `roles`: a set of permissions; a user may have multiple roles.
-- Super-admin: bypass (special guard).
+- Super-admin: holds ALL permissions via the `super-admin` role (seeded with full permission set); NOT a bypass — still subject to Plan boundary Gate check. Only `role.*` / `permission.*` permissions are exempt from Plan checks (see §Enforcement).
 - Role & Permission are **custom models** (`App\Models\Role`, `App\Models\Permission`)
   extending spatie with `SoftDeletes`; `config/permission.php` points spatie to them.
   Always import the custom models, never `Spatie\Permission\Models\*` directly.
@@ -30,9 +30,11 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
 ## Enforcement
 - **Route-level middleware**, never in a controller constructor:
   ```php
-  Route::resource('users', UserController::class)
-      ->middleware(['can:user.view', 'feature:users']);
+  Route::resource('users', UserController::class)->middleware(['feature:users', 'can:user.view']);
   ```
+- `feature:{slug}` runs FIRST (Pennant kill switch → 404 if off), then `can:{perm}`
+  (Role permission + Plan entitlement via Gate `before`). Order matters: Pennant OFF
+  must 404 before the permission gate can 403 (see `docs/base/features/feature-flags.md`).
 - `can:{perm}` is Laravel's built-in authorization middleware (spatie
   permission registered as the gate). Do **not** use a custom `permission:`
   middleware, and do **not** call `$this->middleware()` inside a controller
@@ -41,8 +43,17 @@ Uses `spatie/laravel-permission`. Roles & permissions are created/edited via UI 
   not in the controller body. Current modules gate purely by permission; no
   per-resource Policy is registered.
 - Every role/permission change → audit trail.
-- **Feature flags** sit above RBAC: a module route is also wrapped in
-  `feature:{slug}` (see `docs/base/features/feature-flags.md`). Permission alone is not enough —
+- **Effective permission** = Role grants permission AND Plan allows permission
+  (see `docs/base/features/licensing-and-billing.md` §11). Plan alone never
+  grants; Role alone never bypasses Plan.
+- **Management permissions** (`role.*`, `permission.*`) are exempt from the Plan
+  boundary Gate check — they are governed by Role assignment, not Plan tier.
+  However, `filterPermissions()` in `RoleController` / `RoleApiController`
+  enforces that a subscriber can only ASSIGN permissions within the Plan's
+  `allowed_permissions` when creating/editing roles. This prevents bypassing
+  Plan entitlement via Role mutation.
+- **Feature flags** sit above RBAC + Plan: a module route requires Pennant ON,
+  Plan feature allowed, AND Role permission. Permission alone is not enough —
   the feature must be enabled, or the route 404s and its sidebar item hides.
 
 ## Initial seed

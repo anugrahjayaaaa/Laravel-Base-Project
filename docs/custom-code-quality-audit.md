@@ -27,7 +27,7 @@ does NOT exist — PHPStan runs clean with zero ignored issues.
 |------|---------------|--------|
 | `app/Services/BillingService.php` | checkout, complete, cancel, webhook | BillingController |
 | `app/Services/LicenseService.php` | issue, activate, verify, revoke, status | BillingController, PlanService, DashboardController |
-| `app/Services/PlanService.php` | entitlement gates (`can`, `limit`), permission sync | PlansController, middleware |
+- `app/Services/PlanService.php` | entitlement gates (`can`, `limit`, `allows`, `allowedPermissions`); `syncPermissionsForPlan` (no-op) | PlansController, Gate `before`
 | `app/Services/UserService.php` | create/update/lock/unlock/reset-link | UserController + API |
 | `app/Services/BulkDeleteService.php` | shared bulk delete loop for RBAC | UserController, RoleController, PermissionController |
 | `app/Services/AuditQueryService.php` | shared audit-log query+filter | AuditController, AuditApiController |
@@ -64,8 +64,8 @@ PASS. Key logic:
   return); `handleWebhook()` fail-safe (unknown plan → null, not 500).
 - `LicenseService` — tamper resistance: re-verifies signed key on every check;
   fail-closed secret check in prod/staging. `verify()` uses `hash_equals`.
-- `PlanService::can()` — paid features require valid activated license (cannot
-  flip DB setting to unlock). Snapshot-based entitlement (catalog versioning).
+- `PlanService::can()` / `allows()` — paid features require valid activated license (cannot
+  flip DB setting to unlock). Snapshot-based entitlement (catalog versioning). `syncPermissionsForPlan()` is a **no-op** — permissions resolved at runtime via Role ∩ Plan.
 - `UserObserver::updated` — `unset($dirty['password'])` before audit logging.
 
 ## 5. Function/Method Quality
@@ -135,9 +135,7 @@ no benefit from repository abstraction here.
 
 - Highest complexity: `LoginController::store` (rate-limit + lockout + regen).
   Inherent to auth security; complexity justified.
-- `PlanService::syncPermissionsForPlan` — nested loop O(P×F) over permissions.
-  **Mark: low-risk** — only runs on plan create/update, not on requests.
-  No N+1 in request path.
+- `PlanService::syncPermissionsForPlan` — **no-op** (plan change, not per-request). No complexity concern.
 - No deeply nested methods, no god classes.
 
 ## 13. Database Code
@@ -170,7 +168,7 @@ PASS. Verified:
 - `UserController::index` — `with('roles')`, `paginate(10)->withQueryString()` ✅
 - `User::$with = []` — no auto-loaded relations (N+1 prevention) ✅
 - No collection `load()`-then-filter anti-patterns observed.
-- `PlanService::syncPermissionsForPlan` — acceptable (plan change, not per-request).
+- `PlanService::syncPermissionsForPlan` — no-op, acceptable (plan change, not per-request).
 
 ## 17. Error Handling
 
@@ -245,7 +243,7 @@ GOOD. Inline `ponytail:` comments on `LicenseService` (fail-closed secret),
 | 1 | BillingService::complete (no transaction) | partial payment/license state | Medium |
 | 2 | LoginController::store (lockout/rate logic) | auth security | Low (well-tested) |
 | 3 | LicenseService::sign/verify (secret + signing algo) | license forgery | Low (hash_equals, fail-closed) |
-| 4 | PlanService::syncPermissionsForPlan (O(P×F)) | perf on plan change | Low |
+| 4 | PlanService::syncPermissionsForPlan (no-op) | perf on plan change | Low |
 | 5 | 3 near-identical observers | future drift | Low |
 | 6 | UserObserver (audit old/new diff) | sensitive field leakage | Mitigated (unset password) |
 | 7 | BillingController::webhook (CSRF-excluded) | exploit surface | Low (signature check) |
@@ -264,7 +262,7 @@ None in this pass — code quality is already high. No dead code found.
 - Static service methods kept (no interfaces — no second implementations).
 - No Repository pattern introduced.
 - No DTOs introduced.
-- `PlanService::syncPermissionsForPlan` perf not optimized (not request-path).
+- `PlanService::syncPermissionsForPlan` — no-op, no optimization needed.
 
 ## 29. Needs Decision
 

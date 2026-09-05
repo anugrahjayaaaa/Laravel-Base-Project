@@ -30,14 +30,16 @@
 ## ADR-0008: Sidebar "Template" section
 - Decision: below main menu, a "Template" group with zip demos (read-only).
 
-## ADR-0009: Feature flags above RBAC
-- Context: need to disable whole modules without touching code or redeploy, and let
-  a `feature.manage` holder keep access while a flag is off.
-- Decision: **Laravel Pennant** (`laravel/pennant`) — `config/pennant.php` declares flags,
-  `AppServiceProvider::boot()` defines them, `Feature::active()` + `feature:{slug}` route
-  middleware (stacked with `can:{perm}`) gate access; sidebar visibility via `@feature()` Blade directive.
-  A flag off 404s the route and hides its menu item for everyone (kill-switch,
-  including `feature.manage` holders) — they re-enable from `/features`. Storage = Pennant DB store.
+## ADR-0009: Feature flags above RBAC + Plan
+|- Context: need to disable whole modules without touching code or redeploy, as an
+|  operational kill switch (Pennant) — independent from commercial Plan entitlement.
+|- Decision: **Laravel Pennant** (`laravel/pennant`) — `config/pennant.php` declares flags,
+|  `AppServiceProvider::boot()` defines them, `Feature::active()` + `feature:{slug}` route
+|  middleware (stacked BEFORE `can:{perm}`) gate access; sidebar visibility via `@feature()` Blade directive.
+|  Pennant OFF → 404s the route for **everyone** (true kill-switch, including `feature.manage`
+|  holders). `feature.manage` holders toggle flags from `/features` but cannot access a module while its flag is OFF.
+|  Pennant ON → proceeds to Plan feature entitlement + Role/Plan permission checks.
+|  Storage = Pennant DB store.
 - Consequences: closest path to change the enabled state is the `/features` UI (under
   Settings); fails closed when a feature row is missing.
 
@@ -48,8 +50,8 @@
   so the framework `middleware()` helper was absent. Every sibling controller escaped the bug
   only because they gate at the route level (`routes/web.php`) instead.
 - Decision: **all permission + feature-flag gates are declared on the route** via
-  `->middleware(['can:{perm}', 'feature:{slug}'])`. Controllers must NOT call
-  `$this->middleware()` in a constructor. The base `Controller` extends
+  `->middleware(['feature:{slug}', 'can:{perm}'])` (Pennant first → 404 on kill switch,
+  then permission gate). Controllers must NOT call `$this->middleware()` in a constructor. The base `Controller` extends
   `Illuminate\Routing\Controller` so the helper exists if ever needed, but routes are the
   single place authorization is wired.
 - Consequences: one visible place for authz; no dependency on controller base wiring;

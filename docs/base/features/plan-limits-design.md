@@ -36,9 +36,9 @@ Removed: `max_projects` (never implemented — no project CRUD in routes),
 granted via the `roles` feature).
 
 ### 3. PlanService
-`PlanService::for()` resolves the user license plan_slug in per_user mode.
-`syncPermissionsForPlan()` grants `feature.*` permissions to subscribers
-based on plan features + `Permission::featureOf()` mapping.
+|`PlanService::for()` resolves the user license plan_slug in per_user mode.
+|`syncPermissionsForPlan()` is a **no-op** — permissions are resolved at runtime
+> via Role ∩ Plan (`PlanService::allows()`). See `docs/base/features/permission-sync-design.md`.
 
 ### 4. Seeded plans (reference data)
 `database/seeders/PlanSeeder.php` seeds three tiers with deterministic

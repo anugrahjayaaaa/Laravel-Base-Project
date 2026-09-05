@@ -28,9 +28,9 @@ Why: the gate is declarative, visible in one file, and does not depend on the
 controller extending a specific base. It also composes with feature flags
 (`feature:{slug}`) in the same `middleware([...])` array.
 
-**Every protected resource route MUST carry `can:{perm}`.** Module routes also
-carry `feature:{slug}`. Reference: `routes/web.php`, `docs/base/features/rbac.md`,
-`docs/base/features/feature-flags.md`.
+- **Every protected resource route MUST carry `can:{perm}`.** Module routes also
+  carry `feature:{slug}` (stacked BEFORE `can:` so Pennant's 404 wins). Reference: `routes/web.php`, `docs/base/features/rbac.md`,
+  `docs/base/features/feature-flags.md`.
 
 ## 2. Base Controller
 `app/Http/Controllers/Controller` MUST extend `Illuminate\Routing\Controller`.
