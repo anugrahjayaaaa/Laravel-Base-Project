@@ -70,5 +70,22 @@
             chk.checked = chk.getAttribute('data-enabled') === '0'; // '0' => currently enabled
             e.target._featureChk = null;
         });
+
+        // Lock/Unlock user modal: trigger supplies data-action + data-label.
+        document.addEventListener('show.bs.modal', function (e) {
+            if (e.target.id !== 'lockUserModal') return;
+            const btn = e.relatedTarget;
+            if (!btn) return;
+            const form = e.target.querySelector('#lockUserModalForm');
+            const action = btn.getAttribute('data-action');
+            const label = btn.getAttribute('data-label') || '{{ ui('confirm') }}';
+            const body = e.target.querySelector('#lockUserModalBody');
+            const submit = e.target.querySelector('#lockUserModalSubmit');
+            const title = e.target.querySelector('#lockUserModalTitle');
+            if (form && action) form.setAttribute('action', action);
+            if (body) body.textContent = label;
+            if (submit) submit.textContent = label;
+            if (title) title.textContent = label;
+        });
     })();
 </script>

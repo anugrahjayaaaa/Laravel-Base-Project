@@ -80,17 +80,21 @@
                             @endif
                             @if (!$user->trashed() && $user->id !== auth()->id() && auth()->user()->can('user.lock'))
                             @if ($user->isLocked())
-                            <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
-                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-warning" data-bs-toggle="tooltip" data-bs-title="{{ ui('unlock') }}" aria-label="{{ ui('unlock') }}" style="min-width:38px">
+                                <button type="button" class="btn btn-sm btn-light border rounded-2 text-warning"
+                                    data-bs-toggle="modal" data-bs-target="#lockUserModal"
+                                    data-action="{{ route('users.unlock', $user) }}"
+                                    data-label="{{ ui('confirm_unlock') }}"
+                                    data-bs-title="{{ ui('unlock') }}" aria-label="{{ ui('unlock') }}" style="min-width:38px">
                                     <i class="bi bi-unlock-fill"></i>
                                 </button>
-                            </form>
                             @else
-                            <form method="POST" action="{{ route('users.lock', $user) }}" class="d-inline">@csrf
-                                <button type="submit" class="btn btn-sm btn-light border rounded-2 text-danger" data-bs-toggle="tooltip" data-bs-title="{{ ui('lock') }}" aria-label="{{ ui('lock') }}" style="min-width:38px">
+                                <button type="button" class="btn btn-sm btn-light border rounded-2 text-danger"
+                                    data-bs-toggle="modal" data-bs-target="#lockUserModal"
+                                    data-action="{{ route('users.lock', $user) }}"
+                                    data-label="{{ ui('confirm_lock') }}"
+                                    data-bs-title="{{ ui('lock') }}" aria-label="{{ ui('lock') }}" style="min-width:38px">
                                     <i class="bi bi-lock-fill"></i>
                                 </button>
-                            </form>
                             @endif
                             @endif
                         </div>
@@ -108,4 +112,5 @@
 {{ $users->links() }}
 @include('partials.modals.delete-modal')
 @include('partials.modals.force-delete-modal')
+@include('partials.modals.lock-user-modal')
 @endsection

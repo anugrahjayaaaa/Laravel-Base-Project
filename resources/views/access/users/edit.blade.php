@@ -20,24 +20,30 @@
             @endif
             @if (auth()->user()->can('user.lock'))
                 @if ($user->isLocked())
-                    <span>Unlock:
-                        <form method="POST" action="{{ route('users.unlock', $user) }}" class="d-inline">@csrf
-                            <button class="btn btn-sm btn-warning">{{ ui('unlock') }}</button>
-                        </form>
-                    </span>
+                    <button type="button" class="btn btn-sm btn-light border rounded-2 text-warning"
+                        data-bs-toggle="modal" data-bs-target="#lockUserModal"
+                        data-action="{{ route('users.unlock', $user) }}"
+                        data-label="{{ ui('confirm_unlock') }}"
+                        data-bs-title="{{ ui('unlock') }}" aria-label="{{ ui('unlock') }}" style="min-width:38px">
+                        <i class="bi bi-unlock-fill"></i>
+                    </button>
                 @else
-                    <span>Lock:
-                        <form method="POST" action="{{ route('users.lock', $user) }}" class="d-inline">@csrf
-                            <button class="btn btn-sm btn-danger">{{ ui('lock') }}</button>
-                        </form>
-                    </span>
+                    <button type="button" class="btn btn-sm btn-light border rounded-2 text-danger"
+                        data-bs-toggle="modal" data-bs-target="#lockUserModal"
+                        data-action="{{ route('users.lock', $user) }}"
+                        data-label="{{ ui('confirm_lock') }}"
+                        data-bs-title="{{ ui('lock') }}" aria-label="{{ ui('lock') }}" style="min-width:38px">
+                        <i class="bi bi-lock-fill"></i>
+                    </button>
                 @endif
             @endif
         </div>
         @if (auth()->user()->can('user.edit'))
         <span>{{ ui('send_reset_email_label') }}
             <form method="POST" action="{{ route('users.reset-password', $user) }}" class="d-inline">@csrf
-                <button class="btn btn-sm btn-secondary">{{ ui('send_reset_email') }}</button>
+                <button type="submit" class="btn btn-sm btn-light border rounded-2" data-bs-toggle="tooltip" data-bs-title="{{ ui('send_reset_email') }}" aria-label="{{ ui('send_reset_email') }}" style="min-width:38px">
+                    <i class="bi bi-envelope"></i>
+                </button>
             </form>
         </span>
         @endif
@@ -70,21 +76,26 @@
                     <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $user->phone ?? '') }}">
                     @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-                <div class="col-md-6 position-relative">
+                {{-- password — matches profile/show + auth/register pattern (input-group + eye toggle) --}}
+                <div class="col-md-6">
                     <label class="form-label">{{ ui('password') }}{{ isset($user) ? ' ' . ui('leave_blank_to_keep') : '' }}</label>
-                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" {{ isset($user) ? '' : 'required' }}>
-                    <button type="button" class="btn btn-outline-secondary btn-sm position-absolute top-50 translate-middle-y" style="right: 8px;" id="toggle-password" aria-label="{{ ui('show_password') }}">
-                        <i class="bi bi-eye-slash" id="password-icon"></i>
-                    </button>
-                    @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    <div class="input-group">
+                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" {{ isset($user) ? '' : 'required' }} aria-describedby="password-error" @error('password') aria-invalid="true" @enderror>
+                        <button type="button" class="btn btn-outline-secondary" id="toggle-password" aria-label="{{ ui('show_password') }}">
+                            <i class="bi bi-eye" id="password-icon"></i>
+                        </button>
+                    </div>
+                    @error('password')<div id="password-error" class="invalid-feedback d-block w-100 mt-1" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
-                <div class="col-md-6 position-relative">
+                <div class="col-md-6">
                     <label class="form-label">{{ ui('confirm_password') }}</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror">
-                    <button type="button" class="btn btn-outline-secondary btn-sm position-absolute top-50 translate-middle-y" style="right: 8px;" id="toggle-password-confirm" aria-label="{{ ui('show_password') }}">
-                        <i class="bi bi-eye-slash" id="password-confirm-icon"></i>
-                    </button>
-                    @error('password_confirmation')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    <div class="input-group">
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" aria-describedby="password_confirmation-error" @error('password_confirmation') aria-invalid="true" @enderror>
+                        <button type="button" class="btn btn-outline-secondary" id="toggle-password-confirm" aria-label="{{ ui('show_password') }}">
+                            <i class="bi bi-eye" id="password-confirm-icon"></i>
+                        </button>
+                    </div>
+                    @error('password_confirmation')<div id="password_confirmation-error" class="invalid-feedback d-block w-100 mt-1" role="alert" aria-live="polite">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-12">
                     <label class="form-label">{{ ui('roles') }}</label>
@@ -108,8 +119,10 @@
         </div>
     </div>
 </form>
+@include('partials.modals.lock-user-modal')
 @push('scripts')
 <script>
+    // password visibility toggle — mirrors auth/register.blade.php + profile/show
     (function () {
         for (const [field, btn, icon] of [
             ['password', 'toggle-password', 'password-icon'],

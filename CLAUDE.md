@@ -23,8 +23,8 @@ This file is the **entry point for AI agents**. Human devs start at `docs/README
 - Validation: dedicated Form Request, never inline `$request->validate()` in controllers.
 - i18n: `lang/{en,id}/{ui,messages,validation}.php` are source of truth; spatie `language_lines`
   override at runtime. `ui()` = ui.php (UI terminology), `__('messages.*')` = messages.php
-  (feedback). Do NOT create new translation namespaces — see `docs/i18n.md`. Never hardcode
-  English in Blade. Locale parity enforced by `tests/Feature/TranslationTest.php`.
+  (feedback). Do NOT create new translation namespaces — see `docs/base/features/i18n.md`.
+  Never hardcode English in Blade. Locale parity enforced by `tests/Feature/TranslationTest.php`.
 - Secrets: never commit; license/webhook secrets come from env and fail closed if missing.
 - Docs match code. Update `docs/` + ADR when behaviour changes.
 
