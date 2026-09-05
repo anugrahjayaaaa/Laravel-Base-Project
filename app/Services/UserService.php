@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 /**
@@ -19,9 +22,9 @@ final class UserService
             'username' => $data['username'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
-            'password' => bcrypt($data['password']),
+            'password' => Hash::make($data['password']),
         ]);
-        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
+        $user->syncRoles($this->rolesFromInput($data));
 
         return $user;
     }
@@ -37,10 +40,27 @@ final class UserService
             'phone' => $data['phone'] ?? null,
         ];
         if (! empty($data['password'])) {
-            $payload['password'] = bcrypt($data['password']);
+            $payload['password'] = Hash::make($data['password']);
         }
         $user->update($payload);
-        $user->syncRoles(array_map('intval', $data['roles'] ?? []));
+        $user->syncRoles($this->rolesFromInput($data));
+    }
+
+    /** @return list<int> */
+    private function rolesFromInput(array $data): array
+    {
+        // ponytail: fall back to Setting 'default_role' when caller sends no roles
+        // (self-service registration — doc auth.md §Self-service).
+        if (! empty($data['roles'])) {
+            return array_map('intval', $data['roles']);
+        }
+        $default = Setting::get('default_role');
+        if (! $default) {
+            return [];
+        }
+        $role = Role::where('name', $default)->whereNull('deleted_at')->first();
+
+        return $role ? [(int) $role->id] : [];
     }
 
     public function lock(User $user): void

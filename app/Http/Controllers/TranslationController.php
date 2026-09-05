@@ -45,6 +45,6 @@ class TranslationController extends Controller
         $languageLine->save();
 
         return redirect()->route('translations.index')
-            ->with('status', __('messages.saved') ?? 'Saved.');
+            ->with('status', __('messages.saved'));
     }
 }

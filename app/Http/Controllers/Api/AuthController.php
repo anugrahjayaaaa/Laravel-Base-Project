@@ -78,7 +78,7 @@ class AuthController extends Controller
     public function changePassword(PasswordChangeRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $request->user()->update(['password' => bcrypt($data['password'])]);
+        $request->user()->update(['password' => Hash::make($data['password'])]);
         $request->user()->tokens()->delete(); // revoke all mobile tokens
 
         return response()->json(['message' => __('messages.password_changed')]);

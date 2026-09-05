@@ -39,16 +39,10 @@ class RoleController extends Controller
 
     public function store(RoleStoreRequest $request): RedirectResponse
     {
-        // §11.4: super-admins (feature.manage) bypass plan role-creation limits
         $plan = $request->user()->can('feature.manage') ? null : PlanService::for();
-        if ($plan && ! $plan->canCreateRoles()) {
-            abort(403, 'Plan does not allow role creation.');
-        }
-
         $data = $request->validated();
 
         $role = Role::create(['name' => $data['name'], 'guard_name' => 'web']);
-        // §11.4: filter permission IDs to those allowed by the plan snapshot
         $perms = $this->filterPermissions($data['permissions'] ?? [], $plan);
         $role->syncPermissions($perms);
 
@@ -65,12 +59,7 @@ class RoleController extends Controller
 
     public function update(RoleUpdateRequest $request, Role $role): RedirectResponse
     {
-        // §11.4: super-admins (feature.manage) bypass plan role-creation limits
         $plan = $request->user()->can('feature.manage') ? null : PlanService::for();
-        if ($plan && ! $plan->canCreateRoles()) {
-            abort(403, 'Plan does not allow role creation.');
-        }
-
         $data = $request->validated();
 
         $role->update(['name' => $data['name']]);
@@ -95,6 +84,7 @@ class RoleController extends Controller
             return [];
         }
         $allowedIds = Permission::whereIn('name', $allowedNames)->pluck('id')->all();
+
         return array_intersect($permIds, $allowedIds);
     }
 

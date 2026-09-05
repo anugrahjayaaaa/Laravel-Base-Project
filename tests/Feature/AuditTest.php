@@ -33,7 +33,7 @@ it('logs a real login event', function () {
     auth()->logout(); // ensure not already authenticated so attempt() fires Login
     $this->post(route('login.store'), [
         'identifier' => 'superadmin',
-        'password' => 'Admin@base12345',
+        'password' => '#Password123',
     ])->assertRedirect(route('dashboard'));
 
     expect(Activity::where('description', 'login_success')->exists())->toBeTrue();

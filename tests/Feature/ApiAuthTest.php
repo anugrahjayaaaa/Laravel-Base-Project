@@ -9,7 +9,7 @@ beforeEach(function () {
 it('logs in via api and returns token', function () {
     $response = $this->postJson('/api/v1/login', [
         'identifier' => 'superadmin',
-        'password' => 'Admin@base12345',
+        'password' => '#Password123',
         'device_name' => 'test-device',
     ]);
     $response->assertOk()

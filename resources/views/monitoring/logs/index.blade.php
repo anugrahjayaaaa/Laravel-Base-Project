@@ -5,7 +5,7 @@
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
-        <h1 class="m-0 h3">{{ __('messages.system_logs') }}</h1>
+        <h1 class="m-0 h3">{{ ui('system_logs') }}</h1>
     </div>
 </div>
 
@@ -64,7 +64,7 @@
                                         @endif
                                         @if(!empty($log['stack']))
                                             <details class="mt-1">
-                                                <summary class="small text-primary" style="cursor:pointer">Stack trace</summary>
+                                                <summary class="small text-primary" style="cursor:pointer">{{ ui('stack_trace') }}</summary>
                                                 <pre class="small bg-dark text-light p-2 mt-1 mb-0" style="white-space:pre-wrap;overflow:auto;max-height:300px">{{ trim($log['stack']) }}</pre>
                                             </details>
                                         @endif

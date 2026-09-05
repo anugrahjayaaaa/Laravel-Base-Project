@@ -63,4 +63,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return (bool) $this->locked_permanently;
     }
+
+    /**
+     * Whether this user holds the super-admin role.
+     *
+     * Super-admin is identified by Role assignment, not by username or a
+     * model attribute — so it cannot be bypassed by username manipulation
+     * and remains Role-based (no direct User permissions).
+     *
+     * Super-admins bypass the Plan entitlement boundary (Plan.allows) at the
+     * Gate `before` level, but are NOT exempt from Pennant feature flags
+     * (the global kill switch still applies via route middleware).
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('super-admin');
+    }
 }

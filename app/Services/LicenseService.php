@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\License;
 use App\Models\Plan;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -119,6 +118,7 @@ final class LicenseService
         if ($license->expires_at && $license->expires_at->isPast()) {
             return 'expired';
         }
+
         return 'active';
     }
 
@@ -129,6 +129,7 @@ final class LicenseService
         if (! $license || ! $license->expires_at) {
             return null;
         }
+
         return (int) now()->diffInDays($license->expires_at, false);
     }
 
@@ -143,6 +144,7 @@ final class LicenseService
         if (! $key) {
             return null;
         }
+
         return License::where('license_key', $key)->first();
     }
 

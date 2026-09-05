@@ -108,6 +108,7 @@ final class BillingService
 
         if (($payload['status'] ?? 'paid') === 'paid') {
             $plan = Plan::where('slug', $payload['plan_slug'])->first();
+
             return self::complete($payment, $ref, $plan);
         }
 

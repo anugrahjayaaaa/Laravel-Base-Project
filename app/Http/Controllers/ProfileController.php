@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Profile\PasswordChangeRequest;
 use App\Http\Requests\Profile\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -25,7 +26,7 @@ class ProfileController extends Controller
     public function changePassword(PasswordChangeRequest $request): RedirectResponse
     {
         $user = auth()->user();
-        $user->update(['password' => bcrypt($request->validated()['password'])]);
+        $user->update(['password' => Hash::make($request->validated()['password'])]);
         // revoke other sessions
         if (method_exists($user, 'tokens')) {
             $user->tokens()->delete();
