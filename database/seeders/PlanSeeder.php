@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use App\Models\Plan;
 use Illuminate\Database\Seeder;
 
@@ -43,13 +44,15 @@ class PlanSeeder extends Seeder
             'allowed_permissions' => [],
         ];
         // Enterprise: 0 = effectively unlimited (no cap enforced per key).
+        // CHALLENGE 3: enterprise plan explicitly allows ALL system permissions
+        // so that super-admin/admin role permissions become effective.
         $enterprise = [
             'max_features' => 0,
             'max_members' => 0,
             'max_storage_mb' => 0,
             'max_permissions' => 0,
             'max_roles' => 0,
-            'allowed_permissions' => [],
+            'allowed_permissions' => Permission::pluck('name')->all(),
         ];
 
         Plan::updateOrCreate(

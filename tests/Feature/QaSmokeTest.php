@@ -83,8 +83,9 @@ it('dashboard renders license badge', function () {
     $user = User::where('email', 'admin@laravel-base.local')->first();
     $this->actingAs($user);
 
+    // Global beforeEach activates enterprise license
     $this->get(route('dashboard'))
         ->assertOk()
-        ->assertSee('No license')
-        ->assertSee('Free plan');
+        ->assertSee('License')
+        ->assertSee('Lifetime');
 });

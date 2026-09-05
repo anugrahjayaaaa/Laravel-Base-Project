@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Observers\PermissionObserver;
 use App\Observers\RoleObserver;
 use App\Observers\UserObserver;
+use App\Services\PlanService;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
@@ -22,7 +24,35 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // CHALLENGE 3: Register Plan permission boundary BEFORE spatie does.
+        // Register() runs before all boot() methods, so our afterResolving listener
+        // (index 0) executes before spatie's callAfterResolving (index 1) when the
+        // Gate is first resolved. This guarantees our Plan check runs first;
+        // returning false short-circuits before spatie's role check.
+        // Fail closed: Plan entitlement is necessary (not sufficient).
+        $this->app->afterResolving(Gate::class, function (Gate $gate) {
+            $gate->before(function ($user, $ability) {
+                if (! $user) {
+                    return null;
+                }
+
+                // Only check known permission names (avoid overhead on policy abilities)
+                if (Permission::where('name', $ability)->exists()) {
+                    // RBAC system permissions (role.*, permission.*) are governed by
+                    // the user's role, not the plan tier — the plan boundary only caps
+                    // assignable domain permissions (enforced separately in RoleController::filterPermissions).
+                    if (str_starts_with($ability, 'role.') || str_starts_with($ability, 'permission.')) {
+                        return null;
+                    }
+
+                    if (! PlanService::for($user)->allows($ability)) {
+                        return false;
+                    }
+                }
+
+                return null;
+            });
+        });
     }
 
     /**

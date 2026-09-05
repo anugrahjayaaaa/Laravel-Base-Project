@@ -2,6 +2,7 @@
 
 use App\Models\License;
 use App\Models\Plan;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\BillingService;
 use App\Services\LicenseService;
@@ -29,6 +30,10 @@ it('dummy checkout completes and grants a lifetime license', function () {
 
 it('webhook completes idempotently (no double license)', function () {
     config(['billing.fake' => true]);
+    // Reset from global enterprise default to test pro license flow
+    Setting::set('active_plan', 'free');
+    Setting::set('license_key', null);
+    License::query()->delete(); // clear enterprise license from global beforeEach
     Plan::firstOrCreate(['slug' => 'pro'], ['name' => 'Pro', 'price_monthly' => 99000,
         'is_active' => true, 'limits' => ['max_members' => 5], 'features' => ['api-tokens']]);
 

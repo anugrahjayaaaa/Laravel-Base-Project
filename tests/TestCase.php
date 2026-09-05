@@ -3,11 +3,10 @@
 namespace Tests;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     /**
      * Render the shared admin sidebar view for a given user (no HTTP round-trip).

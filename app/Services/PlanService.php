@@ -125,42 +125,32 @@ final class PlanService
         return is_array($allowed) ? $allowed : [];
     }
 
-    /** Sync permissions to all users based on plan features + allowed_permissions.
-     *  Called when plan is created/updated. Maps feature slugs → permissions via
-     *  Permission::featureOf(). Users without explicit permission keep only their
-     *  role-derived base permissions.
+    /** Whether a permission is within the Plan's entitlement boundary.
+     *  CHALLENGE 2: Plan acts as capability ceiling — this method provides the
+     *  boundary check. Role permissions that exceed Plan entitlement become ineffective.
+     *  Usage: effective permission = role_has($perm) AND Plan::for()->allows($perm).
+     */
+    public function allows(string $permission): bool
+    {
+        $allowed = $this->allowedPermissions();
+
+        // Free plan with empty allowed_permissions = deny all (deny-by-default).
+        // Non-empty allowed_permissions acts as a whitelist.
+        return in_array($permission, $allowed, true);
+    }
+
+    /** No-op: permissions are derived at runtime via Role ∩ Plan, not synced to Users.
+     *  Called when plan is created/updated (PlanController keeps the call site).
+     *
+     *  CHALLENGE 2: removed syncPermissionsForPlan's User write path — it copied
+     *  Plan entitlement into model_has_permissions, violating the invariant that
+     *  Plan is a capability boundary, not a permission-assignment mechanism.
+     *  Runtime authorization now resolves effective permissions via PlanService::allows()
+     *  (Challenge 1) + spatie role permissions; no direct User permissions exist.
      */
     public static function syncPermissionsForPlan(Plan $plan): void
     {
-        // ponytail: derive permission names from plan features + allowed_permissions limits
-        $features = (array) ($plan->features ?? []);
-        $limits = (array) ($plan->limits ?? []);
-        $explicit = (array) ($limits['allowed_permissions'] ?? []);
-
-        // Map: feature slug → permission names (permission.* belong to 'permissions' feature, etc.)
-        // Only sync permissions that belong to a feature enabled in this plan.
-        $syncable = [];
-        foreach ($features as $featureSlug) {
-            // ponytail: feature slug maps to permission names via Permission::featureOf()
-            foreach (Permission::all() as $perm) {
-                if (Permission::featureOf($perm->name) === $featureSlug) {
-                    $syncable[$perm->name] = $perm->name;
-                }
-            }
-        }
-
-        // Explicit allowed_permissions overrides (e.g. role.create even if 'roles' feature off)
-        foreach ($explicit as $permName) {
-            $syncable[$permName] = $permName;
-        }
-
-        // ponytail: in global mode sync to ALL users; per-user syncs via LicenseService
-        if (Setting::get('license_mode', 'global') === 'per_user') {
-            return; // per-user: permission sync happens when license assigned
-        }
-
-        foreach (User::all() as $user) {
-            $user->syncPermissions(array_values($syncable));
-        }
+        // ponytail: no-op — Plan does NOT write permissions to Users.
+        // Permission resolution is runtime: Role.permissions ∩ Plan.allowed_permissions.
     }
 }
