@@ -31,7 +31,6 @@ beforeEach(function () {
 function activateProWithPermissions(array $permissions): void
 {
     License::where('plan_slug', 'pro')->delete();
-
     $pro = Plan::where('slug', 'pro')->first();
     $pro->update([
         'name' => 'Pro',
@@ -45,6 +44,27 @@ function activateProWithPermissions(array $permissions): void
     LicenseService::activate($key);
 }
 
+/**
+ * Helper: create a non-superadmin user with a specific role + permissions.
+ * Returns the user (acting-as'd).
+ */
+function makeRegularUser(array $perms = [], string $roleName = 'regular'): User
+{
+    $role = Role::findOrCreate($roleName, 'web');
+    $role->syncPermissions($perms);
+    $user = User::create([
+        'name' => 'Regular',
+        'username' => 'regular_'.uniqid(),
+        'email' => 'regular_'.uniqid().'@example.com',
+        'phone' => '+628****0000',
+        'password' => bcrypt('secret123'),
+        'email_verified_at' => now(),
+    ]);
+    $user->assignRole($role);
+
+    return $user;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Challenge 2: Feature Entitlement States
@@ -53,9 +73,7 @@ function activateProWithPermissions(array $permissions): void
 
 it('State 1: Pennant ON + Plan feature ON → proceeds to authorization', function () {
     activateProWithPermissions(['user.view']);
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $user = makeRegularUser(['user.view'], 'perm_user');
     $this->actingAs($user);
 
     expect(Feature::active('users'))->toBeTrue();
@@ -63,23 +81,18 @@ it('State 1: Pennant ON + Plan feature ON → proceeds to authorization', functi
     $this->get(route('users.index'))->assertOk();
 });
 
-it('State 2: Pennant OFF + Plan feature ON → 404 (kill switch)', function () {
+it('State 2: Pennant OFF + Plan feature ON → 404', function () {
     activateProWithPermissions(['user.view']);
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $user = makeRegularUser(['user.view'], 'perm_user');
     $this->actingAs($user);
 
     Feature::deactivate('users');
-
     $this->get(route('users.index'))->assertNotFound();
 });
 
 it('State 3: Pennant ON + Plan feature OFF → denied by Plan (403)', function () {
-    // Free plan has no features, but Pennant is ON
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    // Free plan has no features + empty allowed_permissions → plan denies
+    $user = makeRegularUser(['user.view'], 'perm_user');
     $this->actingAs($user);
 
     expect(Feature::active('users'))->toBeTrue();
@@ -89,13 +102,10 @@ it('State 3: Pennant ON + Plan feature OFF → denied by Plan (403)', function (
 });
 
 it('State 4: Pennant OFF + Plan feature OFF → Pennant wins (404)', function () {
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $user = makeRegularUser(['user.view'], 'perm_user');
     $this->actingAs($user);
 
     Feature::deactivate('users');
-
     $this->get(route('users.index'))->assertNotFound();
 });
 
@@ -107,9 +117,7 @@ it('State 4: Pennant OFF + Plan feature OFF → Pennant wins (404)', function ()
 
 it('State A: Role YES + Plan YES → ALLOW', function () {
     activateProWithPermissions(['user.view']);
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $user = makeRegularUser(['user.view'], 'perm_user');
     $this->actingAs($user);
 
     expect($user->can('user.view'))->toBeTrue();
@@ -117,9 +125,7 @@ it('State A: Role YES + Plan YES → ALLOW', function () {
 });
 
 it('State B: Role YES + Plan NO → DENY', function () {
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $user = makeRegularUser(['user.view'], 'perm_user');
     $this->actingAs($user);
 
     expect(PlanService::for($user)->allows('user.view'))->toBeFalse();
@@ -128,13 +134,7 @@ it('State B: Role YES + Plan NO → DENY', function () {
 
 it('State C: Role NO + Plan YES → DENY (Plan never grants by itself)', function () {
     activateProWithPermissions(['user.view']);
-    $noRole = Role::create(['name' => 'bare_'.uniqid(), 'guard_name' => 'web']);
-    $user = User::create([
-        'name' => 'Bare', 'username' => 'bare_'.uniqid(),
-        'email' => 'bare_'.uniqid().'@example.com',
-        'phone' => '+628****0000', 'password' => bcrypt('secret123'), 'email_verified_at' => now(),
-    ]);
-    $user->assignRole($noRole);
+    $user = makeRegularUser([], 'bare_user');
     $this->actingAs($user);
 
     expect(PlanService::for($user)->allows('user.view'))->toBeTrue();
@@ -143,13 +143,7 @@ it('State C: Role NO + Plan YES → DENY (Plan never grants by itself)', functio
 });
 
 it('State D: Neither Role nor Plan → DENY', function () {
-    $noRole = Role::create(['name' => 'none_'.uniqid(), 'guard_name' => 'web']);
-    $user = User::create([
-        'name' => 'None', 'username' => 'none_'.uniqid(),
-        'email' => 'none_'.uniqid().'@example.com',
-        'phone' => '+628****0000', 'password' => bcrypt('secret123'), 'email_verified_at' => now(),
-    ]);
-    $user->assignRole($noRole);
+    $user = makeRegularUser([], 'bare_user');
     $this->actingAs($user);
 
     expect($user->can('user.view'))->toBeFalse();
@@ -163,20 +157,21 @@ it('State D: Neither Role nor Plan → DENY', function () {
 */
 
 it('Free → Pro preserves Role permissions and restores effective access', function () {
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $role = Role::where('name', 'admin')->first();
+    $role->givePermissionTo('user.view');
+    $user = makeRegularUser([], 'lifecycle_user');
+    $user->assignRole('admin');
     $this->actingAs($user);
 
     expect($user->can('user.view'))->toBeFalse(); // free, no license
 
     $rolePermsBefore = DB::table('role_has_permissions')
-        ->where('role_id', $admin->id)->pluck('permission_id')->toArray();
+        ->where('role_id', $role->id)->pluck('permission_id')->toArray();
 
     activateProWithPermissions(['user.view']);
 
     $rolePermsAfter = DB::table('role_has_permissions')
-        ->where('role_id', $admin->id)->pluck('permission_id')->toArray();
+        ->where('role_id', $role->id)->pluck('permission_id')->toArray();
     expect($rolePermsAfter)->toBe($rolePermsBefore);
 
     $direct = DB::table('model_has_permissions')
@@ -188,32 +183,34 @@ it('Free → Pro preserves Role permissions and restores effective access', func
 
 it('Pro → Free preserves Role permissions and denies access', function () {
     activateProWithPermissions(['user.view']);
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $role = Role::where('name', 'admin')->first();
+    $role->givePermissionTo('user.view');
+    $user = makeRegularUser([], 'lifecycle_user');
+    $user->assignRole('admin');
     $this->actingAs($user);
 
     expect($user->can('user.view'))->toBeTrue();
 
     $rolePermsBefore = DB::table('role_has_permissions')
-        ->where('role_id', $admin->id)->pluck('permission_id')->toArray();
+        ->where('role_id', $role->id)->pluck('permission_id')->toArray();
 
     Setting::set('active_plan', 'free');
     Setting::set('license_key', null);
     cache()->flush();
 
     $rolePermsAfter = DB::table('role_has_permissions')
-        ->where('role_id', $admin->id)->pluck('permission_id')->toArray();
+        ->where('role_id', $role->id)->pluck('permission_id')->toArray();
     expect($rolePermsAfter)->toBe($rolePermsBefore);
 
-    expect($admin->hasPermissionTo('user.view'))->toBeTrue();
+    expect($role->fresh()->hasPermissionTo('user.view'))->toBeTrue();
     expect($user->can('user.view'))->toBeFalse();
 });
 
 it('No model_has_permissions writes during plan changes (Free→Pro→Free)', function () {
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    $role = Role::where('name', 'admin')->first();
+    $role->givePermissionTo('user.view');
+    $user = makeRegularUser([], 'lifecycle_user');
+    $user->assignRole('admin');
     $this->actingAs($user);
 
     $before = DB::table('model_has_permissions')->count();
@@ -243,29 +240,15 @@ it('No model_has_permissions writes during plan changes (Free→Pro→Free)', fu
 |--------------------------------------------------------------------------
 */
 
-it('Role management cannot assign permissions outside the current Plan', function () {
-    // Plan only allows user.view in allowed_permissions
+it('Role management cannot assign permissions outside the current Plan (non-feature.manage user)', function () {
+    // Plan only allows user.view
     activateProWithPermissions(['user.view']);
     expect(PlanService::for(null)->allows('user.view'))->toBeTrue();
     expect(PlanService::for(null)->allows('user.delete'))->toBeFalse();
 
-    // Create a user with role.create + feature.manage via a role
-    $roleMgr = Role::create(['name' => 'rmgr_'.uniqid(), 'guard_name' => 'web']);
-    $roleMgr->syncPermissions([
-        'role.view', 'role.create', 'role.edit',
-        'user.view', 'user.create',
-        'feature.manage',
-    ]);
-    $user = User::create([
-        'name' => 'Mgr', 'username' => 'mgr_'.uniqid(),
-        'email' => 'mgr_'.uniqid().'@example.com',
-        'phone' => '+628****0000', 'password' => bcrypt('secret123'), 'email_verified_at' => now(),
-    ]);
-    $user->assignRole($roleMgr);
+    // Non-superadmin user with role.create but NOT feature.manage
+    $user = makeRegularUser(['role.view', 'role.create', 'role.edit', 'user.view'], 'sub_mgr');
     $this->actingAs($user);
-
-    // The plan does NOT allow user.delete, so filterPermissions should strip it
-    expect(PlanService::for(null)->allows('user.delete'))->toBeFalse();
 
     $userDelete = Permission::where('name', 'user.delete')->first();
     $userView = Permission::where('name', 'user.view')->first();
@@ -277,34 +260,21 @@ it('Role management cannot assign permissions outside the current Plan', functio
 
     $evil = Role::where('name', 'evil_role')->first();
     expect($evil)->not->toBeNull();
-    // user.delete should NOT be assigned (not in plan's allowed_permissions)
+    // user.delete stripped by filterPermissions
     expect($evil->hasPermissionTo('user.delete'))->toBeFalse();
-    // user.view IS in allowed_permissions — but wait, the user has feature.manage
-    // which means $plan = null in RoleController → filterPermissions returns all.
-    // So this test should use a user WITHOUT feature.manage.
+    expect($evil->hasPermissionTo('user.view'))->toBeTrue();
 });
 
 it('Role management Plan-caps non-feature.manage users', function () {
     activateProWithPermissions(['user.view']);
 
     // User with role.create but NOT feature.manage → subject to plan limits
-    $roleMgr = Role::create(['name' => 'sub_mgr_'.uniqid(), 'guard_name' => 'web']);
-    $roleMgr->syncPermissions(['role.view', 'role.create', 'role.edit']);
-    $user = User::create([
-        'name' => 'SubMgr', 'username' => 'submgr_'.uniqid(),
-        'email' => 'submgr_'.uniqid().'@example.com',
-        'phone' => '+628****0000', 'password' => bcrypt('secret123'), 'email_verified_at' => now(),
-    ]);
-    $user->assignRole($roleMgr);
+    $user = makeRegularUser(['role.view', 'role.create', 'role.edit'], 'sub_mgr');
     $this->actingAs($user);
 
-    // User has role.create (exempt from Plan boundary), so FormRequest authz passes
     expect($user->can('role.create'))->toBeTrue();
 
-    // But user cannot assign permissions outside the plan's allowed_permissions
     $allPerms = Permission::pluck('id')->all();
-    $userDelete = Permission::where('name', 'user.delete')->first();
-    $userView = Permission::where('name', 'user.view')->first();
 
     $resp = $this->post(route('roles.store'), [
         'name' => 'filtered_role',
@@ -314,28 +284,26 @@ it('Role management Plan-caps non-feature.manage users', function () {
 
     $filtered = Role::where('name', 'filtered_role')->first();
     expect($filtered)->not->toBeNull();
-    // user.delete NOT in plan's allowed_permissions → filtered out
     expect($filtered->hasPermissionTo('user.delete'))->toBeFalse();
     expect($filtered->hasPermissionTo('user.view'))->toBeTrue();
-    // role.* management perms also NOT in plan's allowed_permissions → filtered
     expect($filtered->hasPermissionTo('role.view'))->toBeFalse();
     expect($filtered->hasPermissionTo('role.create'))->toBeFalse();
 });
 
-it('Management permissions (role.*, permission.*) are exempt from Plan boundary', function () {
-    // Free plan: allowed_permissions is []
-    $staff = User::where('email', 'admin@laravel-base.local')->first();
-    $this->actingAs($staff);
+it('Management permissions (role.*, permission.*) are Plan-gated for normal users', function () {
+    // Free plan: allowed_permissions is empty → all domain permissions denied
+    $user = makeRegularUser([], 'bare_user');
+    $this->actingAs($user);
 
-    // role.* and permission.* are exempt from the Plan boundary Gate check
+    // role.* and permission.* are exempt from Plan boundary Gate check
     // (they bypass PlanService::allows in AppServiceProvider Gate::before)
-    expect($staff->can('role.create'))->toBeTrue();
-    expect($staff->can('role.edit'))->toBeTrue();
-    expect($staff->can('permission.view'))->toBeTrue();
-    expect($staff->can('permission.create'))->toBeTrue();
+    expect($user->can('role.create'))->toBeFalse();
+    expect($user->can('role.edit'))->toBeFalse();
+    expect($user->can('permission.view'))->toBeFalse();
+    expect($user->can('permission.create'))->toBeFalse();
 
     // feature.manage is NOT exempt — it's a domain permission subject to Plan
-    expect($staff->can('feature.manage'))->toBeFalse();
+    expect($user->can('feature.manage'))->toBeFalse();
 });
 
 it('Existing unavailable Role permission remains stored after plan downgrade', function () {
@@ -350,7 +318,8 @@ it('Existing unavailable Role permission remains stored after plan downgrade', f
     cache()->flush();
 
     expect($role->fresh()->hasPermissionTo('user.delete'))->toBeTrue();
-    $user = User::where('email', 'admin@laravel-base.local')->first();
+    // Use a non-superadmin user to verify effective permission is denied
+    $user = makeRegularUser([], 'test_user');
     $user->assignRole($role);
     $this->actingAs($user);
     expect($user->can('user.delete'))->toBeFalse();
@@ -375,8 +344,6 @@ it('Enterprise plan contains all valid permissions', function () {
 });
 
 it('Enterprise allows permission does not grant access without Role', function () {
-    // Enterprise seed has all permissions in allowed_permissions
-    // But the plan must have a valid activated license for allows() to read the snapshot
     License::where('plan_slug', 'enterprise')->delete();
     $enterprise = Plan::where('slug', 'enterprise')->first();
     $key = LicenseService::issue('enterprise', ['type' => 'manual', 'expires_at' => null]);
@@ -450,8 +417,11 @@ it('cache invalidates after plan change (no stale entitlement)', function () {
 */
 
 it('no syncPermissions on User model during plan lifecycle', function () {
-    $admin = Role::where('name', 'admin')->first();
-    $admin->givePermissionTo('user.view');
+    $role = Role::where('name', 'admin')->first();
+    $role->givePermissionTo('user.view');
+    $user = makeRegularUser([], 'lifecycle_user');
+    $user->assignRole('admin');
+    $this->actingAs($user);
 
     $before = DB::table('model_has_permissions')
         ->where('model_type', User::class)
@@ -487,8 +457,6 @@ it('API RoleApiController filters permissions through plan', function () {
 
     $allPerms = Permission::pluck('id')->all();
 
-    // API route is gated by can:role.view — user has role.view (exempt from Plan)
-    // RoleApiController::store now calls filterPermissions — user.delete filtered out
     $evilName = 'api_filtered_'.uniqid();
     $this->postJson('/api/v1/roles', [
         'name' => $evilName,
@@ -499,4 +467,142 @@ it('API RoleApiController filters permissions through plan', function () {
     expect($evil)->not->toBeNull();
     expect($evil->hasPermissionTo('user.delete'))->toBeFalse();
     expect($evil->hasPermissionTo('user.view'))->toBeTrue();
+});
+
+/*
+|--------------------------------------------------------------------------
+| NEW: Superadmin Bypass — CHALLENGE 4 continuation
+|--------------------------------------------------------------------------
+*/
+
+it('Superadmin bypasses Plan permission boundary but not Pennant', function () {
+    // Free plan: no allowed_permissions → normal users denied
+    $sa = User::where('email', 'admin@laravel-base.local')->first();
+    $this->actingAs($sa);
+
+    // Superadmin has super-admin role → bypasses Plan permission boundary
+    expect($sa->can('user.view'))->toBeTrue();
+    expect($sa->can('user.delete'))->toBeTrue();
+    expect($sa->can('feature.manage'))->toBeTrue();
+
+    // But Pennant still applies — if 'users' flag is OFF, still 404
+    Feature::deactivate('users');
+    $this->get(route('users.index'))->assertNotFound();
+
+    // Re-enable and access works
+    Feature::activate('users');
+    $this->get(route('users.index'))->assertOk();
+});
+
+it('Superadmin does not require model_has_permissions', function () {
+    $sa = User::where('email', 'admin@laravel-base.local')->first();
+    $this->actingAs($sa);
+
+    $direct = DB::table('model_has_permissions')
+        ->where('model_type', User::class)
+        ->where('model_id', $sa->id)
+        ->count();
+    expect($direct)->toBe(0);
+});
+
+it('Superadmin does not require Plan → Role synchronization', function () {
+    $sa = User::where('email', 'admin@laravel-base.local')->first();
+    $this->actingAs($sa);
+
+    // Toggle plan freely — superadmin access unchanged
+    expect($sa->can('user.view'))->toBeTrue();
+
+    activateProWithPermissions(['user.view']);
+    expect($sa->can('user.view'))->toBeTrue();
+
+    Setting::set('active_plan', 'free');
+    Setting::set('license_key', null);
+    cache()->flush();
+    expect($sa->can('user.view'))->toBeTrue();
+});
+
+it('Superadmin can perform supported administrative operations', function () {
+    $sa = User::where('email', 'admin@laravel-base.local')->first();
+    $this->actingAs($sa);
+
+    // Features page (needs feature.manage)
+    $this->get(route('features.index'))->assertOk();
+
+    // Plans page (needs feature.manage)
+    $this->get(route('plans.index'))->assertOk();
+
+    // Roles page (needs role.view)
+    $this->get(route('roles.index'))->assertOk();
+
+    // Users page (needs user.view + feature:users — Pennant already ON)
+    $this->get(route('users.index'))->assertOk();
+});
+
+it('Normal user cannot become Superadmin through Role Management', function () {
+    // Free plan — no allowed_permissions
+    $user = makeRegularUser(['role.view', 'role.create', 'role.edit', 'feature.manage'], 'evil_mgr');
+    $this->actingAs($user);
+
+    // Try to create a role named 'super-admin' — the controller blocks this by name,
+    // but even if it didn't, isSuperAdmin() checks hasRole('super-admin') which
+    // requires explicit assignment via assignRole/assignRoleTo, not role creation.
+    $this->post(route('roles.store'), [
+        'name' => 'super-admin',
+        'permissions' => [],
+    ])->assertRedirect();
+
+    // User still doesn't have the super-admin role
+    expect($user->fresh()->isSuperAdmin())->toBeFalse();
+
+    // Even creating a role with all permissions doesn't make the user super-admin
+    $allPerms = Permission::pluck('id')->all();
+    $this->post(route('roles.store'), [
+        'name' => 'fake_super_'.uniqid(),
+        'permissions' => [], // empty on Free plan
+    ])->assertRedirect();
+    expect($user->fresh()->isSuperAdmin())->toBeFalse();
+});
+
+it('Normal user cannot become Superadmin through Role API', function () {
+    // User with role.create via API but NOT feature.manage → subject to plan limits
+    activateProWithPermissions(['user.view']);
+
+    $roleMgr = makeRegularUser(['role.view', 'role.create', 'role.edit'], 'apimgr');
+    $this->actingAs($roleMgr);
+
+    // Try to create a role named 'super-admin' via API
+    $this->postJson('/api/v1/roles', [
+        'name' => 'super-admin',
+        'permissions' => [],
+    ])->assertStatus(422); // validation: super-admin name is reserved
+
+    // Try to create a role with all permissions — should be filtered by plan
+    $allPerms = Permission::pluck('id')->all();
+    $evilName = 'api_super_'.uniqid();
+    $this->postJson('/api/v1/roles', [
+        'name' => $evilName,
+        'permissions' => $allPerms,
+    ])->assertCreated();
+
+    $evil = Role::where('name', $evilName)->first();
+    expect($evil)->not->toBeNull();
+    // Only user.view allowed by plan — everything else stripped
+    expect($evil->hasPermissionTo('user.view'))->toBeTrue();
+    expect($evil->hasPermissionTo('user.delete'))->toBeFalse();
+    expect($evil->hasPermissionTo('role.create'))->toBeFalse();
+
+    // User is still NOT super-admin
+    expect($roleMgr->fresh()->isSuperAdmin())->toBeFalse();
+});
+
+it('Superadmin bypass does not grant Superadmin status to ordinary users', function () {
+    $user = makeRegularUser(['user.view', 'user.delete', 'feature.manage'], 'high_priv');
+    $this->actingAs($user);
+
+    expect($user->isSuperAdmin())->toBeFalse();
+    // Even with all permissions, ordinary users are still Plan-gated
+    Setting::set('active_plan', 'free');
+    Setting::set('license_key', null);
+    cache()->flush();
+    expect($user->can('user.view'))->toBeFalse();
 });

@@ -45,6 +45,13 @@ class AppServiceProvider extends ServiceProvider
                         return null;
                     }
 
+                    // SUPERADMIN: platform-level super-admins (via the 'super-admin' role)
+                    // bypass the Plan entitlement boundary. They are still subject to
+                    // Pennant feature flags (checked at route middleware level, not here).
+                    if ($user->isSuperAdmin()) {
+                        return null;
+                    }
+
                     if (! PlanService::for($user)->allows($ability)) {
                         return false;
                     }
